@@ -1,0 +1,1608 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.1.0 for Hugo" />
+  
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Kevin Y.X. Wang" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Introduction How can we (statisticians) better explain the differences between a confidence interval (CI) and a prediction interval (PI)? Sure, one could look up the definition on Wikipedia and memorise the definitions, but the real difficulty is how to communicate this clearly to young students/collaborators/clients without using mathematical formalism." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/" />
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.0/css/academicons.min.css" integrity="sha512-W4yqoT1+8NLkinBLBZko+dFB2ZbHsYLDdr50VElllRcNt2Q4/GSs6u71UHKxB7S6JEMCp5Ve4xjh3eGQl/HRvg==" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha256-FMvZuGapsJLjouA6k7Eo2lusoAX9i0ShlWFG6qt7SLc=" crossorigin="anonymous">
+
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.css" integrity="sha512-1xoFisiGdy9nvho8EgXuXvnpR5GAMSjFwp40gSRE3NwdUdIMIKuPa7bqoUhLD0O/5tPNhteAsE5XyyMi5reQVA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+    
+      
+      <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap" media="print" onload="this.media='all'">
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.2ee374d4cf5562c045dfeda3907f775c.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TGYMC1CTV1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'G-TGYMC1CTV1', {});
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/index.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary" />
+  
+    <meta property="twitter:site" content="@KevinWangStats" />
+    <meta property="twitter:creator" content="@KevinWangStats" />
+  
+  <meta property="og:site_name" content="Kevin Wang" />
+  <meta property="og:url" content="https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/" />
+  <meta property="og:title" content="Confidence and prediction intervals | Kevin Wang" />
+  <meta property="og:description" content="Introduction How can we (statisticians) better explain the differences between a confidence interval (CI) and a prediction interval (PI)? Sure, one could look up the definition on Wikipedia and memorise the definitions, but the real difficulty is how to communicate this clearly to young students/collaborators/clients without using mathematical formalism." /><meta property="og:image" content="https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_512x512_fill_lanczos_center_3.png" />
+    <meta property="twitter:image" content="https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_512x512_fill_lanczos_center_3.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2021-05-30T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2021-05-30T18:23:37&#43;10:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/"
+  },
+  "headline": "Confidence and prediction intervals",
+  
+  "datePublished": "2021-05-30T00:00:00Z",
+  "dateModified": "2021-05-30T18:23:37+10:00",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Kevin Y.X. Wang"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Kevin Wang",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Introduction How can we (statisticians) better explain the differences between a confidence interval (CI) and a prediction interval (PI)? Sure, one could look up the definition on Wikipedia and memorise the definitions, but the real difficulty is how to communicate this clearly to young students/collaborators/clients without using mathematical formalism."
+}
+</script>
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+  <title>Confidence and prediction intervals | Kevin Wang</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="8e8996fd5bc3cbfab8ed99ad424028db" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.a8a181ea67095ef9fbb0e99ffbf585a0.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container-xl">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Kevin Wang</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Kevin Wang</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#packages"><span>Packages</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#projects"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://scholar.google.com/citations?user=ScxpjTgAAAAJ&amp;hl=en" target="_blank" rel="noopener"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/academic_activities"><span>Academic Activities</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+      
+      
+        
+          
+          <li class="nav-item d-none d-lg-inline-flex">
+            <a class="nav-link" href="https://twitter.com/KevinWangStats" data-toggle="tooltip" data-placement="bottom" title="Follow me on Twitter" target="_blank" rel="noopener" aria-label="Follow me on Twitter">
+              <i class="fab fa-twitter" aria-hidden="true"></i>
+            </a>
+          </li>
+        
+      
+
+      
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#" aria-label="Search"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+      
+      <li class="nav-item dropdown theme-dropdown">
+        <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+          <i class="fas fa-moon" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item js-set-theme-light">
+            <span>Light</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-dark">
+            <span>Dark</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-auto">
+            <span>Automatic</span>
+          </a>
+        </div>
+      </li>
+      
+
+      
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>Confidence and prediction intervals</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+          Last updated on
+      
+    
+    May 30, 2021
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    14 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/statistics/">statistics</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+<script src="https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>How can we (statisticians) better explain the differences between a confidence interval (CI) and a prediction interval (PI)? Sure, one could look up the definition on Wikipedia and memorise the definitions, but the real difficulty is how to communicate this clearly to young students/collaborators/clients without using mathematical formalism. For a linear regression model and a given value of the independent variable, the CI and PI confusingly share the same point estimate. Worse still, if we write out the mathematical formulas, they are virtually identical except one term!</p>
+<p>The difference between the interpretation of CI and PI is actually a great example of how very similar mathematical constructions can lead to very different interpretations. These terms are not always rigorously defined and used, sometimes even in reputable sources (I would also add tolerance intervals here as well, but perhaps for another day).</p>
+<p>This blog post explains the main statistical differences between CI and PI in a linear regression model through visualisations. In short:</p>
+<ul>
+<li><p>CI shows the variability in <strong>parameter estimates</strong>. The primary intention is to understand the <strong>variability in the model</strong>.</p></li>
+<li><p>PI shows the variability in <strong>individual data points</strong>. The primary intention is to <strong>capture future data points</strong>.</p></li>
+</ul>
+<p><img src="combined_CI_PI_animation.gif" /></p>
+<p>The statements above are of course extreme simplifications of these statistical concepts. I will attempt to minimise the need for mathematical derivations and use intuitive language and simulations to illustrate the subtle differences between these two concepts.</p>
+</div>
+<div id="a-quick-simulation-to-set-the-scene" class="section level1">
+<h1>A quick simulation to set the scene</h1>
+<p>Suppose we have an independent variable (<span class="math inline">\(x\)</span>) and a dependent variable (<span class="math inline">\(y\)</span>) and we are asked to produce a linear regression.</p>
+<p>For simplicity, I will generate some data with <span class="math inline">\(X \sim N(2,0.2^2)\)</span>, <span class="math inline">\(\epsilon \sim N(0, 0.2^2)\)</span> and <span class="math inline">\(y = 1 + 2*x + \epsilon\)</span>. As much as I would like to use real data to add real-world relevance, generating data with a known value means that we are allowed to discuss how good our estimates are compared to the “true” value. This idea of a “true” value is not always possible if we use real data.</p>
+<pre class="r"><code>## Some packages that we will be using
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(broom)
+  library(ggpubr)
+})</code></pre>
+<p>We will also use the <code>geom_smooth(method = "lm")</code> function from the <code>ggplot2</code> package to add the (simple) linear regression line. I also choose to use the option <code>se = FALSE</code> to suppress the visualisation of the (confidence) interval as we will do this manually later.</p>
+<pre class="r"><code>set.seed(8)
+theme_set(theme_classic(18))
+
+n = 30
+x = rnorm(n, 2, 0.2)
+epsilon = rnorm(n, 0, 0.2)
+y = 1 + 2*x + epsilon
+
+df = tibble(x, y)
+
+model = lm(y ~ x, data = df)
+
+df %&gt;% 
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
+  ggpubr::stat_regline_equation()</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+</div>
+<div id="confidence-interval-ci" class="section level1">
+<h1>Confidence interval (CI)</h1>
+<div id="on-a-single-parameter" class="section level2">
+<h2>On a single parameter</h2>
+<p><strong>Definition</strong>: if we are asked to construct a 95% CI for a parameter, then the probability* that this CI will contain the <em>true</em> population parameter value is 95%. We can replace the “95%” with any other percentage that we can think of, though it is rare for us to consider something below 90%.</p>
+<p>*The word “probability” is to be interpreted using a frequentist approach. See bonus section 1.</p>
+<p>For example, if we were to look at the linear model above, the true slope value is 2, because that is how we generated the data through a formula. But the point estimate for this parameter is about 2.1 (formula in the top left corner of the plot), not exactly 2. You may ask, what is going on?!</p>
+<p>This is because any data sampled from a population, being only a sample, cannot encapsulate entirely what is going on in the population. Our point estimate (in this case, 2.1) is estimated using our data, and thus, can’t be numerically identical to the true parameter (in this case, 2) that is associated with a population. This interplay between an estimate and the parameter of interest (or similarly, between a sampled data and the underlying population) is a fundamental concept in statistics.</p>
+<p>We can think of a CI as being another estimate for the population parameter. Unlike a point estimate, which is just a point, a CI is an interval defined between an upper bound and a lower bound. The midpoint of a CI is the point estimate. Thus, we can think of a CI as a way to quantify the variability for that point estimate*!</p>
+<!-- And if a CI contains the parameter of interest (in this case, 2), then we may retain the null hypothesis that the population parameter is 2. Notice how I used the phrase "null hypothesis" here, that is because there is a equivalence relationship between $(1−\alpha)\%$ CI and hypothesis testing with alpha as the significance level. -->
+<p>*Interestingly, in my experience, a point estimate, being just a single number, can often mislead some people into thinking that there is a lot of certainty behind this number when it absolutely does not! The associate CI could be quite large even if your point estimate looks very reasonable.</p>
+<p>The confidence interval for the slope parameter can be computed as (1.8067, 2.4091) using the code below. Notice how the point estimate of 2.1 is halfway between the two bounds and that this CI also contains the true parameter value of 2. Similarly, one can construct confidence interval for the intercept term as (0.1906, 1.3905).</p>
+<pre class="r"><code>confint(model)</code></pre>
+<pre><code>##                 2.5 %   97.5 %
+## (Intercept) 0.1905894 1.390481
+## x           1.8067446 2.409144</code></pre>
+</div>
+<div id="visualisation" class="section level2">
+<h2>Visualisation</h2>
+<p>We now have a basic understanding of what a CI is with respect to a single parameter, but who cares about a single parameter anyways? After all, a statistical model could have many parameters, how would knowing a single one enhance our knowledge of the entire model?</p>
+<p>Here is where a bit of creative visualisation can help us! Notice how the linear regression model, written out as a formula, is <span class="math inline">\(y = \alpha + \beta x + \epsilon\)</span> with <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> being the population intercept and slope parameters, respectively. When we make estimations on these parameters, our linear model, as a straight line is <span class="math inline">\(y = \hat{\alpha} + \hat{\beta} x + \epsilon\)</span>, where <span class="math inline">\(\hat{\alpha}\)</span> and <span class="math inline">\(\hat{\beta}\)</span> estimate <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> respectively. So if we have the CIs quantifying the variability of<span class="math inline">\(\hat{\alpha}\)</span> and <span class="math inline">\(\hat{\beta}\)</span>, then we should also be able to produce a CI associated with the linear model itself! And by doing so, we can get a better idea of how <strong>variable</strong> the entire model is because we know how variable the individual estimates are!</p>
+<p>Even if you didn’t understand the above, the CI associated with the linear model is simply the gray area produced by <code>geom_smooth(method = "lm", se = TRUE)</code> when using <code>ggplot2</code>! You can think of this line as how the linear model line (blue) “jiggles” if you have (future) data sampled from the same underlying distribution.</p>
+<pre class="r"><code>df %&gt;%
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  ggpubr::stat_regline_equation() +
+  geom_smooth(method = &quot;lm&quot;, se = TRUE)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+</div>
+<div id="prediction-interval-pi" class="section level1">
+<h1>Prediction interval (PI)</h1>
+<div id="on-a-single-data-point" class="section level2">
+<h2>On a single data point</h2>
+<p><strong>Definition</strong>: If we were to construct a 95% prediction interval for a given value of <span class="math inline">\(x\)</span> for a given linear model, then the probability that it will contain the corresponding value of <span class="math inline">\(y\)</span> is 95%.</p>
+<p>This is fundamentally different to a confidence interval, because CI tries to quantify the variability of an estimate, but PI is aiming to capture the variability of a (future) data point, <span class="math inline">\(y_{new}\)</span>, given some <span class="math inline">\(x_{new}\)</span> value. In other words, a CI tries to quantify the behaviour of an estimate (obtained through averaging many data points), but a PI tries to quantify the behaviour of a single data point. Thus, we should expect, through simple intuition, that individual behaviour is more variable than the averaged behaviour. And so, <strong>PI is usually wider than a CI</strong>.</p>
+<p>The main source of confusion for some people is that, both CI and PI share the same point estimate, i.e. <span class="math inline">\(\hat{\alpha} + \hat{\beta} \bar{x}\)</span>. It also doesn’t help when these concepts are sometimes mixed up and talked about as though they are interchangeable in some colloquial settings.</p>
+<p>One can compute the point prediction value and the 95% PI in <code>R</code> using the code below. Though admittedly, we are simply producing predictions for the original data, not new data (thus the warning message in <code>R</code>).</p>
+<pre class="r"><code>predict(model, interval = &quot;prediction&quot;) %&gt;% head</code></pre>
+<pre><code>## Warning in predict.lm(model, interval = &quot;prediction&quot;): predictions on current data refer to _future_ responses</code></pre>
+<pre><code>##        fit      lwr      upr
+## 1 4.970763 4.605474 5.336052
+## 2 5.360727 4.991068 5.730386
+## 3 4.811024 4.445082 5.176966
+## 4 4.774198 4.407903 5.140492
+## 5 5.316730 4.947982 5.685477
+## 6 4.960942 4.595653 5.326230</code></pre>
+</div>
+</div>
+<div id="visualisation-1" class="section level1">
+<h1>Visualisation</h1>
+<p>In my experience, PI’s are more intuitive to understand than CI’s. PI is simply a region to capture new data, but CI is about how the model “jiggles”.</p>
+<p>It is slightly harder to generate a PI using <code>ggplot2</code> with some customisation needed for the <code>geom_smooth</code> function. Thus, I will attempt to generate both CI and PI manually and use <code>ggplot2</code> for visualisation. I particularly like the <code>broom::augment</code> function to generate these intervals here.</p>
+<pre class="r"><code>ci = broom::augment(model, interval = &quot;confidence&quot;)
+pi = broom::augment(model, interval = &quot;prediction&quot;)
+
+plotdf = tibble(
+  x = ci$x,
+  y = ci$y, 
+  line = ci$.fitted,
+  ci_lwr = ci$.lower,
+  ci_upr = ci$.upper,
+  pi_lwr = pi$.lower,
+  pi_upr = pi$.upper)
+
+plot1 = plotdf %&gt;% 
+  ggplot(aes(x = x, y = y)) +
+  geom_point() + 
+  geom_line(aes(x = x, y = line), colour = &quot;blue&quot;) +
+  geom_ribbon(aes(x = x, ymin = ci_lwr, ymax = ci_upr), fill = &quot;gray20&quot;, alpha = 0.3) +
+  labs(caption = &quot;blue: single estimated linear regression line,
+       gray: 95% CI&quot;)
+
+plot1</code></pre>
+<p><img src="https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code>plot2 = plot1 + 
+  geom_ribbon(aes(x = x, ymin = pi_lwr, ymax = pi_upr), colour = &quot;red&quot;, alpha = 0) +
+  labs(caption = &quot;blue: single estimated linear regression line,
+      red: 95% PI,
+      gray: 95% CI&quot;)
+
+plot2</code></pre>
+<p><img src="https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>From the plot, I would like to reiterate this idea that a CI (gray region) tries to quantify averaged behaviour of a model (blue line), and notice how small the jiggling is. But a PI (red lines) tries to quantify the behaviour of individual data points, and thus PI is much wider, because individuals are less predictable than the average.</p>
+</div>
+<div id="bonus-1-probability-and-confidence-level" class="section level1">
+<h1>Bonus 1: probability and confidence level</h1>
+<p>In all the writings above, I have always assumed that we already know what a probability/confidence level is. However, this might not be fair and I would like to explain this concept better in this section.</p>
+<p>In most introductory statistics courses, the first definition of probability is likely to be the frequentist definition, which is closely related to the concept of (re-)sampling. In our definition of CI above, we used 95% confidence level as the default. This means that, if we were to repeatedly sample new data of the same sample size from the population, and construct the CI in the same way, then the proportion of times that the CIs containing the true population parameter is 95%. This idea of “repeated sampling” applies to both PI and TI. Thus, even though in the definitions above, we have used the words “probability” and “confidence level” interchangeably, but in the most rigorous way, these interval concepts should only be interpreted through repeated sampling. We will do this in bonus section 2.</p>
+</div>
+<div id="bonus-2-visualisation-through-repetitions" class="section level1">
+<h1>Bonus 2: visualisation through repetitions</h1>
+<p>We will now repeat the data generation process 100 times and compute the corresponding statistics. The code below is not quite readable unless you are already familiar with <code>tidyverse</code> and nested <code>tibble</code>. The essence of the code is to first construct data in exactly the same way as we have above. And then, for each of the 100 data generation, we will then extract the corresponding fitted line, CI and PI for visualisation.</p>
+<pre class="r"><code>library(gganimate)
+nsim = 100 ## Number of simulations
+n = 30
+
+sim_tbl = tibble(
+  x = rnorm(n*nsim, 2, sd = 0.2),
+  epsilon = rnorm(n*nsim, 0, sd = 0.2),
+  y = 1 + 2*x + epsilon,
+  sim_num = rep(1:nsim, n)) ## This tibble puts all the simulated data in one
+
+sim_tbl</code></pre>
+<pre><code>## # A tibble: 3,000 x 4
+##        x epsilon     y sim_num
+##    &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;   &lt;int&gt;
+##  1  2.11  0.122   5.34       1
+##  2  2.02  0.107   5.15       2
+##  3  1.64  0.151   4.44       3
+##  4  1.78 -0.0513  4.51       4
+##  5  1.95 -0.224   4.67       5
+##  6  1.78  0.159   4.73       6
+##  7  1.90  0.0888  4.89       7
+##  8  2.33 -0.101   5.55       8
+##  9  2.08  0.0578  5.22       9
+## 10  1.68  0.267   4.63      10
+## # … with 2,990 more rows</code></pre>
+<pre class="r"><code>sim_lm_tbl = sim_tbl %&gt;% 
+  group_by(sim_num) %&gt;% 
+  tidyr::nest() %&gt;% ## Group by simulation number and separately fit linear models
+  dplyr::mutate(
+    lm = purrr::map(.x = data, .f = ~ lm(y ~ x, data = .x)),
+    lm_tidy = purrr::map(lm, broom::tidy))
+
+sim_lm_tbl</code></pre>
+<pre><code>## # A tibble: 100 x 4
+## # Groups:   sim_num [100]
+##    sim_num data                  lm     lm_tidy             
+##      &lt;int&gt; &lt;list&gt;                &lt;list&gt; &lt;list&gt;              
+##  1       1 &lt;tibble[,3] [30 × 3]&gt; &lt;lm&gt;   &lt;tibble[,5] [2 × 5]&gt;
+##  2       2 &lt;tibble[,3] [30 × 3]&gt; &lt;lm&gt;   &lt;tibble[,5] [2 × 5]&gt;
+##  3       3 &lt;tibble[,3] [30 × 3]&gt; &lt;lm&gt;   &lt;tibble[,5] [2 × 5]&gt;
+##  4       4 &lt;tibble[,3] [30 × 3]&gt; &lt;lm&gt;   &lt;tibble[,5] [2 × 5]&gt;
+##  5       5 &lt;tibble[,3] [30 × 3]&gt; &lt;lm&gt;   &lt;tibble[,5] [2 × 5]&gt;
+##  6       6 &lt;tibble[,3] [30 × 3]&gt; &lt;lm&gt;   &lt;tibble[,5] [2 × 5]&gt;
+##  7       7 &lt;tibble[,3] [30 × 3]&gt; &lt;lm&gt;   &lt;tibble[,5] [2 × 5]&gt;
+##  8       8 &lt;tibble[,3] [30 × 3]&gt; &lt;lm&gt;   &lt;tibble[,5] [2 × 5]&gt;
+##  9       9 &lt;tibble[,3] [30 × 3]&gt; &lt;lm&gt;   &lt;tibble[,5] [2 × 5]&gt;
+## 10      10 &lt;tibble[,3] [30 × 3]&gt; &lt;lm&gt;   &lt;tibble[,5] [2 × 5]&gt;
+## # … with 90 more rows</code></pre>
+<div id="fitted-lines" class="section level2">
+<h2>Fitted lines</h2>
+<p>For each the linear models that we have fitted, we will now extract the coefficients. We will perform additional manipulations for the purpose of plotting.</p>
+<p>Notice how even though we have many fitted lines, their deviations from the single fitted line are small and almost cover the same range as the confidence interval (gray region). This is exactly what a confidence interval is designed for: to capture how a single fitted line jiggles under sampling from the same population.</p>
+<pre class="r"><code>sim_coef_tbl = sim_lm_tbl %&gt;% 
+  dplyr::select(sim_num, lm_tidy) %&gt;% 
+  unnest(lm_tidy) %&gt;% 
+  dplyr::select(sim_num, term, estimate) %&gt;%
+  tidyr::pivot_wider(names_from = &quot;term&quot;,
+                     values_from = &quot;estimate&quot;)
+
+sim_coef_tbl</code></pre>
+<pre><code>## # A tibble: 100 x 3
+## # Groups:   sim_num [100]
+##    sim_num `(Intercept)`     x
+##      &lt;int&gt;         &lt;dbl&gt; &lt;dbl&gt;
+##  1       1         0.484  2.23
+##  2       2         0.941  2.05
+##  3       3         1.38   1.82
+##  4       4         1.85   1.59
+##  5       5         0.972  2.03
+##  6       6         0.606  2.17
+##  7       7         0.911  2.06
+##  8       8         1.24   1.88
+##  9       9         0.524  2.24
+## 10      10         0.826  2.11
+## # … with 90 more rows</code></pre>
+<pre class="r"><code>plot1 +
+  geom_abline(slope = 2, intercept = 1) +
+  geom_abline(data = sim_coef_tbl,
+              aes(slope = x, intercept = `(Intercept)`),
+              size = 0.3, alpha = 0.5, colour = &quot;orange&quot;) +
+  labs(title = &quot;Fitted lines&quot;,
+       subtitle = &quot;&quot;,
+       caption = &quot;black: true linear relationship
+       blue: single estimated linear regression line
+       orange: 100 simulated linear regression lines,
+       gray: 95% CI&quot;)</code></pre>
+<p><img src="https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+<div id="confidence-intervals" class="section level2">
+<h2>Confidence intervals</h2>
+<p>What I don’t like about the plot above is that orange lines are plotted over other elements of the plot, i.e. overplotting. Another attempt at the same visualisation is to use animation. I will use only the first 20 simulations.</p>
+<pre class="r"><code>sim_coef_tbl20 = sim_coef_tbl %&gt;% dplyr::filter(sim_num &lt;= 20)
+sim_tbl20 = sim_tbl %&gt;% dplyr::filter(sim_num &lt;= 20)
+
+sim_conf_int = augment(model, newdata = sim_tbl20, interval = &quot;confidence&quot;) %&gt;% 
+  dplyr::select(x, y, .lower, .upper)
+
+animation1 = ggplot() +
+  geom_point(data = sim_tbl20, aes(x = x, y = y)) +
+  geom_ribbon(data = sim_conf_int, aes(x = x, y = y, ymin = .lower, ymax = .upper),
+              alpha = 0.5) +
+  geom_abline(intercept = model$coefficients[1],
+              slope = model$coefficients[2], colour = &quot;blue&quot;) +
+  geom_abline(data = sim_coef_tbl20,
+              aes(slope = x, intercept = `(Intercept)`), 
+              colour = &quot;orange&quot;) +
+  transition_states(sim_num) +
+  shadow_mark(exclude_layer = 1) +
+  labs(title = &quot;Effect of CI under simulations&quot;,
+       subtitle = &quot;Simulation {closest_state}&quot;,
+       caption = &quot;blue: single estimated linear regression line,
+       orange: 20 simulated linear regression lines,
+       gray: 95% CI for the blue line&quot;)
+
+# animation1
+
+# gganimate::anim_save(filename = &quot;CI_animation.gif&quot;, animation = animation1)</code></pre>
+<p><img src="CI_animation.gif" /></p>
+<pre class="r"><code>sim_pred_int = augment(x = model, newdata = sim_tbl20, interval = &quot;predict&quot;) %&gt;% 
+  dplyr::select(x, y, .lower, .upper)
+
+animation2 = sim_tbl20 %&gt;% 
+  ggplot(aes(x = x, y = y)) +
+  geom_point(size = 1) +
+  geom_ribbon(data = sim_pred_int, 
+              aes(x = x, ymin = .lower, ymax = .upper), 
+              fill = &quot;gray20&quot;, alpha = 0.5) +
+  geom_abline(intercept = model$coefficients[1],
+              slope = model$coefficients[2], colour = &quot;blue&quot;) +
+  transition_states(sim_num) +
+  shadow_mark(exclude_layer = 1) +
+  labs(title = &quot;Effect of PI under simulations&quot;,
+       subtitle = &quot;Simulation {closest_state}&quot;,
+       caption = &quot;blue: single estimated linear regression line, \n
+       gray: 95% PI for the blue line&quot;)
+
+# animation2
+
+# gganimate::anim_save(filename = &quot;PI_animation.gif&quot;, animation = animation2)</code></pre>
+<p><img src="PI_animation.gif" /></p>
+</div>
+</div>
+<div id="bonus-3-side-by-side-animation" class="section level1">
+<h1>Bonus 3: side by side animation</h1>
+<p>This <a href="https://github.com/thomasp85/gganimate/wiki/Animation-Composition">post</a> shows how to put <code>gganimate</code> plots together.</p>
+<pre class="r"><code>library(patchwork)
+library(magick)
+a_mgif &lt;- image_read(animate(animation1))
+b_mgif &lt;- image_read(animate(animation2))
+
+new_gif &lt;- image_append(c(a_mgif[1], b_mgif[1]))
+for(i in 2:20){
+  combined &lt;- image_append(c(a_mgif[i], b_mgif[i]))
+  new_gif &lt;- c(new_gif, combined)
+}
+
+gganimate::anim_save(filename = &quot;combined_CI_PI_animation.gif&quot;, animation = new_gif)</code></pre>
+<p><img src="combined_CI_PI_animation.gif" /></p>
+</div>
+<div id="bonus-4-mathematical-formulas" class="section level1">
+<h1>Bonus 4: Mathematical formulas</h1>
+<p>Ok, I promise this is the last bonus section. I am including some formulas for completeness here.</p>
+<p>Suppose that our data design matrix is <span class="math inline">\(X \in \mathbb{R}^{n \times p}\)</span> and the response variable is <span class="math inline">\(y \in \mathbb{R}^n\)</span>. If we set the confidence level to <span class="math inline">\((1-\alpha)\%\)</span>, then we will use <span class="math inline">\(t_{n-p}^{(\alpha / 2)}\)</span> to denote the Student t-distribution’s critical value, with <span class="math inline">\(n-p\)</span> degrees of freedom.</p>
+<p>For a new data point at <span class="math inline">\((x_{\text{new}}, y_{\text{new}})\)</span>, the estimated response is <span class="math inline">\(\hat{y}_{new} = a + b x_{new}\)</span>, where <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> are estimated intercept and slope term respectively. The estimated linear regression residual standard deviation is <span class="math inline">\(\hat{\sigma}\)</span>.</p>
+<p>The confidence interval under this notation set up is:</p>
+<p><span class="math display">\[\hat{y}_{new} \pm t_{n-p}^{(\alpha / 2)} \hat{\sigma} \sqrt{x_{new}^{T}\left(X^{T} X\right)^{-1} x_{new}}.\]</span>
+The prediction interval under this notation set up is:</p>
+<p><span class="math display">\[\hat{y}_{new} \pm t_{n-p}^{(\alpha / 2)} \hat{\sigma} \sqrt{1+x_{new}^{T}\left(X^{T} X\right)^{-1} x_{new}}.\]</span>
+Notice that both formulas share the same point estimate of <span class="math inline">\(\hat{y}_{new}\)</span> and the only difference between these two formulas is the term <code>1</code> under the square root sign. But that single term makes up all the differences between these statistical concepts!</p>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/&amp;text=Confidence%20and%20prediction%20intervals" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/&amp;t=Confidence%20and%20prediction%20intervals" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Confidence%20and%20prediction%20intervals&amp;body=https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/&amp;title=Confidence%20and%20prediction%20intervals" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Confidence%20and%20prediction%20intervals%20https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/&amp;title=Confidence%20and%20prediction%20intervals" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://www.kevinwangstats.com/"><img class="avatar mr-3 avatar-circle" src="/author/kevin-y.x.-wang/avatar_hu4dac1e2f91aaf4115dfec68ee8ebdf48_697857_270x270_fill_q75_lanczos_center.jpg" alt="Kevin Y.X. Wang"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://www.kevinwangstats.com/">Kevin Y.X. Wang</a></h5>
+      <h6 class="card-subtitle">Senior Data Scientist</h6>
+      <p class="card-text">Senior Data scientist at Illumina. PhD in Statistics.</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://twitter.com/KevinWangStats" target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=ScxpjTgAAAAJ&amp;hl=en" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/kevinwang09" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/kevinwangstats/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/kevinwangstats/cv/blob/main/CV_KEVIN_YX_WANG_twopage.pdf" target="_blank" rel="noopener">
+        <i class="ai ai-cv"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+  
+
+  
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+      
+      
+      
+      
+      
+      
+      Published with <a href="https://wowchemy.com/?utm_campaign=poweredby" target="_blank" rel="noopener">Wowchemy</a> — the free, <a href="https://github.com/wowchemy/wowchemy-hugo-modules" target="_blank" rel="noopener">open source</a> website builder that empowers creators.
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/instant.page/5.1.0/instantpage.min.js" integrity="sha512-1+qUtKoh9XZW7j+6LhRMAyOrgSQKenQ4mluTR+cvxXjP1Z54RxZuzstR/H9kgPXQsVB8IW7DMDFUJpzLjvhGSQ==" crossorigin="anonymous"></script>
+
+      
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/highlight.min.js" integrity="sha512-TDKKr+IvoqZnPzc3l35hdjpHD0m+b2EC2SrLEgKDRWpxf2rFCxemkgvJ5kfU48ip+Y+m2XVKyOCD85ybtlZDmw==" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/r.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/python.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/latex.min.js"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.js" integrity="sha512-SeiQaaDh73yrb56sTW/RgVdi/mMqNeM2oBwubFHagc5BkixSpP1fvqF47mKzPGWYSSy4RwbBunrJBQ4Co8fRWA==" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    <script src="/js/bootstrap.bundle.min.6aed84840afc03ab4d5750157f69c120.js"></script>
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.cf8ca859a9b74f8b1cd804621b13e5f1.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

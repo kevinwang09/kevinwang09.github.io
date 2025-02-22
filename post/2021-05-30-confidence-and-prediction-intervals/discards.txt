@@ -1,0 +1,423 @@
+---
+title: tolerance intervals
+author: Kevin Wang
+date: '2021-05-30'
+slug: tolerance-intervals
+categories: []
+tags: []
+subtitle: ''
+summary: ''
+authors: []
+lastmod: '2021-05-30T14:24:30+10:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+
+# Introduction
+
+One of the things I will always miss about being a PhD student is the camaraderie we all shared when solving a random mathematical puzzle/statistical problem in the PhD student office. Even after our graduation(s), we still do a little bit of this through online messaging apps like Whatsapp and WeChat.
+
+A few months ago, a friend (now a lecturer) asked us, how can we better explain the differences between a confidence interval (CI) and a prediction interval (PI). Of course, virtually everyone in the chat knew the technical answer, but the real difficulty was how to communicate this clearly to young students without using mathematical formalism. For a linear regression model and a given value of the independent variable, the CI and PI actually share the same point estimate. Worse still, if we write out the mathematical formulas, they are virtually identical except one term!
+
+The difference between the interpretation of CI and PI is actually a great example of how very similar mathematical constructions can lead to very different interpretations. These terms are not always rigorously defined and used, sometimes even in reputable sources. In addition to this, I would also like to add tolerance interval (TI) into the mix. This is another related concept to CI and PI that can add confusion.
+
+This blog explains the main statistical differences between CI, PI and TI in a linear regression model through visualisations. In short:
+
++ CI shows the variability in **parameter estimates**. The primary intention is to understand the **variability in the model**.
+
++ PI shows the variability in **individual future data points**. The primary intention is to **capture future data points**.
+
++ TI shows the variability in **proportion of population**. The primary intention is to show the **proportion of capture for multiple (future) data points**.
+
+The statements above are extreme simplifications of these statistical concepts. I will attempt to use minimise the need for mathematical derivations and use intuitive language and simulations to illustrate the subtle differences between these concepts. But for the mathematical purists, I will still introduce some notations to avoid any ambiguity.
+
+# A quick simulation to set the scene
+
+Suppose we have an independent variable ($x$) and a dependent variable ($y$) and we are asked to produce a linear regression.
+
+For simplicity, I will generate some data with $X \sim N(2,0.2^2)$, $\epsilon \sim N(0, 0.2^2)$ and $y = 1 + 2*x + \epsilon$. As much as I would like to use real data to add real-world relevance, generating data with a known value means that we are allowed to discuss how good our estimates are compared to the "true" value. This idea of a "true" value is not always possible if we use real data.
+
+```{r}
+## Some packages that we will be using
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(broom)
+  library(ggpubr)
+})
+```
+
+We will also use the `geom_smooth(method = "lm")` function from the `ggplot2` package to add the (simple) linear regression line. I also choose to use the option `se = FALSE` to suppress the visualisation of the (confidence) interval as we will do this manually later.
+
+```{r}
+set.seed(8)
+theme_set(theme_classic(18))
+
+n = 30
+x = rnorm(n, 2, 0.2)
+epsilon = rnorm(n, 0, 0.2)
+y = 1 + 2*x + epsilon
+
+df = tibble(x, y)
+
+model = lm(y ~ x, data = df)
+
+df %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  ggpubr::stat_regline_equation()
+```
+
+
+# Confidence interval (CI)
+
+## On a single parameter
+
+```{r, include=FALSE}
+ci = confint(model)
+```
+
+If we are asked to construct a 95% CI for a parameter, then the probability that this CI will contain the *true* population parameter value is 95%. We can replace the "95%" with any other percentage that we can think of, though it is rare for us to consider something below 90%.
+
+For example, if we were to look at the linear model above, the true slope value is 2, because that is how we generated the data through a formula. But the point estimate for this parameter is about 2.1 (formula in the top left corner of the plot), not exactly 2. You may ask, what is going on?!
+
+This is because any data from a population, being only a sample, cannot encapsulate entirely what is going on in the population. Our point estimate (in this case, 2.1) is estimated using our data, and thus, can't be identical to the true parameter (in this case, 2) that is associated with a population. This interplay between an estimate and the parameter of interest (or equivalently, between a sampled data and the underlying population) is a fundamental concept in the study of statistics.
+
+We can think of a CI as being another estimate for the population parameter. Unlike a point estimate, which is just a point, a CI is an interval defined between an upper bound and a lower bound. The midpoint of a CI is the point estimate that we already seen. Thus, we can think of a CI as a way to quantify the variability for that point estimate*!
+
+<!-- And if a CI contains the parameter of interest (in this case, 2), then we may retain the null hypothesis that the population parameter is 2. Notice how I used the phrase "null hypothesis" here, that is because there is a equivalence relationship between $(1−\alpha)\%$ CI and hypothesis testing with alpha as the significance level. -->
+
+*Interestingly, in my experience, a point estimate, being just a single number, can often mislead some people into thinking that there is a lot of certainty behind this number when it absolutely does not! The associate CI could be quite large even if your point estimate looks very reasonable.
+
+The confidence interval for the slope parameter can be computed as `r paste0("(", round(ci[2,1], 4), ", ", round(ci[2,2],4), ")")` using the code below. Notice how the point estimate of 2.1 is halfway between the two bounds and that this CI also contains the true parameter value of 2. Similarly, one can construct confidence interval for the intercept term as `r paste0("(", round(ci[1,1], 4), ", ", round(ci[1,2],4), ")")`.
+
+```{r}
+confint(model)
+```
+
+## Visualisation
+
+We now have a good understanding of what a CI is with respect to a single parameter, but who know what that actually means? Who cares about a single parameter anyways? A statistical model could have many parameters, how would knowing a single one enhance our knowledge of the entire model?
+
+Here is where a bit of creative visualisation can help us! Notice how the linear regression model, written out as a formula, is $y = \alpha + \beta x + \epsilon$ with $\alpha$ and $\beta$ being the population intercept and slope parameters, respectively. When we make estimations on these parameters, our linear model, as a straight line is $y = \hat{\alpha} + \hat{\beta} x + \epsilon$, where $\hat{\alpha}$ and $\hat{\beta}$ estimate $\alpha$ and $\beta$ respectively. So if we have the CIs quantifying the variability of$\hat{\alpha}$ and $\hat{\beta}$, then we should also be able to produce a CI associated with the linear model itself! And by doing so, we can get a better idea of how **variable** the entire model is because we know how variable the individual estimates are!
+
+Even if you didn't understand the above, the CI associated with the linear model is simply the gray area produced by `geom_smooth(method = "lm", se = TRUE)` when using `ggplot2`! You can think of this line as how the linear model line (blue) "jiggles" if you have (future) data sampled from the same underlying distribution.
+
+```{r}
+df %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  ggpubr::stat_regline_equation() +
+  geom_smooth(method = "lm", se = TRUE)
+```
+
+# Prediction interval (PI)
+
+## On a single data point
+
+If we were to construct a 95% prediction interval for a given value of $x$ for a given linear model, then the probability that it will contain the corresponding value of $y$ is 95%.
+
+This is fundamentally different to a confidence interval, because CI tries to quantify the variability of an estimate, but PI is aiming to capture the variability of a (future) data point, $y_{new}$, given some $x_{new}$ value. In other words, a CI tries to quantify the behaviour of an estimate (obtained through averaging many data points), but a PI tries to quantify the behaviour of a single data point. Thus, we should expect, through simple intuition, that individual behaviour is more variable than the averaged behaviour. And so, **PI is usually wider than a CI**.
+
+The main source of confusion for some people is that, both CI and PI share the same point estimates, being $\hat{\alpha} + \hat{\beta} \bar{x}$. It also doesn't help when these concepts are sometimes mixed up and talked about as though they are interchangeable in some colloquial settings.
+
+One can compute the point prediction value and the 95% PI in `R` using the code below. Though admittedly, we are simply producing predictions for the original data, not new data.
+
+```{r}
+predict(model, interval = "prediction") %>% head
+```
+
+
+# Visualisation
+
+In a way, PI is more intuitive to understand than CI. PI is simply a region to capture new data, but CI is about how the model jiggles.
+
+It is harder to generate a PI using `ggplot2`, some customisation is needed for the `geom_smooth` function. Thus, I will attempt to generate both CI and PI manually and use `ggplot2` for visualisation. I particularly like the `broom::augment` function to generate these intervals here.
+
+```{r}
+ci = broom::augment(model, interval = "confidence")
+pi = broom::augment(model, interval = "prediction")
+
+plotdf = tibble(
+  x = ci$x,
+  y = ci$y,
+  line = ci$.fitted,
+  ci_lwr = ci$.lower,
+  ci_upr = ci$.upper,
+  pi_lwr = pi$.lower,
+  pi_upr = pi$.upper)
+
+plot1 = plotdf %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  geom_line(aes(x = x, y = line), colour = "blue") +
+  geom_ribbon(aes(x = x, ymin = ci_lwr, ymax = ci_upr), fill = "gray20", alpha = 0.3) +
+  labs(caption = "blue: single estimated linear regression line,
+       gray: 95% CI")
+
+plot1
+```
+
+```{r}
+plot2 = plot1 +
+  geom_ribbon(aes(x = x, ymin = pi_lwr, ymax = pi_upr), colour = "red", alpha = 0) +
+  labs(caption = "blue: single estimated linear regression line,
+      red: 95% PI,
+      gray: 95% CI")
+
+plot2
+```
+
+From the plot, I would like to reiterate this idea that a CI (gray region) tries to quantify averaged behaviour of a model (blue line), and notice how small the jiggling is. But a PI (red lines) tries to quantify the behaviour of individual data points, and thus PI is much wider, because individuals are less predictable than the average.
+
+# Tolerance interval
+
+I only came across tolerance interval recently, and I still find its formal definition to be quite verbose. Because its definition involves two percentages, one being the confidence level (just like a CI and PI above) and the other being a proportion.
+
+If we were to construct a 99% tolerance interval at 95% confidence level, then (at least) 99% of the population will fall within the said interval with a confidence interval. That is a mouthful! But in a way a TI is similar to a PI, in the sense that a PI aims to quantify the behaviour of a single point from the population, but a TI aims to quantify the behaviour of 99% of the population.
+
+The construction of a TI (for a linear regression) is not a part of the base packages in `R` and the most popular package for computing TI is the `tolerance` package.
+
+```{r}
+library(tolerance)
+ti = regtol.int(reg = model, side = 2, alpha = 0.05, P = 0.99) %>%
+  left_join(df, by = "y")
+
+head(ti)
+```
+
+As this is only a simple blog post about these intervals, with little emphasis on the mathematical constructions, I will refrain from showing the formulas associated with this TI. Instead, I will use visualisation to aid our understanding of this concept.
+
+
+## Visualisation
+
+```{r}
+plot3 = plot2 +
+  geom_ribbon(data = ti, aes(ymin = `2-sided.lower`, ymax = `2-sided.upper`), colour = "green4", alpha = 0)
+
+plot3
+```
+
+Woah, what is going on?!
+
+A little intuition here can help us. Remember our PI is trying to quantify the behaviour of an individual data point, which is not necessarily always the most extreme data point. However, when we try to look at TI, it is trying to capture 99% of the population proportion. In doing so, the bounds of a TI tries to look at the most extreme ends of the underlying distribution. Thus, in this particular case, we see that at TI is larger than the PI.
+
+However, this is not always the case! Remember that a TI is only meaningful with respect to a proportion, in our case, 99%. If this number can be relaxed to, say, 80%, you would expect a TI to look at not-as-extreme ends of the distribution, and as such, TI is not going to be wider than a PI even if we keep the confidence level to be 95%. You are welcome to try this out by changing the code chunks above.
+
+# Bonus1: confidence level and probability
+In all the writings above, I have always assumed that we already know what a confidence level/probability is. However, this is not quite fair and I would like to explain this concept better in this section.
+
+In most introductory statistics courses, the first definition of probability is probably the frequentist definition, which is closely related to the concept of (re-)sampling. In our definition of CI above, we used 95% confidence level as the default. This means that, if we were to repeatedly sample from the population, and construct the CI in the same way, then the proportion of times that the CI will contain the true population parameter is 95%. This idea of "repeated sampling" applies to both PI and TI. Thus, even though in the definitions above, we have used the words "probability" and "confidence level", but in the most rigorous way, these concepts should only be interpreted through repetition of experiments.
+
+# Bonus 2: visualisation through repetitions
+
+We will now repeat the data generation process 100 times and compute the corresponding statistics. The code below is not quite readable unless you are familiar with tidyverse and nested tibble.
+
+```{r}
+library(gganimate)
+nsim = 20 ## Number of simulations
+n = 30
+
+sim_tbl = tibble(
+  x = rnorm(n*nsim, 2, sd = 0.2),
+  epsilon = rnorm(n*nsim, 0, sd = 0.2),
+  y = 1 + 2*x + epsilon,
+  sim_num = rep(1:nsim, n)) ## This tibble puts all the simulated data in one
+
+sim_tbl
+
+sim_lm_tbl = sim_tbl %>%
+  group_by(sim_num) %>%
+  tidyr::nest() %>% ## Group by simulation number and separately fit linear models
+  dplyr::mutate(
+    lm = purrr::map(.x = data, .f = ~ lm(y ~ x, data = .x)),
+    lm_tidy = purrr::map(lm, broom::tidy))
+
+sim_lm_tbl
+```
+
+For each the linear models that we have fitted, we will now extract the coefficients. We will perform additional manipulations for the purpose of plotting.
+
+```{r}
+sim_coef_tbl = sim_lm_tbl %>%
+  dplyr::select(sim_num, lm_tidy) %>%
+  unnest(lm_tidy) %>%
+  dplyr::select(sim_num, term, estimate) %>%
+  tidyr::pivot_wider(names_from = "term",
+                     values_from = "estimate")
+
+sim_coef_tbl
+
+plot1 +
+  geom_abline(slope = 2, intercept = 1) +
+  geom_abline(data = sim_coef_tbl,
+              aes(slope = x, intercept = `(Intercept)`),
+              size = 0.3, alpha = 0.5, colour = "orange") +
+  labs(title = "Effect of CI under simulation",
+       subtitle = "",
+       caption = "black: true linear relationship
+       blue: single estimated linear regression line
+       orange: 20 simulated linear regression lines,
+       gray: 95% CI")
+```
+
+
+```{r, eval = FALSE}
+sim_conf_int = augment(model, newdata = sim_tbl, interval = "confidence") %>%
+  dplyr::select(x, y, .lower, .upper)
+
+animation1 = ggplot() +
+  geom_point(data = sim_tbl, aes(x = x, y = y)) +
+  geom_ribbon(data = sim_conf_int, aes(x = x, y = y, ymin = .lower, ymax = .upper),
+              alpha = 0.5) +
+  geom_abline(intercept = model$coefficients[1],
+              slope = model$coefficients[2], colour = "blue") +
+  geom_abline(data = sim_coef_tbl,
+              aes(slope = x, intercept = `(Intercept)`),
+              colour = "orange") +
+  transition_states(sim_num) +
+  shadow_mark(exclude_layer = 1) +
+  labs(title = "Effect of CI under simulation",
+       subtitle = "Simulation {closest_state}",
+       caption = "blue: single estimated linear regression line
+       orange: 20 simulated linear regression lines,
+       gray: 95% CI")
+
+# animation1
+
+# gganimate::anim_save(filename = "CI_animation.gif", animation = animation1)
+```
+
+![](CI_animation.gif)
+
+```{r, eval = FALSE}
+lm_pred_tbl = augment(x = model, newdata = sim_tbl, interval = "predict")
+
+extreme_pred_tbl = bind_rows(
+  tibble(
+    x = min(lm_pred_tbl$x),
+    y = c(min(lm_pred_tbl$.lower), max(lm_pred_tbl$.lower))),
+  tibble(
+    x = max(lm_pred_tbl$x),
+    y = c(max(lm_pred_tbl$.upper), min(lm_pred_tbl$.upper))),
+  tibble(
+    x = min(lm_pred_tbl$x),
+    y = min(lm_pred_tbl$.lower))
+)
+
+animation2 = lm_pred_tbl %>%
+  ggplot(aes(x = x, y = y)) +
+  geom_point(size = 1) +
+  geom_polygon(data = extreme_pred_tbl,
+               aes(x = x, y = y),
+               alpha = 0.5) +
+  transition_states(sim_num) +
+  shadow_mark(exclude_layer = 1) +
+  labs(title = "Effect of PI under simulation",
+       subtitle = "Simulation {closest_state}",
+       caption = "gray: 95% PI")
+
+# animation2
+
+# gganimate::anim_save(filename = "PI_animation.gif", animation = animation2)
+```
+
+
+![](PI_animation.gif)
+
+<!-- ```{r} -->
+<!-- set.seed(1234) -->
+<!-- nexp = 1000 -->
+<!-- n = 30 -->
+
+<!-- bigdf = tibble( -->
+<!--   x = rnorm(n*nexp, mean = 2, sd = 0.2), -->
+<!--   y = 1 + 2*x + rnorm(n*nexp, 0, sd = 0.2), -->
+<!--   exp_num = rep(paste0("exp_", 1:nexp), each = n)) -->
+
+<!-- bigdf %>% head -->
+<!-- ``` -->
+
+<!-- ## Confidence interval -->
+<!-- ```{r} -->
+<!-- ci_bigdf = bigdf %>%  -->
+<!--   group_by(exp_num) %>%  -->
+<!--   tidyr::nest() %>%  -->
+<!--   dplyr::mutate( -->
+<!--     models = purrr::map(.x = data, .f = ~ lm(y ~ x, data = .x)), -->
+<!--     cis_slope = purrr::map( -->
+<!--       .x = models,  -->
+<!--       .f = ~ tibble( -->
+<!--         ci_lower = confint(.x)[2, 1], -->
+<!--         ci_upper = confint(.x)[2, 2])), -->
+<!--     cis_contained = purrr::map_lgl( -->
+<!--       .x = cis_slope, -->
+<!--       .f = ~ (.x[1] <= 2) & (.x[2] >= 2) -->
+<!--       )) %>%  -->
+<!--   dplyr::ungroup() -->
+
+<!-- ci_bigdf %>% -->
+<!--   dplyr::select(-data, -models) %>% -->
+<!--   tidyr::unnest("cis_slope") %>% -->
+<!--   ggplot(aes(y = exp_num)) + -->
+<!--   geom_linerange(aes(xmin = ci_lower, xmax = ci_upper, -->
+<!--                      colour = cis_contained, -->
+<!--                      alpha = cis_contained)) + -->
+<!--   geom_vline(xintercept = 2) + -->
+<!--   scale_colour_manual(values = c("TRUE" = "gray70", "FALSE" = "red")) + -->
+<!--   scale_alpha_manual(values = c("TRUE" = 0.5, "FALSE" = 1)) + -->
+<!--   labs(x = "Coefficients", -->
+<!--        y = "Number of experiments", -->
+<!--        colour = "Contained") + -->
+<!--   theme(axis.text.y = element_blank(), -->
+<!--         axis.ticks.y = element_blank()) -->
+
+<!-- ci_bigdf %>%  -->
+<!--   dplyr::summarise( -->
+<!--     ci_coverage = mean(cis_contained)) -->
+<!-- ``` -->
+
+
+<!-- ## Prediction interval -->
+
+<!-- ```{r} -->
+<!-- bigdf_pred = broom::augment(model, newdata = bigdf,  -->
+<!--                              interval = "prediction", conf.level = 0.95) -->
+
+<!-- pi_bigdf = broom::augment(model, newdata = bigdf, interval = "prediction") -->
+
+<!-- pi_bigdf %>%  -->
+<!--   ggplot(aes(x = x, y = y)) + -->
+<!--   geom_point(size = 0.2) +  -->
+<!--   geom_ribbon(aes(x = x, ymin = .lower, ymax = .upper), colour = "red", alpha = 0) -->
+
+<!-- pi_bigdf %>%  -->
+<!--   dplyr::summarise(coverage = mean(y < .upper & y > .lower)) -->
+<!-- ``` -->
+
+<!-- ## Tolerance interval  -->
+
+<!-- ```{r} -->
+<!-- ti_lower_model = lm(y ~ x, data = ti %>% dplyr::select(x, y = `2-sided.lower`)) -->
+<!-- ti_upper_model = lm(y ~ x, data = ti %>% dplyr::select(x, y = `2-sided.upper`)) -->
+
+<!-- ti_bigdf = bigdf %>%  -->
+<!--   dplyr::mutate( -->
+<!--     ti_bigdf_lower = predict(ti_lower_model, newdata = bigdf), -->
+<!--     ti_bigdf_upper = predict(ti_upper_model, newdata = bigdf)) -->
+
+<!-- ti_bigdf %>%  -->
+<!--   ggplot(aes(x = x, y = y)) + -->
+<!--   geom_point(size = 0.2) +  -->
+<!--   geom_ribbon(aes(x = x, ymin = ti_bigdf_lower, ymax = ti_bigdf_upper), colour = "green4",  -->
+<!--               alpha = 0) -->
+
+<!-- ti_bigdf %>%  -->
+<!--   dplyr::summarise(coverage = mean(y < ti_bigdf_upper & y > ti_bigdf_lower)) -->
+<!-- ``` -->
+
+

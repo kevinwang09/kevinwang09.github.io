@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Categories | Kevin Wang</title>
+    <link>https://www.kevinwangstats.com/categories/</link>
+      <atom:link href="https://www.kevinwangstats.com/categories/index.xml" rel="self" type="application/rss+xml" />
+    <description>Categories</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Thu, 03 Jun 2021 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_512x512_fill_lanczos_center_3.png</url>
+      <title>Categories</title>
+      <link>https://www.kevinwangstats.com/categories/</link>
+    </image>
+    
+  </channel>
+</rss>

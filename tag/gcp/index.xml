@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>GCP | Kevin Wang</title>
+    <link>https://www.kevinwangstats.com/tag/gcp/</link>
+      <atom:link href="https://www.kevinwangstats.com/tag/gcp/index.xml" rel="self" type="application/rss+xml" />
+    <description>GCP</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Sat, 11 Apr 2020 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_512x512_fill_lanczos_center_3.png</url>
+      <title>GCP</title>
+      <link>https://www.kevinwangstats.com/tag/gcp/</link>
+    </image>
+    
+    <item>
+      <title>Visualising COVID-19 data using Data Studio</title>
+      <link>https://www.kevinwangstats.com/post/visualising-covid19-using-data-studio/</link>
+      <pubDate>Sat, 11 Apr 2020 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/post/visualising-covid19-using-data-studio/</guid>
+      <description>
+&lt;script src=&#34;https://www.kevinwangstats.com/post/visualising-covid19-using-data-studio/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;tl;dr:&lt;/strong&gt; Google’s Data Studio is a great (and free) option for making data visualisation dashboards. Being a web-based dashboard application, its ability to connect to other Google products, such as BigQuery and GCP resources offers huge advantage over competing products. You can design a dashboard with minimum programming experience and the process is similar to writing PowerPoint slides. However, DS is mostly for the purpose of visualisation, so R/Shiny still has an advantage in computing and modeling. Below is my hacky 2-page report, correct up to April 2020:&lt;/p&gt;
+&lt;iframe width=&#34;800&#34; height=&#34;600&#34; src=&#34;https://datastudio.google.com/embed/reporting/3358c0f1-a068-47c6-9e8c-7b4d4873a843/page/MS0LB&#34; frameborder=&#34;0&#34; style=&#34;border:0&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;p&gt;I am in the process of learning how to use BigQuery (some progress are documented here in &lt;a href=&#34;https://kevinwang09.github.io/post/bigquery-in-r/&#34;&gt;this post&lt;/a&gt;). When I was exploring BigQuery’s web interface, I noticed that BigQuery could be connected with Data Studio (DS), a Google product that makes dashboard/BI visualisations.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;some-person-comments&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Some person comments&lt;/h1&gt;
+&lt;p&gt;As I recently have delivered &lt;a href=&#34;https://kevinwang09.github.io/shiny_3888&#34;&gt;a lecture on Shiny&lt;/a&gt;, I thought I will check out how Data Studio works and how it compares with Shiny. Sure, I have used Tableau before, but I have never used this kind of data visualisation software with databases before.&lt;/p&gt;
+&lt;p&gt;Overall, I think DS is a great web-based tool for quick explorations/visualisation of the data, its ability to connect to BigQuery and other databases is very attractive. I almost can’t believe how smooth the connection was after I have tried to connect the same data into &lt;code&gt;R&lt;/code&gt;. While many features that DS offers are not dissimilar to Microsoft Power BI and Tableau, &lt;strong&gt;DS is free&lt;/strong&gt; to use! Which is quite important for, well, people like myself who just lost the privilege to claim student discounts.&lt;/p&gt;
+&lt;p&gt;The drawback of DS is also clear: it is not Shiny, so it won’t handle complex modelling/computations in the background (that being said, I am sure there is a way that you can connect it to Google Cloud products for backend computations). DS is also web-based, so connecting it with data in your local laptop isn’t quite straight forward. It is also not quite as reproducible since it is not constructed using scripts. But these shouldn’t overshadow how easy it was to use DS and share it.&lt;/p&gt;
+&lt;p&gt;If a single visualisation is all you are after, not complex modelling, then DS is definitely a faster option than Shiny with a gentler learning curve.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;starting-started-with-a-ds-report&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Starting started with a DS report&lt;/h1&gt;
+&lt;p&gt;A DS report is made up of multiple pages, much like PowerPoint slides. &lt;a href=&#34;https://support.google.com/datastudio/answer/6292570?hl=en&amp;amp;ref_topic=6289358&#34;&gt;This tutorial&lt;/a&gt; is quite helpful to learn the basics.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The most powerful part of DS, in my opinion, is how you can add multiple data sources, e.g. SQL databases or Google Sheets. But being part of the Google ecosystem, I think the real power lies in how DS interacts with other Google products like Google Analytics and other third-party data sources.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;ds_source1.png&#34; 
+align=&#34;center&#34; width=&#34;800&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;ds_source2.png&#34; align=&#34;center&#34; width=&#34;800&#34; /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In the DS report above, I made connections to the &lt;a href=&#34;https://console.cloud.google.com/marketplace/details/johnshopkins/covid19_jhu_global_cases&#34;&gt;COVID-19 data from Johns Hopskins University&lt;/a&gt; and the World Bank global population data. I couldn’t find a Google public data documentation page for the latter, but you can make a SQL query using:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;SELECT *
+FROM `bigquery-public-data.world_bank_global_population.population_by_country` 
+LIMIT 10&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Having added the these two data into the DS report, you can visualise these data using charts, such as a table on the page 1 of the report:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;iframe width=&#34;800&#34; height=&#34;600&#34; src=&#34;https://datastudio.google.com/embed/reporting/3358c0f1-a068-47c6-9e8c-7b4d4873a843/page/SR0LB&#34; frameborder=&#34;0&#34; style=&#34;border:0&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;p&gt;In DS, every chart is associated with one data source that you have added. Of course, you can put together multiple data in some meaningful way and make a visualisation. This is exactly what I have done to calculate the “confirmed cases per 1 million” statistic.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;a-bit-more-data-manipulations&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;A bit more data manipulations&lt;/h1&gt;
+&lt;p&gt;In order to make the heatmap at the beginning of this post, a bit more data manipulations are needed. In particular, joining the two data together using “country” as a common key. Once this is done, we can take the ratio of the confirmed cases and the population and calculate the “confirmed cases per 1 million” statistic and making a heatmap visualisation is straightforward after that.&lt;/p&gt;
+&lt;p&gt;Joining data in DS is called “blending data”, which you can &lt;a href=&#34;https://support.google.com/datastudio/answer/9061420?hl=en&#34;&gt;find out more here&lt;/a&gt;. This is identical to the operation of the various JOIN operations in SQL if you choose your settings correctly.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.kevinwangstats.com/post/2020-04-11-visualising-covid19-using-data-studio_files/ds_data_blend.png&#34; align=&#34;center&#34; width=&#34;800&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Aside: of course, joining data isn’t the magic silver bullet for everything. If you examine closely on page 2 of the report, you will see that some countries have &lt;code&gt;null&lt;/code&gt; values in the &lt;code&gt;confirmed cases&lt;/code&gt; column, e.g. South Korea. This is because the name of the country was not consistent between the two counties. E.g. “South Korea” in one data and “Korea, South” in another. This has to be fixed by making a new column with matched names. The way that I did it was to create a &lt;code&gt;country_correct&lt;/code&gt; column in the population data using the definitions such as&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;CASE 
+    WHEN country IN (&amp;quot;United States&amp;quot;) THEN &amp;quot;US&amp;quot; 
+    WHEN country IN (&amp;quot;Russian Federation&amp;quot;) THEN &amp;quot;Russia&amp;quot; 
+    WHEN country IN (&amp;quot;Iran, Islamic Rep.&amp;quot;) THEN &amp;quot;Iran&amp;quot; 
+    ELSE country
+END&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You will probably notice that this is SQL code and quite similar to the &lt;code&gt;dplyr&lt;/code&gt; function &lt;code&gt;case_when&lt;/code&gt;. So I think some knowledge of SQL will be helpful when using DS.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;making-the-visualisations&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Making the visualisations&lt;/h1&gt;
+&lt;p&gt;This is where I was pleasantly surprised and where a point-and-click dashboard visualisation wins over Shiny. Since the &lt;code&gt;country_region&lt;/code&gt;/&lt;code&gt;country_correct&lt;/code&gt; is a geography variable, it can be directly plotted onto a world map automatically. Also importantly, linked interactivity is easily achieved between the table and the heatmap on page 2.&lt;/p&gt;
+&lt;p&gt;Aside: these tasks are possible, butnot always the easiest to do in &lt;code&gt;R&lt;/code&gt;, &lt;code&gt;plotly&lt;/code&gt; is the most competitive in this area (see &lt;a href=&#34;https://plotly.com/r/choropleth-maps/#world-choropleth-map&#34;&gt;this example&lt;/a&gt; and &lt;a href=&#34;https://plotly-r.com/client-side-linking.html#filter&#34;&gt;this example&lt;/a&gt;). Sure, I can pick up the codes in 5 minutes, but think about the learning curve behind learning &lt;code&gt;ggplot&lt;/code&gt;/&lt;code&gt;plotly&lt;/code&gt; framework, this could be overwhelming for people without a programming background. I can’t tell you how many hours I have spent trying to make a plot look right!&lt;/p&gt;
+&lt;iframe width=&#34;800&#34; height=&#34;600&#34; src=&#34;https://datastudio.google.com/embed/reporting/3358c0f1-a068-47c6-9e8c-7b4d4873a843/page/MS0LB&#34; frameborder=&#34;0&#34; style=&#34;border:0&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;For the R/Shiny fanatics, put down your pitchforks, I am not going to abandon R/Shiny any time soon. Shiny is definitely great for customisation, but DS and other professional dashboard software actually do have a lot of awesome ideas. Advanced R/Shiny users can do many things that DS can do, but this is only assuming you have enough experience and know where to look for the right answers. For example:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The fact that I can readily share this report without setting up my own Shiny server or website is a great example of how Google thought about how their products will be distributed!&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;I am also not an artist, so I actually dislike spending hours to make my Shiny app look pretty, DS actually makes this process much easier since making a dashboard UI is quite similar to making PowerPoint slides.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Connecting to databases might be annoying and slow at times (seriously, it takes about 20 seconds for me to fetch the COVID-19 data over the National Broadband Network here in Australia), but when DS tries to fetch data, it has the backings of Google’s massive servers, and making changes to my visualisation is often done in less than 2 seconds!&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I can see myself using DS to visualise my pre-computed results in R and distribute this kind of interactive reports with others without paying for expensive Shiny servers, assuming that simple visualisations are all that I am after.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>BigQuery in R</title>
+      <link>https://www.kevinwangstats.com/post/bigquery-in-r/</link>
+      <pubDate>Wed, 01 Apr 2020 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/post/bigquery-in-r/</guid>
+      <description>
+&lt;script src=&#34;https://www.kevinwangstats.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;motivation&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Motivation&lt;/h1&gt;
+&lt;p&gt;Stranded at home due to COVID-19, I am trying to pick up SQL and Google’s BigQuery as new skills. Even though the learning curve has been okay, I can’t help to think how easy (and fast!) it was for me to use &lt;code&gt;dplyr&lt;/code&gt; to do exactly the same operations.&lt;/p&gt;
+&lt;p&gt;The purpose of this post is to document some SQL against &lt;code&gt;dplyr&lt;/code&gt;, or more precisely, &lt;code&gt;dbplyr&lt;/code&gt; (&lt;a href=&#34;https://cran.r-project.org/web/packages/dbplyr/vignettes/dbplyr.html&#34;&gt;&lt;code&gt;dplyr&lt;/code&gt; verbs on a database&lt;/a&gt;, don’t ask, it is magic!) to query COVID-19 data from &lt;a href=&#34;https://cloud.google.com/bigquery&#34;&gt;BigQuery&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The main part of the article starts &lt;a href=&#34;#main&#34;&gt;here&lt;/a&gt;, if you want to skip over &lt;a href=&#34;#bq_command&#34;&gt;using BigQuery in the command line&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Overall, I think &lt;code&gt;dplyr&lt;/code&gt; offers a more modern syntax. But then, of course, I am very biased towards anything that comes out of tidyverse and keep in mind that &lt;code&gt;dplyr&lt;/code&gt; is about 40 years later than SQL and probably borrowed a lot of strength from it.&lt;/p&gt;
+&lt;div id=&#34;what-you-need&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;What you need&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;A Google Cloud account. See &lt;a href=&#34;https://cloud.google.com/sdk/docs/quickstarts&#34;&gt;here&lt;/a&gt; for some resources and set it up with an appropriate project&lt;/li&gt;
+&lt;li&gt;R packages: &lt;code&gt;dplyr&lt;/code&gt;, &lt;code&gt;bigrquery&lt;/code&gt;, &lt;code&gt;DBI&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Command line tools from Google Cloud&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;why-gcpbigquery&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Why GCP/BigQuery?&lt;/h2&gt;
+&lt;p&gt;&lt;del&gt;Well, Google gave me lots of free credits. I am easily bought.&lt;/del&gt;&lt;/p&gt;
+&lt;p&gt;Jokes aside, I find the GCP documentation to be quite well-written and always up-to-date. Plus, the documentation contains lots examples of how to link the queried data to &lt;a href=&#34;https://cloud.google.com/bigquery/docs/visualize-data-studio&#34;&gt;data studio&lt;/a&gt; and &lt;a href=&#34;https://cloud.google.com/bigquery-ml/docs/bigqueryml-web-ui-start&#34;&gt;machine learning algorithms&lt;/a&gt;. Both of these capabilities are things that I want to eventually learn without paying for visualisation softwares like Tableau (sadly, I am no longer a student to qualify for their free accounts).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bq_command&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;(Optional) Running a BigQuery query in the command line&lt;/h1&gt;
+&lt;p&gt;&lt;em&gt;(Note: to use BigQuery, you will need to have a Google Cloud account and enable billing for a project, this might cost you, but luckily Google Cloud offers free credits when you sign up.)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;The two most common ways of making queries are:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://cloud.google.com/bigquery/docs/quickstarts/quickstart-web-ui&#34;&gt;Going through the Google Cloud Console and use the WebUI&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://cloud.google.com/bigquery/docs/quickstarts/quickstart-command-line&#34;&gt;Command line&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I will show you a quick demo of how to run a simple query in the command line. But I do find the web UI option incredibly useful. I can see myself using web UI on the go if I have some urgent data questions while riding on a bus to work (totally normal behaviour based on my past experiences).&lt;/p&gt;
+&lt;p&gt;BigQuery has a set of &lt;a href=&#34;https://cloud.google.com/bigquery/public-data&#34;&gt;public datasets&lt;/a&gt;, including one for &lt;a href=&#34;https://console.cloud.google.com/marketplace/details/bigquery-public-datasets/covid19-dataset-list?preview=bigquery-public-datasets&#34;&gt;COVID-19&lt;/a&gt;. The &lt;a href=&#34;https://console.cloud.google.com/marketplace/details/johnshopkins/covid19_jhu_global_cases&#34;&gt;Johns Hopkins University dataset&lt;/a&gt; is also part of this collection, and at the time of writing this article, this dataset is small enough for demostration purposes.&lt;/p&gt;
+&lt;p&gt;In command line, tying&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;bq show bigquery-public-data:covid19_jhu_csse.summary&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;gives the output&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Table bigquery-public-data:covid19_jhu_csse.summary
+
+   Last modified              Schema              Total Rows   Total Bytes   Expiration   Time Partitioning   Clustered Fields      Labels     
+ ----------------- ----------------------------- ------------ ------------- ------------ ------------------- ------------------ -------------- 
+  02 Apr 19:06:19   |- province_state: string     41129        5564578                                                           freebqcovid:  
+                    |- country_region: string                                                                                                  
+                    |- date: date                                                                                                              
+                    |- latitude: float                                                                                                         
+                    |- longitude: float                                                                                                        
+                    |- location_geom: geography                                                                                                
+                    |- confirmed: integer                                                                                                      
+                    |- deaths: integer                                                                                                         
+                    |- recovered: integer                                                                                                      
+                    |- active: integer                                                                                                         
+                    |- fips: string                                                                                                            
+                    |- admin2: string                                                                                                          
+                    |- combined_key: string   &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here, &lt;code&gt;bigquery-public-data&lt;/code&gt; is the name of the BigQuery project that hosts the COVID-19 data. The name of the data stored in that project is &lt;code&gt;covid19_jhu_csse.summary&lt;/code&gt;. And you can see that the output of &lt;code&gt;bq show&lt;/code&gt; gives the specifications of all the columns in this data.&lt;/p&gt;
+&lt;p&gt;To make a normal SQL query, you can use&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;bq query --use_legacy_sql=false \
+&amp;#39;SELECT *
+FROM `bigquery-public-data.covid19_jhu_csse.summary`
+LIMIT 10;&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;which gives the output&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Waiting on bqjob_r28ad9889c4311223_0000017139f7f30c_1 ... (0s) Current status: DONE   
++----------------+----------------------+------------+----------+-----------+---------------+-----------+--------+-----------+--------+------+--------+--------------+
+| province_state |    country_region    |    date    | latitude | longitude | location_geom | confirmed | deaths | recovered | active | fips | admin2 | combined_key |
++----------------+----------------------+------------+----------+-----------+---------------+-----------+--------+-----------+--------+------+--------+--------------+
+| NULL           | United Arab Emirates | 2020-02-13 |     NULL |      NULL |          NULL |         8 |      0 |         1 |   NULL | NULL | NULL   | NULL         |
+| NULL           | Thailand             | 2020-02-22 |     NULL |      NULL |          NULL |        35 |      0 |        17 |   NULL | NULL | NULL   | NULL         |
+| NULL           | Vietnam              | 2020-01-24 |     NULL |      NULL |          NULL |         2 |   NULL |      NULL |   NULL | NULL | NULL   | NULL         |
+| NULL           | Malaysia             | 2020-02-17 |     NULL |      NULL |          NULL |        22 |      0 |         7 |   NULL | NULL | NULL   | NULL         |
+| NULL           | Finland              | 2020-02-25 |     NULL |      NULL |          NULL |         1 |      0 |         1 |   NULL | NULL | NULL   | NULL         |
+| NULL           | Vietnam              | 2020-02-21 |     NULL |      NULL |          NULL |        16 |      0 |        14 |   NULL | NULL | NULL   | NULL         |
+| NULL           | UK                   | 2020-02-17 |     NULL |      NULL |          NULL |         9 |      0 |         8 |   NULL | NULL | NULL   | NULL         |
+| NULL           | Nepal                | 2020-02-21 |     NULL |      NULL |          NULL |         1 |      0 |         1 |   NULL | NULL | NULL   | NULL         |
+| NULL           | San Marino           | 2020-02-27 |     NULL |      NULL |          NULL |         1 |      0 |         0 |   NULL | NULL | NULL   | NULL         |
+| NULL           | Thailand             | 2020-01-31 |     NULL |      NULL |          NULL |        19 |   NULL |         5 |   NULL | NULL | NULL   | NULL         |
++----------------+----------------------+------------+----------+-----------+---------------+-----------+--------+-----------+--------+------+--------+--------------+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Not bad! But let’s try to do this in &lt;code&gt;R&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;main&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Connecting to BigQuery using &lt;code&gt;DBI&lt;/code&gt;&lt;/h1&gt;
+&lt;p&gt;The &lt;code&gt;DBI&lt;/code&gt; (DataBaseInterface) package provides an important function, &lt;code&gt;dbconnect&lt;/code&gt;, which facilitates the connection to &lt;a href=&#34;https://db.rstudio.com/databases&#34;&gt;various databases&lt;/a&gt;. The most important argument in &lt;code&gt;dbconnect()&lt;/code&gt; is &lt;code&gt;drv&lt;/code&gt;, which specifies the driver that is necessary to connect to a database. The extra arguments in this case are related to Google’s way of setting up a Google Cloud projects and billing:
++ &lt;code&gt;project = &#34;bigquery-public-data&#34;&lt;/code&gt; sets which project the data is at, in this case, it is at the project managed by Google called “bigquery-public-data”.
++ &lt;code&gt;dataset = &#34;covid19_jhu_csse&#34;&lt;/code&gt; refers to the dataset (consiste of multiple tables) stored in the project.
++ &lt;code&gt;billing = &#34;your_project_name&#34;&lt;/code&gt; refers to billing account that you have with Google. Since you are making queries to databases, which takes up computational resources, which are not free, so you will need an Google Cloud account and your own project so Google will charge you. Mine is called “scpworkshop”.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(DBI)
+library(bigrquery)
+
+con &amp;lt;- dbConnect(
+  drv = bigrquery::bigquery(),
+  project = &amp;quot;bigquery-public-data&amp;quot;,
+  dataset = &amp;quot;covid19_jhu_csse&amp;quot;,
+  billing = &amp;quot;scpworkshop&amp;quot;
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can list all the tables in the dataset using the &lt;code&gt;dbListTables&lt;/code&gt; function.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dbListTables(con) ## List all tables in this connection&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Using an auto-discovered, cached token.
+## To suppress this message, modify your code or options to clearly consent to the use of a cached token.
+## See gargle&amp;#39;s &amp;quot;Non-interactive auth&amp;quot; vignette for more details:
+## https://gargle.r-lib.org/articles/non-interactive-auth.html
+## The bigrquery package is using a cached token for kevin.wang09@gmail.com.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;confirmed_cases&amp;quot; &amp;quot;deaths&amp;quot;          &amp;quot;recovered_cases&amp;quot; &amp;quot;summary&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Once we decide which table we wish to work on, in this case, the summary table, we can check on the column types of this table first before making the query. The reason that I prefer to check the column types first is because I keep finding a parsing error with the latest version of the &lt;code&gt;bigrquery&lt;/code&gt; package, which I have fixed &lt;a href=&#34;https://github.com/kevinwang09/bigrquery/tree/geography&#34;&gt;here&lt;/a&gt;. If you want to follow the example below, please install my updated package using &lt;code&gt;devtools::install_github(&#34;kevinwang09/bigrquery&#34;, ref = &#34;geography&#34;)&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bigrquery::bq_table_fields(&amp;quot;bigquery-public-data.covid19_jhu_csse.summary&amp;quot;) ## List field types &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## &amp;lt;bq_fields&amp;gt;
+##   province_state &amp;lt;STRING&amp;gt;
+##   country_region &amp;lt;STRING&amp;gt;
+##   date &amp;lt;DATE&amp;gt;
+##   latitude &amp;lt;FLOAT&amp;gt;
+##   longitude &amp;lt;FLOAT&amp;gt;
+##   location_geom &amp;lt;GEOGRAPHY&amp;gt;
+##   confirmed &amp;lt;INTEGER&amp;gt;
+##   deaths &amp;lt;INTEGER&amp;gt;
+##   recovered &amp;lt;INTEGER&amp;gt;
+##   active &amp;lt;INTEGER&amp;gt;
+##   fips &amp;lt;STRING&amp;gt;
+##   admin2 &amp;lt;STRING&amp;gt;
+##   combined_key &amp;lt;STRING&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;DBI::dbGetQuery(con, 
+&amp;quot;SELECT *
+FROM `bigquery-public-data.covid19_jhu_csse.summary`
+LIMIT 10;&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 10 x 13
+##    province_state country_region date       latitude longitude location_geom
+##    &amp;lt;chr&amp;gt;          &amp;lt;chr&amp;gt;          &amp;lt;date&amp;gt;        &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;        
+##  1 Hubei          Mainland China 2020-01-26       NA        NA &amp;lt;NA&amp;gt;         
+##  2 Guangdong      Mainland China 2020-01-26       NA        NA &amp;lt;NA&amp;gt;         
+##  3 Zhejiang       Mainland China 2020-01-26       NA        NA &amp;lt;NA&amp;gt;         
+##  4 Henan          Mainland China 2020-01-26       NA        NA &amp;lt;NA&amp;gt;         
+##  5 Chongqing      Mainland China 2020-01-26       NA        NA &amp;lt;NA&amp;gt;         
+##  6 Hunan          Mainland China 2020-01-26       NA        NA &amp;lt;NA&amp;gt;         
+##  7 Beijing        Mainland China 2020-01-26       NA        NA &amp;lt;NA&amp;gt;         
+##  8 Anhui          Mainland China 2020-01-26       NA        NA &amp;lt;NA&amp;gt;         
+##  9 Shandong       Mainland China 2020-01-26       NA        NA &amp;lt;NA&amp;gt;         
+## 10 Sichuan        Mainland China 2020-01-26       NA        NA &amp;lt;NA&amp;gt;         
+## # … with 7 more variables: confirmed &amp;lt;int&amp;gt;, deaths &amp;lt;int&amp;gt;, recovered &amp;lt;int&amp;gt;,
+## #   active &amp;lt;int&amp;gt;, fips &amp;lt;chr&amp;gt;, admin2 &amp;lt;chr&amp;gt;, combined_key &amp;lt;chr&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;comparing-the-syntax-style-of-dplyr-and-sql&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Comparing the syntax style of &lt;code&gt;dplyr&lt;/code&gt; and &lt;code&gt;SQL&lt;/code&gt;&lt;/h1&gt;
+&lt;p&gt;Suppose we want to check the total confirmed (the columns are already in cumulative confirmed cases) COVID19 cases for Italy and Spain, then in SQL, we can make the following query:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sql_tbl = DBI::dbGetQuery(con, 
+&amp;quot;SELECT country_region, confirmed
+FROM `bigquery-public-data.covid19_jhu_csse.summary`
+WHERE country_region IN (&amp;#39;Italy&amp;#39;, &amp;#39;Spain&amp;#39;) AND date = &amp;#39;2020-04-02&amp;#39;
+&amp;quot;)
+
+sql_tbl&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 2
+##   country_region confirmed
+##   &amp;lt;chr&amp;gt;              &amp;lt;int&amp;gt;
+## 1 Italy             115242
+## 2 Spain             112065&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Looks good!&lt;/p&gt;
+&lt;p&gt;But what about &lt;code&gt;dplyr&lt;/code&gt;?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(dplyr)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Attaching package: &amp;#39;dplyr&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following objects are masked from &amp;#39;package:stats&amp;#39;:
+## 
+##     filter, lag&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following objects are masked from &amp;#39;package:base&amp;#39;:
+## 
+##     intersect, setdiff, setequal, union&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;covid_data = tbl(con, &amp;quot;summary&amp;quot;) 
+
+dplyr_tbl = covid_data %&amp;gt;% 
+  dplyr::filter(country_region %in% c(&amp;#39;Italy&amp;#39;, &amp;#39;Spain&amp;#39;), date == &amp;#39;2020-04-02&amp;#39;) %&amp;gt;% 
+  dplyr::select(country_region, confirmed) %&amp;gt;% 
+  collect() ## collect() pulls the entire table into memory
+
+dplyr_tbl&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 2
+##   country_region confirmed
+##   &amp;lt;chr&amp;gt;              &amp;lt;int&amp;gt;
+## 1 Italy             115242
+## 2 Spain             112065&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;But are the results the same?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all.equal(sql_tbl, dplyr_tbl)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] TRUE&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Awesome!&lt;/p&gt;
+&lt;p&gt;We can see that both &lt;code&gt;dplyr&lt;/code&gt; verbs and SQL in this query are very similar which is great for data scientist to translate between the two.&lt;/p&gt;
+&lt;div id=&#34;a-more-complicated-query&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;A more complicated query&lt;/h2&gt;
+&lt;p&gt;You might be asking why I didn’t put US and China in the query, well, this is because that both countries has state/province level data, so the total confirmed caes will need to be summed across the state/province level first before being compared to other data at the country level.&lt;/p&gt;
+&lt;p&gt;Combine this subuery with the previous query, we get:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sql_tbl = DBI::dbGetQuery(con, 
+&amp;quot;SELECT country_region, SUM(confirmed) AS country_confirmed
+FROM `bigquery-public-data.covid19_jhu_csse.summary`
+WHERE country_region IN (&amp;#39;Italy&amp;#39;, &amp;#39;Spain&amp;#39;, &amp;#39;US&amp;#39;, &amp;#39;China&amp;#39;) AND date = &amp;#39;2020-04-02&amp;#39;
+GROUP BY country_region
+ORDER BY country_confirmed;
+&amp;quot;)
+
+sql_tbl&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 4 x 2
+##   country_region country_confirmed
+##   &amp;lt;chr&amp;gt;                      &amp;lt;int&amp;gt;
+## 1 China                      82432
+## 2 Spain                     112065
+## 3 Italy                     115242
+## 4 US                        243453&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Not bad! The &lt;code&gt;UNION ALL&lt;/code&gt; took care a lot of the hard work!&lt;/p&gt;
+&lt;p&gt;In &lt;code&gt;dplyr&lt;/code&gt;, the job is (I would argue) simpler:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dplyr_tbl = covid_data %&amp;gt;% 
+  filter(country_region %in% c(&amp;#39;Italy&amp;#39;, &amp;#39;Spain&amp;#39;, &amp;#39;US&amp;#39;, &amp;#39;China&amp;#39;), date == &amp;#39;2020-04-02&amp;#39;) %&amp;gt;% 
+  group_by(country_region) %&amp;gt;% 
+  summarise(country_confirmed = sum(confirmed)) %&amp;gt;% 
+  arrange(country_confirmed) %&amp;gt;% 
+  collect()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: Missing values are always removed in SQL.
+## Use `SUM(x, na.rm = TRUE)` to silence this warning
+## This warning is displayed only once per session.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dplyr_tbl&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 4 x 2
+##   country_region country_confirmed
+##   &amp;lt;chr&amp;gt;                      &amp;lt;int&amp;gt;
+## 1 China                      82432
+## 2 Spain                     112065
+## 3 Italy                     115242
+## 4 US                        243453&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all.equal(sql_tbl, dplyr_tbl)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] TRUE&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;which-is-better&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Which is better?&lt;/h2&gt;
+&lt;p&gt;Very much up to your personal taste!&lt;/p&gt;
+&lt;p&gt;I personally prefer &lt;code&gt;dplyr&lt;/code&gt; because I think its design is more intuitive:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;the grouping variable is automatically included in the final output, without using extra selection of columns&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;the operation of selecting columns and summarising columns are two distinct verbs in &lt;code&gt;dplyr&lt;/code&gt;, whereas in SQL it is just &lt;code&gt;SELECT&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;style&gt;
+pre {
+  overflow-x: auto;
+}
+pre code {
+  word-wrap: normal;
+  white-space: pre;
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

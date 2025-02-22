@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>DataVisualisation | Kevin Wang</title>
+    <link>https://www.kevinwangstats.com/category/datavisualisation/</link>
+      <atom:link href="https://www.kevinwangstats.com/category/datavisualisation/index.xml" rel="self" type="application/rss+xml" />
+    <description>DataVisualisation</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Thu, 03 Jun 2021 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_512x512_fill_lanczos_center_3.png</url>
+      <title>DataVisualisation</title>
+      <link>https://www.kevinwangstats.com/category/datavisualisation/</link>
+    </image>
+    
+    <item>
+      <title>Busiest air routes</title>
+      <link>https://www.kevinwangstats.com/post/busiest-air-routes/</link>
+      <pubDate>Thu, 03 Jun 2021 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/post/busiest-air-routes/</guid>
+      <description>
+&lt;script src=&#34;https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/plotly-binding/plotly.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/typedarray/typedarray.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/jquery/jquery.min.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/crosstalk/css/crosstalk.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/crosstalk/js/crosstalk.min.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/plotly-htmlwidgets-css/plotly-htmlwidgets.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/plotly-main/plotly-latest.min.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;This is a simple exercise to extract data from a Wikipedia page (&lt;a href=&#34;https://en.wikipedia.org/wiki/List_of_busiest_passenger_air_routes&#34;&gt;List of busiest passenger air routes&lt;/a&gt;) and performing a basic data visualisation.&lt;/p&gt;
+&lt;p&gt;Why am I doing this? I somehow really got into aviation in the past 2 years. Due to the COVID travel restriction, I have spent days on YouTube watching planes taking off and landing. In a moment of self-indulgence, I would also like to add that Airbus 380 is such a beautiful engineering marvel and it is sad that COVID fastened the end of its production.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;HK-qantas.jpg&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Airbus 380 at Hong Kong airport, 2018&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;extracting-data&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Extracting data&lt;/h1&gt;
+&lt;p&gt;We can, in theory, copy and paste the data to an Excel sheet and then import the data. However, we will try to do something a bit fancier and use the &lt;code&gt;rvest&lt;/code&gt; package to extract this data.&lt;/p&gt;
+&lt;p&gt;The only downside with extracting the data in this way is that if the webpage is updated, then our code might not work. Hence, I will also save a copy of this data in my &lt;a href=&#34;https://gist.github.com/kevinwang09/cfbb5bcbc73f6d8970fa4499f2cc0621&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;suppressPackageStartupMessages({
+  library(xml2)
+  library(rvest)
+  library(tidyverse)
+})&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;webpage = xml2::read_html(&amp;quot;https://en.wikipedia.org/wiki/List_of_busiest_passenger_air_routes&amp;quot;)
+
+raw_tbl = webpage %&amp;gt;% 
+  html_element(&amp;quot;table&amp;quot;) %&amp;gt;% 
+  html_table()
+
+raw_tbl&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 50 x 7
+##     Rank `Airport 1`  `Airport 2`    `Distance (km)` `2018[1]` `2017[2]` Type   
+##    &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;        &amp;lt;chr&amp;gt;                    &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;     &amp;lt;chr&amp;gt;     &amp;lt;chr&amp;gt;  
+##  1     1 Jeju         Seoul-Gimpo                449 14,107,4… 13,460,3… Domest…
+##  2     2 Sapporo      Tokyo-Haneda               835 9,698,639 8,726,502 Domest…
+##  3     3 Sydney       Melbourne                  705 9,245,392 9,090,941 Domest…
+##  4     4 Fukuoka      Tokyo-Haneda               889 8,762,547 7,864,000 Domest…
+##  5     5 Mumbai       Delhi                     1150 7,392,155 7,129,943 Domest…
+##  6     6 Hanoi        Ho Chi Minh C…            1171 6,867,114 6,769,823 Domest…
+##  7     7 Beijing      Shanghai-Hong…            1081 6,518,997 6,833,684 Domest…
+##  8     8 Hong Kong    Taipei-Taoyuan             802 6,476,268 6,719,030 Intern…
+##  9     9 Tokyo-Haneda Naha                      1573 5,829,712 5,269,481 Domest…
+## 10    10 Jakarta      Surabaya                   700 5,649,046 5,271,304 Domest…
+## # … with 40 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## We are only interested in the 2018 passenger numbers
+subset_tbl = raw_tbl %&amp;gt;% 
+  dplyr::transmute(
+    rank = Rank, 
+    airport1 = `Airport 1`, 
+    airport2 = `Airport 2`, 
+    distance = `Distance (km)`, 
+    passengers = `2018[1]` %&amp;gt;% str_remove_all(&amp;quot;,&amp;quot;) %&amp;gt;% as.integer(), 
+    type = Type)
+
+subset_tbl&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 50 x 6
+##     rank airport1     airport2          distance passengers type         
+##    &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;        &amp;lt;chr&amp;gt;                &amp;lt;int&amp;gt;      &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;        
+##  1     1 Jeju         Seoul-Gimpo            449   14107414 Domestic     
+##  2     2 Sapporo      Tokyo-Haneda           835    9698639 Domestic     
+##  3     3 Sydney       Melbourne              705    9245392 Domestic     
+##  4     4 Fukuoka      Tokyo-Haneda           889    8762547 Domestic     
+##  5     5 Mumbai       Delhi                 1150    7392155 Domestic     
+##  6     6 Hanoi        Ho Chi Minh City      1171    6867114 Domestic     
+##  7     7 Beijing      Shanghai-Hongqiao     1081    6518997 Domestic     
+##  8     8 Hong Kong    Taipei-Taoyuan         802    6476268 International
+##  9     9 Tokyo-Haneda Naha                  1573    5829712 Domestic     
+## 10    10 Jakarta      Surabaya               700    5649046 Domestic     
+## # … with 40 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;write_csv(x = subset_tbl, file = &amp;quot;raw_airports_data.csv&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Notice that most of the “airports” are actually just the name of the city. We will use this to grab the longitude and latitude information. However, there are some exceptions like “Tokyo-Haneda”, where “Haneda” is one of the two international airports in the city of Tokyo. We will need to clean up these exceptions for consistency.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;clean_tbl = subset_tbl %&amp;gt;% 
+  dplyr::mutate(
+    city1 = purrr::map_chr(.x = airport1,
+                       .f = ~ str_split(.x, &amp;quot;-&amp;quot;)[[1]][1]),
+    city2 = purrr::map_chr(.x = airport2,
+                       .f = ~ str_split(.x, &amp;quot;-&amp;quot;)[[1]][1]))
+
+clean_tbl&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 50 x 8
+##     rank airport1   airport2     distance passengers type      city1   city2    
+##    &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;      &amp;lt;chr&amp;gt;           &amp;lt;int&amp;gt;      &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;     &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;    
+##  1     1 Jeju       Seoul-Gimpo       449   14107414 Domestic  Jeju    Seoul    
+##  2     2 Sapporo    Tokyo-Haneda      835    9698639 Domestic  Sapporo Tokyo    
+##  3     3 Sydney     Melbourne         705    9245392 Domestic  Sydney  Melbourne
+##  4     4 Fukuoka    Tokyo-Haneda      889    8762547 Domestic  Fukuoka Tokyo    
+##  5     5 Mumbai     Delhi            1150    7392155 Domestic  Mumbai  Delhi    
+##  6     6 Hanoi      Ho Chi Minh…     1171    6867114 Domestic  Hanoi   Ho Chi M…
+##  7     7 Beijing    Shanghai-Ho…     1081    6518997 Domestic  Beijing Shanghai 
+##  8     8 Hong Kong  Taipei-Taoy…      802    6476268 Internat… Hong K… Taipei   
+##  9     9 Tokyo-Han… Naha             1573    5829712 Domestic  Tokyo   Naha     
+## 10    10 Jakarta    Surabaya          700    5649046 Domestic  Jakarta Surabaya 
+## # … with 40 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;getting-locations-for-the-cities&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Getting locations for the cities&lt;/h1&gt;
+&lt;div id=&#34;google-maps-api&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Google Maps API&lt;/h2&gt;
+&lt;p&gt;There are many ways of getting the location information for cities. In the past, I have found the most reliable way is to get it through &lt;code&gt;ggmap&lt;/code&gt; which uses the Google Maps API, but this means you must set up a Google Cloud Platform billing account with them (which unfortunately requires a credit card). See &lt;a href=&#34;https://cran.r-project.org/web/packages/ggmap/readme/README.html&#34;&gt;this documentation&lt;/a&gt;. Once a project is set up with the Google Cloud Platform, you will then need to enable the Google Maps API by searching for it in the top search bar. The API key is required too, see the documentations for &lt;code&gt;ggmap::register_google&lt;/code&gt; for more information.&lt;/p&gt;
+&lt;p&gt;Aside: is all these worth it? In my experience, absolutely! Because Google Maps is very smart and tends to understand certain complexities that you didn’t think of and handle those for you. For example, if you are interested in the city of Sydney, Google Maps will understand that to be the city of Sydney in Australia, not the city in Nova Scotia, Canada (I don’t know how they do this, but my guess is that they will return results that are more relevant, because, well, they are Google). Google Cloud is also offering free credits for most of their basic services, so one can take advantage of these without incurring substantial costs.&lt;/p&gt;
+&lt;p&gt;To ensure code reproducibility, I will use the code below to download the coordinates for all the cities, save it as a CSV and make it available on &lt;a href=&#34;https://gist.github.com/kevinwang09/006d00ee7a43778171e7fc2fd409cdd6&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggmap)
+# ggmap::geocode(&amp;quot;Sydney, Australia&amp;quot;, output = &amp;quot;latlon&amp;quot;, source = &amp;quot;google&amp;quot;)
+all_cities = c(clean_tbl$city1, clean_tbl$city2) %&amp;gt;% unique
+all_geocode = ggmap::geocode(location = all_cities, output = &amp;quot;latlon&amp;quot;)
+city_tbl = tibble(
+  city = all_cities,
+  lon = all_geocode$lon,
+  lat = all_geocode$lat)
+
+readr::write_csv(x = city_tbl, file = &amp;quot;./city_tbl.csv&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Alternatively, if you don’t want to register for Google’s billings, you could use the &lt;code&gt;tidygeocoder&lt;/code&gt;’s &lt;code&gt;geocode&lt;/code&gt; function to get the latitude/longitude information via Open Street Map, which doesn’t require registration, but in my experience, it can be slower than Google Maps.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;tidygeocoder-location-extractions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;code&gt;tidygeocoder&lt;/code&gt; location extractions&lt;/h2&gt;
+&lt;p&gt;A small example:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;city_tbl = tibble(
+  city = c(clean_tbl$city1, clean_tbl$city2) %&amp;gt;% unique) %&amp;gt;% 
+  tidygeocoder::geocode(city, method = &amp;#39;osm&amp;#39;, lat = latitude , long = longitude)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;simple-maps-location-extractions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Simple maps location extractions&lt;/h2&gt;
+&lt;p&gt;You could also use the data provided in &lt;a href=&#34;https://simplemaps.com/data/world-cities&#34; class=&#34;uri&#34;&gt;https://simplemaps.com/data/world-cities&lt;/a&gt; to perform data joins to get the location information. The downloaded data looks quite tidy with additional ASCII encoding and I was quite impressed with the quality of the data.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;joining-data-and-visualise&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Joining data and visualise&lt;/h1&gt;
+&lt;p&gt;Once we have the location information we can simply join the data as followed:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;city_tbl = readr::read_csv(file = &amp;quot;https://gist.githubusercontent.com/kevinwang09/006d00ee7a43778171e7fc2fd409cdd6/raw/f12ec9deecdd99b093d0c819e21b125a7f7d4afd/city_tbl.csv&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   city = col_character(),
+##   lon = col_double(),
+##   lat = col_double()
+## )&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;joined_data = clean_tbl %&amp;gt;% 
+  left_join(city_tbl, by = c(&amp;quot;city1&amp;quot; = &amp;quot;city&amp;quot;)) %&amp;gt;% 
+  left_join(city_tbl, by = c(&amp;quot;city2&amp;quot; = &amp;quot;city&amp;quot;), suffix = c(&amp;quot;1&amp;quot;, &amp;quot;2&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I really like &lt;code&gt;plotly&lt;/code&gt;’s globe visualisation, because you can click and drag the globe, which is really nice.&lt;/p&gt;
+&lt;p&gt;Using this visualisation, we can see most of the busiest routes in the world are concentrated around Asia. What surprised me a few years ago is that Australia, despite its small population, also had a couple of routes made it to this list, with Sydney - Melbourne being the third on the list. In my experience, on a good day, there could be two planes at the Sydney airport flying to Melbourne but only 10 minutes apart. Which I must admit was a rare luxury that I never realised.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(plotly)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Attaching package: &amp;#39;plotly&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following object is masked from &amp;#39;package:ggplot2&amp;#39;:
+## 
+##     last_plot&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following object is masked from &amp;#39;package:stats&amp;#39;:
+## 
+##     filter&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following object is masked from &amp;#39;package:graphics&amp;#39;:
+## 
+##     layout&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;geo &amp;lt;- list(
+  scope = &amp;#39;world&amp;#39;,
+  projection = list(type = &amp;#39;orthographic&amp;#39;),
+  showland = TRUE,
+  landcolor = toRGB(&amp;quot;gray95&amp;quot;),
+  countrycolor = toRGB(&amp;quot;gray80&amp;quot;)
+)
+
+fig &amp;lt;- plot_geo(color = I(&amp;quot;red&amp;quot;))
+
+fig &amp;lt;- fig %&amp;gt;% 
+  add_markers(
+    data = joined_data, x = ~lon1, y = ~lat1, text = ~city1,
+    hoverinfo = &amp;quot;text&amp;quot;, alpha = 0.5) %&amp;gt;% 
+  add_markers(
+    data = joined_data, x = ~lon2, y = ~lat2, text = ~city2,
+    hoverinfo = &amp;quot;text&amp;quot;, alpha = 0.5) %&amp;gt;% 
+  add_segments(
+    data = group_by(joined_data, rank),
+    x = ~lon1, xend = ~lon2,
+    y = ~lat1, yend = ~lat2,
+    alpha = 0.3, size = I(1), 
+    hoverinfo = &amp;quot;none&amp;quot;) %&amp;gt;% 
+  layout(
+    title = &amp;#39;Busiest air routes in the world&amp;#39;,
+    geo = geo, 
+    showlegend = FALSE, 
+    height = 800)
+
+fig&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:672px;height:480px;&#34; class=&#34;plotly html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;visdat&#34;:{&#34;12dae18202af8&#34;:[&#34;function () &#34;,&#34;plotlyVisDat&#34;],&#34;12dae67e50c27&#34;:[&#34;function () &#34;,&#34;data&#34;],&#34;12dae6e8109ba&#34;:[&#34;function () &#34;,&#34;data&#34;],&#34;12dae59a5cb03&#34;:[&#34;function () &#34;,&#34;data&#34;]},&#34;cur_data&#34;:&#34;12dae59a5cb03&#34;,&#34;attrs&#34;:{&#34;12dae67e50c27&#34;:{&#34;color&#34;:[&#34;red&#34;],&#34;alpha_stroke&#34;:1,&#34;sizes&#34;:[10,100],&#34;spans&#34;:[1,20],&#34;x&#34;:{},&#34;y&#34;:{},&#34;type&#34;:&#34;scatter&#34;,&#34;mode&#34;:&#34;markers&#34;,&#34;text&#34;:{},&#34;hoverinfo&#34;:&#34;text&#34;,&#34;alpha&#34;:0.5,&#34;inherit&#34;:true},&#34;12dae6e8109ba&#34;:{&#34;color&#34;:[&#34;red&#34;],&#34;alpha_stroke&#34;:1,&#34;sizes&#34;:[10,100],&#34;spans&#34;:[1,20],&#34;x&#34;:{},&#34;y&#34;:{},&#34;type&#34;:&#34;scatter&#34;,&#34;mode&#34;:&#34;markers&#34;,&#34;text&#34;:{},&#34;hoverinfo&#34;:&#34;text&#34;,&#34;alpha&#34;:0.5,&#34;inherit&#34;:true},&#34;12dae59a5cb03&#34;:{&#34;color&#34;:[&#34;red&#34;],&#34;alpha_stroke&#34;:1,&#34;sizes&#34;:[10,100],&#34;spans&#34;:[1,20],&#34;x&#34;:{},&#34;y&#34;:{},&#34;xend&#34;:{},&#34;yend&#34;:{},&#34;type&#34;:&#34;scatter&#34;,&#34;mode&#34;:&#34;lines&#34;,&#34;alpha&#34;:0.3,&#34;size&#34;:[1],&#34;hoverinfo&#34;:&#34;none&#34;,&#34;inherit&#34;:true}},&#34;layout&#34;:{&#34;height&#34;:800,&#34;margin&#34;:{&#34;b&#34;:40,&#34;l&#34;:60,&#34;t&#34;:25,&#34;r&#34;:10},&#34;mapType&#34;:&#34;geo&#34;,&#34;title&#34;:&#34;Busiest air routes in the world&#34;,&#34;geo&#34;:{&#34;domain&#34;:{&#34;x&#34;:[0,1],&#34;y&#34;:[0,1]},&#34;scope&#34;:&#34;world&#34;,&#34;projection&#34;:{&#34;type&#34;:&#34;orthographic&#34;},&#34;showland&#34;:true,&#34;landcolor&#34;:&#34;rgba(242,242,242,1)&#34;,&#34;countrycolor&#34;:&#34;rgba(204,204,204,1)&#34;},&#34;showlegend&#34;:false,&#34;hovermode&#34;:&#34;closest&#34;},&#34;source&#34;:&#34;A&#34;,&#34;config&#34;:{&#34;showSendToCloud&#34;:false},&#34;data&#34;:[{&#34;type&#34;:&#34;scattergeo&#34;,&#34;mode&#34;:&#34;markers&#34;,&#34;text&#34;:[&#34;Jeju&#34;,&#34;Sapporo&#34;,&#34;Sydney&#34;,&#34;Fukuoka&#34;,&#34;Mumbai&#34;,&#34;Hanoi&#34;,&#34;Beijing&#34;,&#34;Hong Kong&#34;,&#34;Tokyo&#34;,&#34;Jakarta&#34;,&#34;Jakarta&#34;,&#34;Jeddah&#34;,&#34;Tokyo&#34;,&#34;Chengdu&#34;,&#34;Guangzhou&#34;,&#34;Cancun&#34;,&#34;Beijing&#34;,&#34;Brisbane&#34;,&#34;Jakarta&#34;,&#34;Guangzhou&#34;,&#34;Shanghai&#34;,&#34;Bangalore&#34;,&#34;Jakarta&#34;,&#34;Jakarta&#34;,&#34;Cape Town&#34;,&#34;Kuala Lumpur&#34;,&#34;São Paulo–Congonhas&#34;,&#34;Hong Kong&#34;,&#34;New York&#34;,&#34;Bogotá&#34;,&#34;Bangalore&#34;,&#34;Los Angeles&#34;,&#34;Bangkok&#34;,&#34;Brisbane&#34;,&#34;Cebu&#34;,&#34;Hong Kong&#34;,&#34;Mexico City&#34;,&#34;Kolkata&#34;,&#34;Da Nang&#34;,&#34;Chiang Mai&#34;,&#34;Seoul&#34;,&#34;Cusco&#34;,&#34;New York&#34;,&#34;Jakarta&#34;,&#34;Mexico City&#34;,&#34;Jeju&#34;,&#34;İzmir&#34;,&#34;Hong Kong&#34;,&#34;Guangzhou&#34;,&#34;Hong Kong&#34;],&#34;hoverinfo&#34;:[&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;],&#34;marker&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,0.5)&#34;,&#34;line&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,1)&#34;}},&#34;textfont&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,0.5)&#34;},&#34;line&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,0.5)&#34;},&#34;geo&#34;:&#34;geo&#34;,&#34;lat&#34;:[33.4996213,43.0617713,-33.8688197,33.5901838,19.0759837,21.0277644,39.9041999,22.3193039,35.6761919,-6.2087634,-6.2087634,21.485811,35.6761919,30.572815,23.12911,21.161908,39.9041999,-27.4704528,-6.2087634,23.12911,31.230416,12.9715987,-6.2087634,-6.2087634,-33.9248685,3.139003,-23.6273246,22.3193039,40.7127753,4.7109886,12.9715987,34.0522342,13.7563309,-27.4704528,10.3156992,22.3193039,19.4326077,22.572646,16.0544068,18.7883439,37.566535,-13.53195,40.7127753,-6.2087634,19.4326077,33.4996213,38.423734,22.3193039,23.12911,22.3193039],&#34;lon&#34;:[126.5311884,141.3544507,151.2092955,130.4016888,72.8776559,105.8341598,116.4073963,114.1693611,139.6503106,106.845599,106.845599,39.1925048,139.6503106,104.066801,113.264385,-86.8515279,116.4073963,153.0260341,106.845599,113.264385,121.473701,77.5945627,106.845599,106.845599,18.4240553,101.686855,-46.6565842,114.1693611,-74.0059728,-74.072092,77.5945627,-118.2436849,100.5017651,153.0260341,123.8854366,114.1693611,-99.133208,88.363895,108.2021667,98.9853008,126.9779692,-71.9674626,-74.0059728,106.845599,-99.133208,126.5311884,27.142826,114.1693611,113.264385,114.1693611],&#34;frame&#34;:null},{&#34;type&#34;:&#34;scattergeo&#34;,&#34;mode&#34;:&#34;markers&#34;,&#34;text&#34;:[&#34;Seoul&#34;,&#34;Tokyo&#34;,&#34;Melbourne&#34;,&#34;Tokyo&#34;,&#34;Delhi&#34;,&#34;Ho Chi Minh City&#34;,&#34;Shanghai&#34;,&#34;Taipei&#34;,&#34;Naha&#34;,&#34;Surabaya&#34;,&#34;Denpasar&#34;,&#34;Riyadh&#34;,&#34;Osaka&#34;,&#34;Beijing&#34;,&#34;Beijing&#34;,&#34;Mexico City&#34;,&#34;Shenzhen&#34;,&#34;Sydney&#34;,&#34;Singapore&#34;,&#34;Shanghai&#34;,&#34;Shenzhen&#34;,&#34;Delhi&#34;,&#34;Makassar&#34;,&#34;Medan&#34;,&#34;Johannesburg&#34;,&#34;Singapore&#34;,&#34;Rio de Janeiro&#34;,&#34;Shanghai&#34;,&#34;Los Angeles&#34;,&#34;Medellin&#34;,&#34;Mumbai&#34;,&#34;San Francisco&#34;,&#34;Phuket&#34;,&#34;Melbourne&#34;,&#34;Manila&#34;,&#34;Bangkok&#34;,&#34;Monterrey&#34;,&#34;Delhi&#34;,&#34;Ho Chi Minh City&#34;,&#34;Bangkok&#34;,&#34;Osaka&#34;,&#34;Lima&#34;,&#34;Chicago&#34;,&#34;Kuala Lumpur&#34;,&#34;Guadalajara&#34;,&#34;Gimhae&#34;,&#34;Istanbul&#34;,&#34;Seoul&#34;,&#34;Chengdu&#34;,&#34;Manila&#34;],&#34;hoverinfo&#34;:[&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;],&#34;marker&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,0.5)&#34;,&#34;line&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,1)&#34;}},&#34;textfont&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,0.5)&#34;},&#34;line&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,0.5)&#34;},&#34;geo&#34;:&#34;geo&#34;,&#34;lat&#34;:[37.566535,35.6761919,-37.8136276,35.6761919,28.7040592,10.8230989,31.230416,25.0329694,26.2125758,-7.2574719,-8.6704582,24.7135517,34.6937249,39.9041999,39.9041999,19.4326077,22.543096,-33.8688197,1.352083,31.230416,22.543096,28.7040592,-5.1476651,3.5951956,-26.2041028,1.352083,-22.9068467,31.230416,34.0522342,6.2476376,19.0759837,37.7749295,7.9519331,-37.8136276,14.5995124,13.7563309,25.6866142,28.7040592,10.8230989,13.7563309,34.6937249,-12.0463731,41.8781136,3.139003,20.6596988,35.2285451,41.0082376,37.566535,30.572815,14.5995124],&#34;lon&#34;:[126.9779692,139.6503106,144.9630576,139.6503106,77.1024902,106.6296638,121.473701,121.5654177,127.6790208,112.7520883,115.2126293,46.6752957,135.5022535,116.4073963,116.4073963,-99.133208,114.057865,151.2092955,103.819836,121.473701,114.057865,77.1024902,119.4327314,98.6722227,28.0473051,103.819836,-43.1728965,121.473701,-118.2436849,-75.5658153,72.8776559,-122.4194155,98.3380884,144.9630576,120.9842195,100.5017651,-100.3161126,77.1024902,106.6296638,100.5017651,135.5022535,-77.042754,-87.6297982,101.686855,-103.3496092,128.8893517,28.9783589,126.9779692,104.066801,120.9842195],&#34;frame&#34;:null},{&#34;type&#34;:&#34;scattergeo&#34;,&#34;mode&#34;:&#34;lines&#34;,&#34;hoverinfo&#34;:[&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;],&#34;marker&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,0.3)&#34;,&#34;size&#34;:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],&#34;sizemode&#34;:&#34;area&#34;,&#34;line&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,1)&#34;}},&#34;textfont&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,0.3)&#34;,&#34;size&#34;:1},&#34;line&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,0.3)&#34;,&#34;width&#34;:1},&#34;geo&#34;:&#34;geo&#34;,&#34;lat&#34;:[33.4996213,37.566535,null,43.0617713,35.6761919,null,-33.8688197,-37.8136276,null,33.5901838,35.6761919,null,19.0759837,28.7040592,null,21.0277644,10.8230989,null,39.9041999,31.230416,null,22.3193039,25.0329694,null,35.6761919,26.2125758,null,-6.2087634,-7.2574719,null,-6.2087634,-8.6704582,null,21.485811,24.7135517,null,35.6761919,34.6937249,null,30.572815,39.9041999,null,23.12911,39.9041999,null,21.161908,19.4326077,null,39.9041999,22.543096,null,-27.4704528,-33.8688197,null,-6.2087634,1.352083,null,23.12911,31.230416,null,31.230416,22.543096,null,12.9715987,28.7040592,null,-6.2087634,-5.1476651,null,-6.2087634,3.5951956,null,-33.9248685,-26.2041028,null,3.139003,1.352083,null,-23.6273246,-22.9068467,null,22.3193039,31.230416,null,40.7127753,34.0522342,null,4.7109886,6.2476376,null,12.9715987,19.0759837,null,34.0522342,37.7749295,null,13.7563309,7.9519331,null,-27.4704528,-37.8136276,null,10.3156992,14.5995124,null,22.3193039,13.7563309,null,19.4326077,25.6866142,null,22.572646,28.7040592,null,16.0544068,10.8230989,null,18.7883439,13.7563309,null,37.566535,34.6937249,null,-13.53195,-12.0463731,null,40.7127753,41.8781136,null,-6.2087634,3.139003,null,19.4326077,20.6596988,null,33.4996213,35.2285451,null,38.423734,41.0082376,null,22.3193039,37.566535,null,23.12911,30.572815,null,22.3193039,14.5995124],&#34;lon&#34;:[126.5311884,126.9779692,null,141.3544507,139.6503106,null,151.2092955,144.9630576,null,130.4016888,139.6503106,null,72.8776559,77.1024902,null,105.8341598,106.6296638,null,116.4073963,121.473701,null,114.1693611,121.5654177,null,139.6503106,127.6790208,null,106.845599,112.7520883,null,106.845599,115.2126293,null,39.1925048,46.6752957,null,139.6503106,135.5022535,null,104.066801,116.4073963,null,113.264385,116.4073963,null,-86.8515279,-99.133208,null,116.4073963,114.057865,null,153.0260341,151.2092955,null,106.845599,103.819836,null,113.264385,121.473701,null,121.473701,114.057865,null,77.5945627,77.1024902,null,106.845599,119.4327314,null,106.845599,98.6722227,null,18.4240553,28.0473051,null,101.686855,103.819836,null,-46.6565842,-43.1728965,null,114.1693611,121.473701,null,-74.0059728,-118.2436849,null,-74.072092,-75.5658153,null,77.5945627,72.8776559,null,-118.2436849,-122.4194155,null,100.5017651,98.3380884,null,153.0260341,144.9630576,null,123.8854366,120.9842195,null,114.1693611,100.5017651,null,-99.133208,-100.3161126,null,88.363895,77.1024902,null,108.2021667,106.6296638,null,98.9853008,100.5017651,null,126.9779692,135.5022535,null,-71.9674626,-77.042754,null,-74.0059728,-87.6297982,null,106.845599,101.686855,null,-99.133208,-103.3496092,null,126.5311884,128.8893517,null,27.142826,28.9783589,null,114.1693611,126.9779692,null,113.264385,104.066801,null,114.1693611,120.9842195],&#34;frame&#34;:null}],&#34;highlight&#34;:{&#34;on&#34;:&#34;plotly_click&#34;,&#34;persistent&#34;:false,&#34;dynamic&#34;:false,&#34;selectize&#34;:false,&#34;opacityDim&#34;:0.2,&#34;selected&#34;:{&#34;opacity&#34;:1},&#34;debounce&#34;:0},&#34;shinyEvents&#34;:[&#34;plotly_hover&#34;,&#34;plotly_click&#34;,&#34;plotly_selected&#34;,&#34;plotly_relayout&#34;,&#34;plotly_brushed&#34;,&#34;plotly_brushing&#34;,&#34;plotly_clickannotation&#34;,&#34;plotly_doubleclick&#34;,&#34;plotly_deselect&#34;,&#34;plotly_afterplot&#34;,&#34;plotly_sunburstclick&#34;],&#34;base_url&#34;:&#34;https://plot.ly&#34;},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

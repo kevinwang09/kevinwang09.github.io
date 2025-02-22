@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>datavis | Kevin Wang</title>
+    <link>https://www.kevinwangstats.com/tag/datavis/</link>
+      <atom:link href="https://www.kevinwangstats.com/tag/datavis/index.xml" rel="self" type="application/rss+xml" />
+    <description>datavis</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Sat, 11 Apr 2020 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_512x512_fill_lanczos_center_3.png</url>
+      <title>datavis</title>
+      <link>https://www.kevinwangstats.com/tag/datavis/</link>
+    </image>
+    
+    <item>
+      <title>Visualising COVID-19 data using Data Studio</title>
+      <link>https://www.kevinwangstats.com/post/visualising-covid19-using-data-studio/</link>
+      <pubDate>Sat, 11 Apr 2020 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/post/visualising-covid19-using-data-studio/</guid>
+      <description>
+&lt;script src=&#34;https://www.kevinwangstats.com/post/visualising-covid19-using-data-studio/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;tl;dr:&lt;/strong&gt; Google’s Data Studio is a great (and free) option for making data visualisation dashboards. Being a web-based dashboard application, its ability to connect to other Google products, such as BigQuery and GCP resources offers huge advantage over competing products. You can design a dashboard with minimum programming experience and the process is similar to writing PowerPoint slides. However, DS is mostly for the purpose of visualisation, so R/Shiny still has an advantage in computing and modeling. Below is my hacky 2-page report, correct up to April 2020:&lt;/p&gt;
+&lt;iframe width=&#34;800&#34; height=&#34;600&#34; src=&#34;https://datastudio.google.com/embed/reporting/3358c0f1-a068-47c6-9e8c-7b4d4873a843/page/MS0LB&#34; frameborder=&#34;0&#34; style=&#34;border:0&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;p&gt;I am in the process of learning how to use BigQuery (some progress are documented here in &lt;a href=&#34;https://kevinwang09.github.io/post/bigquery-in-r/&#34;&gt;this post&lt;/a&gt;). When I was exploring BigQuery’s web interface, I noticed that BigQuery could be connected with Data Studio (DS), a Google product that makes dashboard/BI visualisations.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;some-person-comments&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Some person comments&lt;/h1&gt;
+&lt;p&gt;As I recently have delivered &lt;a href=&#34;https://kevinwang09.github.io/shiny_3888&#34;&gt;a lecture on Shiny&lt;/a&gt;, I thought I will check out how Data Studio works and how it compares with Shiny. Sure, I have used Tableau before, but I have never used this kind of data visualisation software with databases before.&lt;/p&gt;
+&lt;p&gt;Overall, I think DS is a great web-based tool for quick explorations/visualisation of the data, its ability to connect to BigQuery and other databases is very attractive. I almost can’t believe how smooth the connection was after I have tried to connect the same data into &lt;code&gt;R&lt;/code&gt;. While many features that DS offers are not dissimilar to Microsoft Power BI and Tableau, &lt;strong&gt;DS is free&lt;/strong&gt; to use! Which is quite important for, well, people like myself who just lost the privilege to claim student discounts.&lt;/p&gt;
+&lt;p&gt;The drawback of DS is also clear: it is not Shiny, so it won’t handle complex modelling/computations in the background (that being said, I am sure there is a way that you can connect it to Google Cloud products for backend computations). DS is also web-based, so connecting it with data in your local laptop isn’t quite straight forward. It is also not quite as reproducible since it is not constructed using scripts. But these shouldn’t overshadow how easy it was to use DS and share it.&lt;/p&gt;
+&lt;p&gt;If a single visualisation is all you are after, not complex modelling, then DS is definitely a faster option than Shiny with a gentler learning curve.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;starting-started-with-a-ds-report&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Starting started with a DS report&lt;/h1&gt;
+&lt;p&gt;A DS report is made up of multiple pages, much like PowerPoint slides. &lt;a href=&#34;https://support.google.com/datastudio/answer/6292570?hl=en&amp;amp;ref_topic=6289358&#34;&gt;This tutorial&lt;/a&gt; is quite helpful to learn the basics.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The most powerful part of DS, in my opinion, is how you can add multiple data sources, e.g. SQL databases or Google Sheets. But being part of the Google ecosystem, I think the real power lies in how DS interacts with other Google products like Google Analytics and other third-party data sources.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;ds_source1.png&#34; 
+align=&#34;center&#34; width=&#34;800&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;ds_source2.png&#34; align=&#34;center&#34; width=&#34;800&#34; /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In the DS report above, I made connections to the &lt;a href=&#34;https://console.cloud.google.com/marketplace/details/johnshopkins/covid19_jhu_global_cases&#34;&gt;COVID-19 data from Johns Hopskins University&lt;/a&gt; and the World Bank global population data. I couldn’t find a Google public data documentation page for the latter, but you can make a SQL query using:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;SELECT *
+FROM `bigquery-public-data.world_bank_global_population.population_by_country` 
+LIMIT 10&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Having added the these two data into the DS report, you can visualise these data using charts, such as a table on the page 1 of the report:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;iframe width=&#34;800&#34; height=&#34;600&#34; src=&#34;https://datastudio.google.com/embed/reporting/3358c0f1-a068-47c6-9e8c-7b4d4873a843/page/SR0LB&#34; frameborder=&#34;0&#34; style=&#34;border:0&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;p&gt;In DS, every chart is associated with one data source that you have added. Of course, you can put together multiple data in some meaningful way and make a visualisation. This is exactly what I have done to calculate the “confirmed cases per 1 million” statistic.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;a-bit-more-data-manipulations&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;A bit more data manipulations&lt;/h1&gt;
+&lt;p&gt;In order to make the heatmap at the beginning of this post, a bit more data manipulations are needed. In particular, joining the two data together using “country” as a common key. Once this is done, we can take the ratio of the confirmed cases and the population and calculate the “confirmed cases per 1 million” statistic and making a heatmap visualisation is straightforward after that.&lt;/p&gt;
+&lt;p&gt;Joining data in DS is called “blending data”, which you can &lt;a href=&#34;https://support.google.com/datastudio/answer/9061420?hl=en&#34;&gt;find out more here&lt;/a&gt;. This is identical to the operation of the various JOIN operations in SQL if you choose your settings correctly.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.kevinwangstats.com/post/2020-04-11-visualising-covid19-using-data-studio_files/ds_data_blend.png&#34; align=&#34;center&#34; width=&#34;800&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Aside: of course, joining data isn’t the magic silver bullet for everything. If you examine closely on page 2 of the report, you will see that some countries have &lt;code&gt;null&lt;/code&gt; values in the &lt;code&gt;confirmed cases&lt;/code&gt; column, e.g. South Korea. This is because the name of the country was not consistent between the two counties. E.g. “South Korea” in one data and “Korea, South” in another. This has to be fixed by making a new column with matched names. The way that I did it was to create a &lt;code&gt;country_correct&lt;/code&gt; column in the population data using the definitions such as&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;CASE 
+    WHEN country IN (&amp;quot;United States&amp;quot;) THEN &amp;quot;US&amp;quot; 
+    WHEN country IN (&amp;quot;Russian Federation&amp;quot;) THEN &amp;quot;Russia&amp;quot; 
+    WHEN country IN (&amp;quot;Iran, Islamic Rep.&amp;quot;) THEN &amp;quot;Iran&amp;quot; 
+    ELSE country
+END&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You will probably notice that this is SQL code and quite similar to the &lt;code&gt;dplyr&lt;/code&gt; function &lt;code&gt;case_when&lt;/code&gt;. So I think some knowledge of SQL will be helpful when using DS.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;making-the-visualisations&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Making the visualisations&lt;/h1&gt;
+&lt;p&gt;This is where I was pleasantly surprised and where a point-and-click dashboard visualisation wins over Shiny. Since the &lt;code&gt;country_region&lt;/code&gt;/&lt;code&gt;country_correct&lt;/code&gt; is a geography variable, it can be directly plotted onto a world map automatically. Also importantly, linked interactivity is easily achieved between the table and the heatmap on page 2.&lt;/p&gt;
+&lt;p&gt;Aside: these tasks are possible, butnot always the easiest to do in &lt;code&gt;R&lt;/code&gt;, &lt;code&gt;plotly&lt;/code&gt; is the most competitive in this area (see &lt;a href=&#34;https://plotly.com/r/choropleth-maps/#world-choropleth-map&#34;&gt;this example&lt;/a&gt; and &lt;a href=&#34;https://plotly-r.com/client-side-linking.html#filter&#34;&gt;this example&lt;/a&gt;). Sure, I can pick up the codes in 5 minutes, but think about the learning curve behind learning &lt;code&gt;ggplot&lt;/code&gt;/&lt;code&gt;plotly&lt;/code&gt; framework, this could be overwhelming for people without a programming background. I can’t tell you how many hours I have spent trying to make a plot look right!&lt;/p&gt;
+&lt;iframe width=&#34;800&#34; height=&#34;600&#34; src=&#34;https://datastudio.google.com/embed/reporting/3358c0f1-a068-47c6-9e8c-7b4d4873a843/page/MS0LB&#34; frameborder=&#34;0&#34; style=&#34;border:0&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;For the R/Shiny fanatics, put down your pitchforks, I am not going to abandon R/Shiny any time soon. Shiny is definitely great for customisation, but DS and other professional dashboard software actually do have a lot of awesome ideas. Advanced R/Shiny users can do many things that DS can do, but this is only assuming you have enough experience and know where to look for the right answers. For example:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The fact that I can readily share this report without setting up my own Shiny server or website is a great example of how Google thought about how their products will be distributed!&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;I am also not an artist, so I actually dislike spending hours to make my Shiny app look pretty, DS actually makes this process much easier since making a dashboard UI is quite similar to making PowerPoint slides.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Connecting to databases might be annoying and slow at times (seriously, it takes about 20 seconds for me to fetch the COVID-19 data over the National Broadband Network here in Australia), but when DS tries to fetch data, it has the backings of Google’s massive servers, and making changes to my visualisation is often done in less than 2 seconds!&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I can see myself using DS to visualise my pre-computed results in R and distribute this kind of interactive reports with others without paying for expensive Shiny servers, assuming that simple visualisations are all that I am after.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>COVID-19 visualisations</title>
+      <link>https://www.kevinwangstats.com/post/covid-19-visualisations/</link>
+      <pubDate>Fri, 27 Mar 2020 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/post/covid-19-visualisations/</guid>
+      <description>
+&lt;script src=&#34;https://www.kevinwangstats.com/post/covid-19-visualisations/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;The recent COVID-19 outbreak has caused much disruptions to people’s daily lives. As the policy of self-isolation gets adopted by many countries around the world, many people took to social media to share important resources and data visualisation illustrating the severity of COVID-19.
+I want to quite clear about my intentions behind this blog post: I am &lt;strong&gt;not&lt;/strong&gt; an epidemiologist/biologist/medical doctor. I will refrain from making any inferences from this data (ironic for a statistician) because it would be irresponsible for me to make commentaries on an ongoing public health crisis in which I am not an expert on. I am only here to show you some interesting R coding and data visualisations.&lt;/p&gt;
+&lt;p&gt;Between mid-February 2020 and mid-March 2020, I was in Cornell University (New York state) and observing the spread of COVID-19 quite closely. I was increasingly worried about the dramatic increase in the number of cases in US and the potential shutdown of the Australian border. I was on the brink of re-booking all my flights before it is too late. It is around the same time that I was asked by my supervisor back in Australia to design a lecture in Shiny apps, so I thought it will be useful for me to write an app and other visualisations to answer the following questions:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;What do the confirmed cases for each country looks like? What is the days-lagged in confirmed cases for each compare when compare to China (i.e. cross-correlation)?&lt;/li&gt;
+&lt;li&gt;What are the Sydney-bound flights that had confirmed cases? Is there a route that is safer than others?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div id=&#34;shiny-app-for-confirmed-cases-and-added-cases&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Shiny app for confirmed cases and added cases&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.kevinwangstats.com/img/covid19_shiny.png&#34; align=&#34;center&#34; width=&#34;600&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This app attemps to answer the first question, code: &lt;a href=&#34;https://github.com/kevinwang09/covid19&#34; class=&#34;uri&#34;&gt;https://github.com/kevinwang09/covid19&lt;/a&gt;. I can’t afford a server at this point, so you will need to run this app locally by reading through the instructions in the README of that repo.&lt;/p&gt;
+&lt;p&gt;Based on my simple visualisations at the time (~15 March 2020), I estimated that US’s major outbreak lags behind that of China by about 45 days or so. So it wasn’t so dangerous for me when I was in Cornell around mid-March, however, it was definitely not ideal as the county I was in already had two confirmed cases. Any delays in my departure could spell trouble. This is unfortunately true since at the time of writing, US has overtaken China in confirmed cases and New York state shares the biggest percentage of those confirmed cases.&lt;/p&gt;
+&lt;p&gt;The structure of the app is quite simple:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The COVID-19 data is fetched using the &lt;a href=&#34;https://github.com/GuangchuangYu/nCov2019&#34;&gt;nCov2019&lt;/a&gt; package using this line of code &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/global.R#L6&#34;&gt;here&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Cumulative confirmed cases are extracted &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/server.R#L3&#34;&gt;here&lt;/a&gt; and time series plot is made &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/server.R#L34&#34;&gt;here&lt;/a&gt; and the cross-correlation plot is made &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/server.R#L107&#34;&gt;here&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Similarly, the plots for added cases are &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/server.R#L66&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/server.R#L96&#34;&gt;here&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;interactive-animation-of-flights-with-confirmed-case&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Interactive animation of flights with confirmed case&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.kevinwangstats.com/img/covid19_flights.gif&#34; align=&#34;center&#34; width=&#34;600&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This is a standalone RMarkdown document: &lt;a href=&#34;https://kevinwang09.github.io/covid19/confirmed_flights.html#5_plotly_visualisations&#34; class=&#34;uri&#34;&gt;https://kevinwang09.github.io/covid19/confirmed_flights.html#5_plotly_visualisations&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The New South Wales Health website publishes a &lt;a href=&#34;https://www.health.nsw.gov.au/Infectious/diseases/Pages/coronavirus-flights.aspx&#34;&gt;list of flights with confirmed cases of COVID-19&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The coding beind this visualisation is also quite straight-forward:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The data are scrapped from the NSW Health website using the &lt;code&gt;xml2&lt;/code&gt; and &lt;code&gt;rvest&lt;/code&gt; packages. I particularly like the elegance of the coding style using tidyver to scrap this data, though some inspiration came from &lt;a href=&#34;https://stackoverflow.com/a/52863929&#34;&gt;this StackOverflow thread&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;url = &amp;quot;https://www.health.nsw.gov.au/Infectious/diseases/Pages/coronavirus-flights.aspx&amp;quot;
+raw = xml2::read_html(url)
+
+raw_flights_tbl = raw %&amp;gt;%
+  rvest::html_node(xpath = &amp;quot;.//div[@id=&amp;#39;ctl00_PlaceHolderMain_contentc1__ControlWrapper_RichHtmlField&amp;#39;]/table&amp;quot;) %&amp;gt;%
+  rvest::html_table() %&amp;gt;% 
+  as_tibble() %&amp;gt;% 
+  janitor::clean_names()&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;The geographical locations are then queried through Google Maps API for their longitude and latitudes.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;all_geocode = tibble(
+  location = c(flights_tbl$origin, flights_tbl$destination) %&amp;gt;% unique,
+  geocode = purrr::map(location, ggmap::geocode))&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;After grabbing these data, it is time to make plots using &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/confirmed_flights.Rmd#L129&#34;&gt;this chunk of code&lt;/a&gt;. Althought a lot of small adjustments were needed, but this &lt;a href=&#34;https://plotly.com/r/lines-on-maps/#flight-paths-map&#34;&gt;example from Plotly’s official website&lt;/a&gt; was quite helpful.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

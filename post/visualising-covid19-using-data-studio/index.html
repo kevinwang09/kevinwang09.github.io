@@ -1,0 +1,1383 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.1.0 for Hugo" />
+  
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Kevin Y.X. Wang" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Introduction tl;dr: Google’s Data Studio is a great (and free) option for making data visualisation dashboards. Being a web-based dashboard application, its ability to connect to other Google products, such as BigQuery and GCP resources offers huge advantage over competing products." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://www.kevinwangstats.com/post/visualising-covid19-using-data-studio/" />
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.0/css/academicons.min.css" integrity="sha512-W4yqoT1+8NLkinBLBZko+dFB2ZbHsYLDdr50VElllRcNt2Q4/GSs6u71UHKxB7S6JEMCp5Ve4xjh3eGQl/HRvg==" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha256-FMvZuGapsJLjouA6k7Eo2lusoAX9i0ShlWFG6qt7SLc=" crossorigin="anonymous">
+
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.css" integrity="sha512-1xoFisiGdy9nvho8EgXuXvnpR5GAMSjFwp40gSRE3NwdUdIMIKuPa7bqoUhLD0O/5tPNhteAsE5XyyMi5reQVA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+    
+      
+      <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap" media="print" onload="this.media='all'">
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.2ee374d4cf5562c045dfeda3907f775c.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TGYMC1CTV1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'G-TGYMC1CTV1', {});
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/index.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://www.kevinwangstats.com/post/visualising-covid19-using-data-studio/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary" />
+  
+    <meta property="twitter:site" content="@KevinWangStats" />
+    <meta property="twitter:creator" content="@KevinWangStats" />
+  
+  <meta property="og:site_name" content="Kevin Wang" />
+  <meta property="og:url" content="https://www.kevinwangstats.com/post/visualising-covid19-using-data-studio/" />
+  <meta property="og:title" content="Visualising COVID-19 data using Data Studio | Kevin Wang" />
+  <meta property="og:description" content="Introduction tl;dr: Google’s Data Studio is a great (and free) option for making data visualisation dashboards. Being a web-based dashboard application, its ability to connect to other Google products, such as BigQuery and GCP resources offers huge advantage over competing products." /><meta property="og:image" content="https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_512x512_fill_lanczos_center_3.png" />
+    <meta property="twitter:image" content="https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_512x512_fill_lanczos_center_3.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2020-04-11T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2020-04-11T22:09:41&#43;10:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.kevinwangstats.com/post/visualising-covid19-using-data-studio/"
+  },
+  "headline": "Visualising COVID-19 data using Data Studio",
+  
+  "datePublished": "2020-04-11T00:00:00Z",
+  "dateModified": "2020-04-11T22:09:41+10:00",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Kevin Y.X. Wang"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Kevin Wang",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Introduction tl;dr: Google’s Data Studio is a great (and free) option for making data visualisation dashboards. Being a web-based dashboard application, its ability to connect to other Google products, such as BigQuery and GCP resources offers huge advantage over competing products."
+}
+</script>
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+  <title>Visualising COVID-19 data using Data Studio | Kevin Wang</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="ccc79090f861cc09e7ea509a1a150e06" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.a8a181ea67095ef9fbb0e99ffbf585a0.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container-xl">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Kevin Wang</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Kevin Wang</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#packages"><span>Packages</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#projects"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://scholar.google.com/citations?user=ScxpjTgAAAAJ&amp;hl=en" target="_blank" rel="noopener"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/academic_activities"><span>Academic Activities</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+      
+      
+        
+          
+          <li class="nav-item d-none d-lg-inline-flex">
+            <a class="nav-link" href="https://twitter.com/KevinWangStats" data-toggle="tooltip" data-placement="bottom" title="Follow me on Twitter" target="_blank" rel="noopener" aria-label="Follow me on Twitter">
+              <i class="fab fa-twitter" aria-hidden="true"></i>
+            </a>
+          </li>
+        
+      
+
+      
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#" aria-label="Search"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+      
+      <li class="nav-item dropdown theme-dropdown">
+        <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+          <i class="fas fa-moon" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item js-set-theme-light">
+            <span>Light</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-dark">
+            <span>Dark</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-auto">
+            <span>Automatic</span>
+          </a>
+        </div>
+      </li>
+      
+
+      
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>Visualising COVID-19 data using Data Studio</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+          Last updated on
+      
+    
+    Apr 11, 2020
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    6 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+
+</div>
+
+    
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+<script src="https://www.kevinwangstats.com/post/visualising-covid19-using-data-studio/index_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p><strong>tl;dr:</strong> Google’s Data Studio is a great (and free) option for making data visualisation dashboards. Being a web-based dashboard application, its ability to connect to other Google products, such as BigQuery and GCP resources offers huge advantage over competing products. You can design a dashboard with minimum programming experience and the process is similar to writing PowerPoint slides. However, DS is mostly for the purpose of visualisation, so R/Shiny still has an advantage in computing and modeling. Below is my hacky 2-page report, correct up to April 2020:</p>
+<iframe width="800" height="600" src="https://datastudio.google.com/embed/reporting/3358c0f1-a068-47c6-9e8c-7b4d4873a843/page/MS0LB" frameborder="0" style="border:0" allowfullscreen>
+</iframe>
+<p>I am in the process of learning how to use BigQuery (some progress are documented here in <a href="https://kevinwang09.github.io/post/bigquery-in-r/">this post</a>). When I was exploring BigQuery’s web interface, I noticed that BigQuery could be connected with Data Studio (DS), a Google product that makes dashboard/BI visualisations.</p>
+</div>
+<div id="some-person-comments" class="section level1">
+<h1>Some person comments</h1>
+<p>As I recently have delivered <a href="https://kevinwang09.github.io/shiny_3888">a lecture on Shiny</a>, I thought I will check out how Data Studio works and how it compares with Shiny. Sure, I have used Tableau before, but I have never used this kind of data visualisation software with databases before.</p>
+<p>Overall, I think DS is a great web-based tool for quick explorations/visualisation of the data, its ability to connect to BigQuery and other databases is very attractive. I almost can’t believe how smooth the connection was after I have tried to connect the same data into <code>R</code>. While many features that DS offers are not dissimilar to Microsoft Power BI and Tableau, <strong>DS is free</strong> to use! Which is quite important for, well, people like myself who just lost the privilege to claim student discounts.</p>
+<p>The drawback of DS is also clear: it is not Shiny, so it won’t handle complex modelling/computations in the background (that being said, I am sure there is a way that you can connect it to Google Cloud products for backend computations). DS is also web-based, so connecting it with data in your local laptop isn’t quite straight forward. It is also not quite as reproducible since it is not constructed using scripts. But these shouldn’t overshadow how easy it was to use DS and share it.</p>
+<p>If a single visualisation is all you are after, not complex modelling, then DS is definitely a faster option than Shiny with a gentler learning curve.</p>
+</div>
+<div id="starting-started-with-a-ds-report" class="section level1">
+<h1>Starting started with a DS report</h1>
+<p>A DS report is made up of multiple pages, much like PowerPoint slides. <a href="https://support.google.com/datastudio/answer/6292570?hl=en&amp;ref_topic=6289358">This tutorial</a> is quite helpful to learn the basics.</p>
+<ul>
+<li>The most powerful part of DS, in my opinion, is how you can add multiple data sources, e.g. SQL databases or Google Sheets. But being part of the Google ecosystem, I think the real power lies in how DS interacts with other Google products like Google Analytics and other third-party data sources.</li>
+</ul>
+<p><img src="ds_source1.png" 
+align="center" width="800" /></p>
+<p><img src="ds_source2.png" align="center" width="800" /></p>
+<ul>
+<li>In the DS report above, I made connections to the <a href="https://console.cloud.google.com/marketplace/details/johnshopkins/covid19_jhu_global_cases">COVID-19 data from Johns Hopskins University</a> and the World Bank global population data. I couldn’t find a Google public data documentation page for the latter, but you can make a SQL query using:</li>
+</ul>
+<pre><code>SELECT *
+FROM `bigquery-public-data.world_bank_global_population.population_by_country` 
+LIMIT 10</code></pre>
+<ul>
+<li>Having added the these two data into the DS report, you can visualise these data using charts, such as a table on the page 1 of the report:</li>
+</ul>
+<iframe width="800" height="600" src="https://datastudio.google.com/embed/reporting/3358c0f1-a068-47c6-9e8c-7b4d4873a843/page/SR0LB" frameborder="0" style="border:0" allowfullscreen>
+</iframe>
+<p>In DS, every chart is associated with one data source that you have added. Of course, you can put together multiple data in some meaningful way and make a visualisation. This is exactly what I have done to calculate the “confirmed cases per 1 million” statistic.</p>
+</div>
+<div id="a-bit-more-data-manipulations" class="section level1">
+<h1>A bit more data manipulations</h1>
+<p>In order to make the heatmap at the beginning of this post, a bit more data manipulations are needed. In particular, joining the two data together using “country” as a common key. Once this is done, we can take the ratio of the confirmed cases and the population and calculate the “confirmed cases per 1 million” statistic and making a heatmap visualisation is straightforward after that.</p>
+<p>Joining data in DS is called “blending data”, which you can <a href="https://support.google.com/datastudio/answer/9061420?hl=en">find out more here</a>. This is identical to the operation of the various JOIN operations in SQL if you choose your settings correctly.</p>
+<p><img src="/post/2020-04-11-visualising-covid19-using-data-studio_files/ds_data_blend.png" align="center" width="800" /></p>
+<p>Aside: of course, joining data isn’t the magic silver bullet for everything. If you examine closely on page 2 of the report, you will see that some countries have <code>null</code> values in the <code>confirmed cases</code> column, e.g. South Korea. This is because the name of the country was not consistent between the two counties. E.g. “South Korea” in one data and “Korea, South” in another. This has to be fixed by making a new column with matched names. The way that I did it was to create a <code>country_correct</code> column in the population data using the definitions such as</p>
+<pre><code>CASE 
+    WHEN country IN (&quot;United States&quot;) THEN &quot;US&quot; 
+    WHEN country IN (&quot;Russian Federation&quot;) THEN &quot;Russia&quot; 
+    WHEN country IN (&quot;Iran, Islamic Rep.&quot;) THEN &quot;Iran&quot; 
+    ELSE country
+END</code></pre>
+<p>You will probably notice that this is SQL code and quite similar to the <code>dplyr</code> function <code>case_when</code>. So I think some knowledge of SQL will be helpful when using DS.</p>
+</div>
+<div id="making-the-visualisations" class="section level1">
+<h1>Making the visualisations</h1>
+<p>This is where I was pleasantly surprised and where a point-and-click dashboard visualisation wins over Shiny. Since the <code>country_region</code>/<code>country_correct</code> is a geography variable, it can be directly plotted onto a world map automatically. Also importantly, linked interactivity is easily achieved between the table and the heatmap on page 2.</p>
+<p>Aside: these tasks are possible, butnot always the easiest to do in <code>R</code>, <code>plotly</code> is the most competitive in this area (see <a href="https://plotly.com/r/choropleth-maps/#world-choropleth-map">this example</a> and <a href="https://plotly-r.com/client-side-linking.html#filter">this example</a>). Sure, I can pick up the codes in 5 minutes, but think about the learning curve behind learning <code>ggplot</code>/<code>plotly</code> framework, this could be overwhelming for people without a programming background. I can’t tell you how many hours I have spent trying to make a plot look right!</p>
+<iframe width="800" height="600" src="https://datastudio.google.com/embed/reporting/3358c0f1-a068-47c6-9e8c-7b4d4873a843/page/MS0LB" frameborder="0" style="border:0" allowfullscreen>
+</iframe>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<p>For the R/Shiny fanatics, put down your pitchforks, I am not going to abandon R/Shiny any time soon. Shiny is definitely great for customisation, but DS and other professional dashboard software actually do have a lot of awesome ideas. Advanced R/Shiny users can do many things that DS can do, but this is only assuming you have enough experience and know where to look for the right answers. For example:</p>
+<ul>
+<li><p>The fact that I can readily share this report without setting up my own Shiny server or website is a great example of how Google thought about how their products will be distributed!</p></li>
+<li><p>I am also not an artist, so I actually dislike spending hours to make my Shiny app look pretty, DS actually makes this process much easier since making a dashboard UI is quite similar to making PowerPoint slides.</p></li>
+<li><p>Connecting to databases might be annoying and slow at times (seriously, it takes about 20 seconds for me to fetch the COVID-19 data over the National Broadband Network here in Australia), but when DS tries to fetch data, it has the backings of Google’s massive servers, and making changes to my visualisation is often done in less than 2 seconds!</p></li>
+</ul>
+<p>I can see myself using DS to visualise my pre-computed results in R and distribute this kind of interactive reports with others without paying for expensive Shiny servers, assuming that simple visualisations are all that I am after.</p>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/datavis/">datavis</a>
+  
+  <a class="badge badge-light" href="/tag/gcp/">GCP</a>
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://www.kevinwangstats.com/post/visualising-covid19-using-data-studio/&amp;text=Visualising%20COVID-19%20data%20using%20Data%20Studio" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://www.kevinwangstats.com/post/visualising-covid19-using-data-studio/&amp;t=Visualising%20COVID-19%20data%20using%20Data%20Studio" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Visualising%20COVID-19%20data%20using%20Data%20Studio&amp;body=https://www.kevinwangstats.com/post/visualising-covid19-using-data-studio/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://www.kevinwangstats.com/post/visualising-covid19-using-data-studio/&amp;title=Visualising%20COVID-19%20data%20using%20Data%20Studio" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Visualising%20COVID-19%20data%20using%20Data%20Studio%20https://www.kevinwangstats.com/post/visualising-covid19-using-data-studio/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://www.kevinwangstats.com/post/visualising-covid19-using-data-studio/&amp;title=Visualising%20COVID-19%20data%20using%20Data%20Studio" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://www.kevinwangstats.com/"><img class="avatar mr-3 avatar-circle" src="/author/kevin-y.x.-wang/avatar_hu4dac1e2f91aaf4115dfec68ee8ebdf48_697857_270x270_fill_q75_lanczos_center.jpg" alt="Kevin Y.X. Wang"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://www.kevinwangstats.com/">Kevin Y.X. Wang</a></h5>
+      <h6 class="card-subtitle">Senior Data Scientist</h6>
+      <p class="card-text">Senior Data scientist at Illumina. PhD in Statistics.</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://twitter.com/KevinWangStats" target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=ScxpjTgAAAAJ&amp;hl=en" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/kevinwang09" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/kevinwangstats/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/kevinwangstats/cv/blob/main/CV_KEVIN_YX_WANG_twopage.pdf" target="_blank" rel="noopener">
+        <i class="ai ai-cv"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/bigquery-in-r/">BigQuery in R</a></li>
+      
+      <li><a href="/post/covid-19-visualisations/">COVID-19 visualisations</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+  
+
+  
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+      
+      
+      
+      
+      
+      
+      Published with <a href="https://wowchemy.com/?utm_campaign=poweredby" target="_blank" rel="noopener">Wowchemy</a> — the free, <a href="https://github.com/wowchemy/wowchemy-hugo-modules" target="_blank" rel="noopener">open source</a> website builder that empowers creators.
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/instant.page/5.1.0/instantpage.min.js" integrity="sha512-1+qUtKoh9XZW7j+6LhRMAyOrgSQKenQ4mluTR+cvxXjP1Z54RxZuzstR/H9kgPXQsVB8IW7DMDFUJpzLjvhGSQ==" crossorigin="anonymous"></script>
+
+      
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/highlight.min.js" integrity="sha512-TDKKr+IvoqZnPzc3l35hdjpHD0m+b2EC2SrLEgKDRWpxf2rFCxemkgvJ5kfU48ip+Y+m2XVKyOCD85ybtlZDmw==" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/r.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/python.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/latex.min.js"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.js" integrity="sha512-SeiQaaDh73yrb56sTW/RgVdi/mMqNeM2oBwubFHagc5BkixSpP1fvqF47mKzPGWYSSy4RwbBunrJBQ4Co8fRWA==" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    <script src="/js/bootstrap.bundle.min.6aed84840afc03ab4d5750157f69c120.js"></script>
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.cf8ca859a9b74f8b1cd804621b13e5f1.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

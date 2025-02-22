@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>shiny | Kevin Wang</title>
+    <link>https://www.kevinwangstats.com/tag/shiny/</link>
+      <atom:link href="https://www.kevinwangstats.com/tag/shiny/index.xml" rel="self" type="application/rss+xml" />
+    <description>shiny</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Fri, 27 Mar 2020 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_512x512_fill_lanczos_center_3.png</url>
+      <title>shiny</title>
+      <link>https://www.kevinwangstats.com/tag/shiny/</link>
+    </image>
+    
+    <item>
+      <title>COVID-19 visualisations</title>
+      <link>https://www.kevinwangstats.com/post/covid-19-visualisations/</link>
+      <pubDate>Fri, 27 Mar 2020 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/post/covid-19-visualisations/</guid>
+      <description>
+&lt;script src=&#34;https://www.kevinwangstats.com/post/covid-19-visualisations/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;The recent COVID-19 outbreak has caused much disruptions to people’s daily lives. As the policy of self-isolation gets adopted by many countries around the world, many people took to social media to share important resources and data visualisation illustrating the severity of COVID-19.
+I want to quite clear about my intentions behind this blog post: I am &lt;strong&gt;not&lt;/strong&gt; an epidemiologist/biologist/medical doctor. I will refrain from making any inferences from this data (ironic for a statistician) because it would be irresponsible for me to make commentaries on an ongoing public health crisis in which I am not an expert on. I am only here to show you some interesting R coding and data visualisations.&lt;/p&gt;
+&lt;p&gt;Between mid-February 2020 and mid-March 2020, I was in Cornell University (New York state) and observing the spread of COVID-19 quite closely. I was increasingly worried about the dramatic increase in the number of cases in US and the potential shutdown of the Australian border. I was on the brink of re-booking all my flights before it is too late. It is around the same time that I was asked by my supervisor back in Australia to design a lecture in Shiny apps, so I thought it will be useful for me to write an app and other visualisations to answer the following questions:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;What do the confirmed cases for each country looks like? What is the days-lagged in confirmed cases for each compare when compare to China (i.e. cross-correlation)?&lt;/li&gt;
+&lt;li&gt;What are the Sydney-bound flights that had confirmed cases? Is there a route that is safer than others?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div id=&#34;shiny-app-for-confirmed-cases-and-added-cases&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Shiny app for confirmed cases and added cases&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.kevinwangstats.com/img/covid19_shiny.png&#34; align=&#34;center&#34; width=&#34;600&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This app attemps to answer the first question, code: &lt;a href=&#34;https://github.com/kevinwang09/covid19&#34; class=&#34;uri&#34;&gt;https://github.com/kevinwang09/covid19&lt;/a&gt;. I can’t afford a server at this point, so you will need to run this app locally by reading through the instructions in the README of that repo.&lt;/p&gt;
+&lt;p&gt;Based on my simple visualisations at the time (~15 March 2020), I estimated that US’s major outbreak lags behind that of China by about 45 days or so. So it wasn’t so dangerous for me when I was in Cornell around mid-March, however, it was definitely not ideal as the county I was in already had two confirmed cases. Any delays in my departure could spell trouble. This is unfortunately true since at the time of writing, US has overtaken China in confirmed cases and New York state shares the biggest percentage of those confirmed cases.&lt;/p&gt;
+&lt;p&gt;The structure of the app is quite simple:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The COVID-19 data is fetched using the &lt;a href=&#34;https://github.com/GuangchuangYu/nCov2019&#34;&gt;nCov2019&lt;/a&gt; package using this line of code &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/global.R#L6&#34;&gt;here&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Cumulative confirmed cases are extracted &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/server.R#L3&#34;&gt;here&lt;/a&gt; and time series plot is made &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/server.R#L34&#34;&gt;here&lt;/a&gt; and the cross-correlation plot is made &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/server.R#L107&#34;&gt;here&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Similarly, the plots for added cases are &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/server.R#L66&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/server.R#L96&#34;&gt;here&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;interactive-animation-of-flights-with-confirmed-case&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Interactive animation of flights with confirmed case&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.kevinwangstats.com/img/covid19_flights.gif&#34; align=&#34;center&#34; width=&#34;600&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This is a standalone RMarkdown document: &lt;a href=&#34;https://kevinwang09.github.io/covid19/confirmed_flights.html#5_plotly_visualisations&#34; class=&#34;uri&#34;&gt;https://kevinwang09.github.io/covid19/confirmed_flights.html#5_plotly_visualisations&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The New South Wales Health website publishes a &lt;a href=&#34;https://www.health.nsw.gov.au/Infectious/diseases/Pages/coronavirus-flights.aspx&#34;&gt;list of flights with confirmed cases of COVID-19&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The coding beind this visualisation is also quite straight-forward:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The data are scrapped from the NSW Health website using the &lt;code&gt;xml2&lt;/code&gt; and &lt;code&gt;rvest&lt;/code&gt; packages. I particularly like the elegance of the coding style using tidyver to scrap this data, though some inspiration came from &lt;a href=&#34;https://stackoverflow.com/a/52863929&#34;&gt;this StackOverflow thread&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;url = &amp;quot;https://www.health.nsw.gov.au/Infectious/diseases/Pages/coronavirus-flights.aspx&amp;quot;
+raw = xml2::read_html(url)
+
+raw_flights_tbl = raw %&amp;gt;%
+  rvest::html_node(xpath = &amp;quot;.//div[@id=&amp;#39;ctl00_PlaceHolderMain_contentc1__ControlWrapper_RichHtmlField&amp;#39;]/table&amp;quot;) %&amp;gt;%
+  rvest::html_table() %&amp;gt;% 
+  as_tibble() %&amp;gt;% 
+  janitor::clean_names()&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;The geographical locations are then queried through Google Maps API for their longitude and latitudes.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;all_geocode = tibble(
+  location = c(flights_tbl$origin, flights_tbl$destination) %&amp;gt;% unique,
+  geocode = purrr::map(location, ggmap::geocode))&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;After grabbing these data, it is time to make plots using &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/confirmed_flights.Rmd#L129&#34;&gt;this chunk of code&lt;/a&gt;. Althought a lot of small adjustments were needed, but this &lt;a href=&#34;https://plotly.com/r/lines-on-maps/#flight-paths-map&#34;&gt;example from Plotly’s official website&lt;/a&gt; was quite helpful.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,924 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts | Kevin Wang</title>
+    <link>https://www.kevinwangstats.com/post/</link>
+      <atom:link href="https://www.kevinwangstats.com/post/index.xml" rel="self" type="application/rss+xml" />
+    <description>Posts</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Thu, 03 Jun 2021 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_512x512_fill_lanczos_center_3.png</url>
+      <title>Posts</title>
+      <link>https://www.kevinwangstats.com/post/</link>
+    </image>
+    
+    <item>
+      <title>Busiest air routes</title>
+      <link>https://www.kevinwangstats.com/post/busiest-air-routes/</link>
+      <pubDate>Thu, 03 Jun 2021 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/post/busiest-air-routes/</guid>
+      <description>
+&lt;script src=&#34;https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/htmlwidgets/htmlwidgets.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/plotly-binding/plotly.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/typedarray/typedarray.min.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/jquery/jquery.min.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/crosstalk/css/crosstalk.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/crosstalk/js/crosstalk.min.js&#34;&gt;&lt;/script&gt;
+&lt;link href=&#34;https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/plotly-htmlwidgets-css/plotly-htmlwidgets.css&#34; rel=&#34;stylesheet&#34; /&gt;
+&lt;script src=&#34;https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/plotly-main/plotly-latest.min.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;This is a simple exercise to extract data from a Wikipedia page (&lt;a href=&#34;https://en.wikipedia.org/wiki/List_of_busiest_passenger_air_routes&#34;&gt;List of busiest passenger air routes&lt;/a&gt;) and performing a basic data visualisation.&lt;/p&gt;
+&lt;p&gt;Why am I doing this? I somehow really got into aviation in the past 2 years. Due to the COVID travel restriction, I have spent days on YouTube watching planes taking off and landing. In a moment of self-indulgence, I would also like to add that Airbus 380 is such a beautiful engineering marvel and it is sad that COVID fastened the end of its production.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;HK-qantas.jpg&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Airbus 380 at Hong Kong airport, 2018&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;extracting-data&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Extracting data&lt;/h1&gt;
+&lt;p&gt;We can, in theory, copy and paste the data to an Excel sheet and then import the data. However, we will try to do something a bit fancier and use the &lt;code&gt;rvest&lt;/code&gt; package to extract this data.&lt;/p&gt;
+&lt;p&gt;The only downside with extracting the data in this way is that if the webpage is updated, then our code might not work. Hence, I will also save a copy of this data in my &lt;a href=&#34;https://gist.github.com/kevinwang09/cfbb5bcbc73f6d8970fa4499f2cc0621&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;suppressPackageStartupMessages({
+  library(xml2)
+  library(rvest)
+  library(tidyverse)
+})&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;webpage = xml2::read_html(&amp;quot;https://en.wikipedia.org/wiki/List_of_busiest_passenger_air_routes&amp;quot;)
+
+raw_tbl = webpage %&amp;gt;% 
+  html_element(&amp;quot;table&amp;quot;) %&amp;gt;% 
+  html_table()
+
+raw_tbl&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 50 x 7
+##     Rank `Airport 1`  `Airport 2`    `Distance (km)` `2018[1]` `2017[2]` Type   
+##    &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;        &amp;lt;chr&amp;gt;                    &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;     &amp;lt;chr&amp;gt;     &amp;lt;chr&amp;gt;  
+##  1     1 Jeju         Seoul-Gimpo                449 14,107,4… 13,460,3… Domest…
+##  2     2 Sapporo      Tokyo-Haneda               835 9,698,639 8,726,502 Domest…
+##  3     3 Sydney       Melbourne                  705 9,245,392 9,090,941 Domest…
+##  4     4 Fukuoka      Tokyo-Haneda               889 8,762,547 7,864,000 Domest…
+##  5     5 Mumbai       Delhi                     1150 7,392,155 7,129,943 Domest…
+##  6     6 Hanoi        Ho Chi Minh C…            1171 6,867,114 6,769,823 Domest…
+##  7     7 Beijing      Shanghai-Hong…            1081 6,518,997 6,833,684 Domest…
+##  8     8 Hong Kong    Taipei-Taoyuan             802 6,476,268 6,719,030 Intern…
+##  9     9 Tokyo-Haneda Naha                      1573 5,829,712 5,269,481 Domest…
+## 10    10 Jakarta      Surabaya                   700 5,649,046 5,271,304 Domest…
+## # … with 40 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## We are only interested in the 2018 passenger numbers
+subset_tbl = raw_tbl %&amp;gt;% 
+  dplyr::transmute(
+    rank = Rank, 
+    airport1 = `Airport 1`, 
+    airport2 = `Airport 2`, 
+    distance = `Distance (km)`, 
+    passengers = `2018[1]` %&amp;gt;% str_remove_all(&amp;quot;,&amp;quot;) %&amp;gt;% as.integer(), 
+    type = Type)
+
+subset_tbl&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 50 x 6
+##     rank airport1     airport2          distance passengers type         
+##    &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;        &amp;lt;chr&amp;gt;                &amp;lt;int&amp;gt;      &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;        
+##  1     1 Jeju         Seoul-Gimpo            449   14107414 Domestic     
+##  2     2 Sapporo      Tokyo-Haneda           835    9698639 Domestic     
+##  3     3 Sydney       Melbourne              705    9245392 Domestic     
+##  4     4 Fukuoka      Tokyo-Haneda           889    8762547 Domestic     
+##  5     5 Mumbai       Delhi                 1150    7392155 Domestic     
+##  6     6 Hanoi        Ho Chi Minh City      1171    6867114 Domestic     
+##  7     7 Beijing      Shanghai-Hongqiao     1081    6518997 Domestic     
+##  8     8 Hong Kong    Taipei-Taoyuan         802    6476268 International
+##  9     9 Tokyo-Haneda Naha                  1573    5829712 Domestic     
+## 10    10 Jakarta      Surabaya               700    5649046 Domestic     
+## # … with 40 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;write_csv(x = subset_tbl, file = &amp;quot;raw_airports_data.csv&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Notice that most of the “airports” are actually just the name of the city. We will use this to grab the longitude and latitude information. However, there are some exceptions like “Tokyo-Haneda”, where “Haneda” is one of the two international airports in the city of Tokyo. We will need to clean up these exceptions for consistency.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;clean_tbl = subset_tbl %&amp;gt;% 
+  dplyr::mutate(
+    city1 = purrr::map_chr(.x = airport1,
+                       .f = ~ str_split(.x, &amp;quot;-&amp;quot;)[[1]][1]),
+    city2 = purrr::map_chr(.x = airport2,
+                       .f = ~ str_split(.x, &amp;quot;-&amp;quot;)[[1]][1]))
+
+clean_tbl&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 50 x 8
+##     rank airport1   airport2     distance passengers type      city1   city2    
+##    &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;      &amp;lt;chr&amp;gt;           &amp;lt;int&amp;gt;      &amp;lt;int&amp;gt; &amp;lt;chr&amp;gt;     &amp;lt;chr&amp;gt;   &amp;lt;chr&amp;gt;    
+##  1     1 Jeju       Seoul-Gimpo       449   14107414 Domestic  Jeju    Seoul    
+##  2     2 Sapporo    Tokyo-Haneda      835    9698639 Domestic  Sapporo Tokyo    
+##  3     3 Sydney     Melbourne         705    9245392 Domestic  Sydney  Melbourne
+##  4     4 Fukuoka    Tokyo-Haneda      889    8762547 Domestic  Fukuoka Tokyo    
+##  5     5 Mumbai     Delhi            1150    7392155 Domestic  Mumbai  Delhi    
+##  6     6 Hanoi      Ho Chi Minh…     1171    6867114 Domestic  Hanoi   Ho Chi M…
+##  7     7 Beijing    Shanghai-Ho…     1081    6518997 Domestic  Beijing Shanghai 
+##  8     8 Hong Kong  Taipei-Taoy…      802    6476268 Internat… Hong K… Taipei   
+##  9     9 Tokyo-Han… Naha             1573    5829712 Domestic  Tokyo   Naha     
+## 10    10 Jakarta    Surabaya          700    5649046 Domestic  Jakarta Surabaya 
+## # … with 40 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;getting-locations-for-the-cities&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Getting locations for the cities&lt;/h1&gt;
+&lt;div id=&#34;google-maps-api&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Google Maps API&lt;/h2&gt;
+&lt;p&gt;There are many ways of getting the location information for cities. In the past, I have found the most reliable way is to get it through &lt;code&gt;ggmap&lt;/code&gt; which uses the Google Maps API, but this means you must set up a Google Cloud Platform billing account with them (which unfortunately requires a credit card). See &lt;a href=&#34;https://cran.r-project.org/web/packages/ggmap/readme/README.html&#34;&gt;this documentation&lt;/a&gt;. Once a project is set up with the Google Cloud Platform, you will then need to enable the Google Maps API by searching for it in the top search bar. The API key is required too, see the documentations for &lt;code&gt;ggmap::register_google&lt;/code&gt; for more information.&lt;/p&gt;
+&lt;p&gt;Aside: is all these worth it? In my experience, absolutely! Because Google Maps is very smart and tends to understand certain complexities that you didn’t think of and handle those for you. For example, if you are interested in the city of Sydney, Google Maps will understand that to be the city of Sydney in Australia, not the city in Nova Scotia, Canada (I don’t know how they do this, but my guess is that they will return results that are more relevant, because, well, they are Google). Google Cloud is also offering free credits for most of their basic services, so one can take advantage of these without incurring substantial costs.&lt;/p&gt;
+&lt;p&gt;To ensure code reproducibility, I will use the code below to download the coordinates for all the cities, save it as a CSV and make it available on &lt;a href=&#34;https://gist.github.com/kevinwang09/006d00ee7a43778171e7fc2fd409cdd6&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ggmap)
+# ggmap::geocode(&amp;quot;Sydney, Australia&amp;quot;, output = &amp;quot;latlon&amp;quot;, source = &amp;quot;google&amp;quot;)
+all_cities = c(clean_tbl$city1, clean_tbl$city2) %&amp;gt;% unique
+all_geocode = ggmap::geocode(location = all_cities, output = &amp;quot;latlon&amp;quot;)
+city_tbl = tibble(
+  city = all_cities,
+  lon = all_geocode$lon,
+  lat = all_geocode$lat)
+
+readr::write_csv(x = city_tbl, file = &amp;quot;./city_tbl.csv&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Alternatively, if you don’t want to register for Google’s billings, you could use the &lt;code&gt;tidygeocoder&lt;/code&gt;’s &lt;code&gt;geocode&lt;/code&gt; function to get the latitude/longitude information via Open Street Map, which doesn’t require registration, but in my experience, it can be slower than Google Maps.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;tidygeocoder-location-extractions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;code&gt;tidygeocoder&lt;/code&gt; location extractions&lt;/h2&gt;
+&lt;p&gt;A small example:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;city_tbl = tibble(
+  city = c(clean_tbl$city1, clean_tbl$city2) %&amp;gt;% unique) %&amp;gt;% 
+  tidygeocoder::geocode(city, method = &amp;#39;osm&amp;#39;, lat = latitude , long = longitude)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;simple-maps-location-extractions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Simple maps location extractions&lt;/h2&gt;
+&lt;p&gt;You could also use the data provided in &lt;a href=&#34;https://simplemaps.com/data/world-cities&#34; class=&#34;uri&#34;&gt;https://simplemaps.com/data/world-cities&lt;/a&gt; to perform data joins to get the location information. The downloaded data looks quite tidy with additional ASCII encoding and I was quite impressed with the quality of the data.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;joining-data-and-visualise&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Joining data and visualise&lt;/h1&gt;
+&lt;p&gt;Once we have the location information we can simply join the data as followed:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;city_tbl = readr::read_csv(file = &amp;quot;https://gist.githubusercontent.com/kevinwang09/006d00ee7a43778171e7fc2fd409cdd6/raw/f12ec9deecdd99b093d0c819e21b125a7f7d4afd/city_tbl.csv&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   city = col_character(),
+##   lon = col_double(),
+##   lat = col_double()
+## )&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;joined_data = clean_tbl %&amp;gt;% 
+  left_join(city_tbl, by = c(&amp;quot;city1&amp;quot; = &amp;quot;city&amp;quot;)) %&amp;gt;% 
+  left_join(city_tbl, by = c(&amp;quot;city2&amp;quot; = &amp;quot;city&amp;quot;), suffix = c(&amp;quot;1&amp;quot;, &amp;quot;2&amp;quot;))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I really like &lt;code&gt;plotly&lt;/code&gt;’s globe visualisation, because you can click and drag the globe, which is really nice.&lt;/p&gt;
+&lt;p&gt;Using this visualisation, we can see most of the busiest routes in the world are concentrated around Asia. What surprised me a few years ago is that Australia, despite its small population, also had a couple of routes made it to this list, with Sydney - Melbourne being the third on the list. In my experience, on a good day, there could be two planes at the Sydney airport flying to Melbourne but only 10 minutes apart. Which I must admit was a rare luxury that I never realised.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(plotly)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Attaching package: &amp;#39;plotly&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following object is masked from &amp;#39;package:ggplot2&amp;#39;:
+## 
+##     last_plot&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following object is masked from &amp;#39;package:stats&amp;#39;:
+## 
+##     filter&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following object is masked from &amp;#39;package:graphics&amp;#39;:
+## 
+##     layout&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;geo &amp;lt;- list(
+  scope = &amp;#39;world&amp;#39;,
+  projection = list(type = &amp;#39;orthographic&amp;#39;),
+  showland = TRUE,
+  landcolor = toRGB(&amp;quot;gray95&amp;quot;),
+  countrycolor = toRGB(&amp;quot;gray80&amp;quot;)
+)
+
+fig &amp;lt;- plot_geo(color = I(&amp;quot;red&amp;quot;))
+
+fig &amp;lt;- fig %&amp;gt;% 
+  add_markers(
+    data = joined_data, x = ~lon1, y = ~lat1, text = ~city1,
+    hoverinfo = &amp;quot;text&amp;quot;, alpha = 0.5) %&amp;gt;% 
+  add_markers(
+    data = joined_data, x = ~lon2, y = ~lat2, text = ~city2,
+    hoverinfo = &amp;quot;text&amp;quot;, alpha = 0.5) %&amp;gt;% 
+  add_segments(
+    data = group_by(joined_data, rank),
+    x = ~lon1, xend = ~lon2,
+    y = ~lat1, yend = ~lat2,
+    alpha = 0.3, size = I(1), 
+    hoverinfo = &amp;quot;none&amp;quot;) %&amp;gt;% 
+  layout(
+    title = &amp;#39;Busiest air routes in the world&amp;#39;,
+    geo = geo, 
+    showlegend = FALSE, 
+    height = 800)
+
+fig&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;htmlwidget-1&#34; style=&#34;width:672px;height:480px;&#34; class=&#34;plotly html-widget&#34;&gt;&lt;/div&gt;
+&lt;script type=&#34;application/json&#34; data-for=&#34;htmlwidget-1&#34;&gt;{&#34;x&#34;:{&#34;visdat&#34;:{&#34;12dae18202af8&#34;:[&#34;function () &#34;,&#34;plotlyVisDat&#34;],&#34;12dae67e50c27&#34;:[&#34;function () &#34;,&#34;data&#34;],&#34;12dae6e8109ba&#34;:[&#34;function () &#34;,&#34;data&#34;],&#34;12dae59a5cb03&#34;:[&#34;function () &#34;,&#34;data&#34;]},&#34;cur_data&#34;:&#34;12dae59a5cb03&#34;,&#34;attrs&#34;:{&#34;12dae67e50c27&#34;:{&#34;color&#34;:[&#34;red&#34;],&#34;alpha_stroke&#34;:1,&#34;sizes&#34;:[10,100],&#34;spans&#34;:[1,20],&#34;x&#34;:{},&#34;y&#34;:{},&#34;type&#34;:&#34;scatter&#34;,&#34;mode&#34;:&#34;markers&#34;,&#34;text&#34;:{},&#34;hoverinfo&#34;:&#34;text&#34;,&#34;alpha&#34;:0.5,&#34;inherit&#34;:true},&#34;12dae6e8109ba&#34;:{&#34;color&#34;:[&#34;red&#34;],&#34;alpha_stroke&#34;:1,&#34;sizes&#34;:[10,100],&#34;spans&#34;:[1,20],&#34;x&#34;:{},&#34;y&#34;:{},&#34;type&#34;:&#34;scatter&#34;,&#34;mode&#34;:&#34;markers&#34;,&#34;text&#34;:{},&#34;hoverinfo&#34;:&#34;text&#34;,&#34;alpha&#34;:0.5,&#34;inherit&#34;:true},&#34;12dae59a5cb03&#34;:{&#34;color&#34;:[&#34;red&#34;],&#34;alpha_stroke&#34;:1,&#34;sizes&#34;:[10,100],&#34;spans&#34;:[1,20],&#34;x&#34;:{},&#34;y&#34;:{},&#34;xend&#34;:{},&#34;yend&#34;:{},&#34;type&#34;:&#34;scatter&#34;,&#34;mode&#34;:&#34;lines&#34;,&#34;alpha&#34;:0.3,&#34;size&#34;:[1],&#34;hoverinfo&#34;:&#34;none&#34;,&#34;inherit&#34;:true}},&#34;layout&#34;:{&#34;height&#34;:800,&#34;margin&#34;:{&#34;b&#34;:40,&#34;l&#34;:60,&#34;t&#34;:25,&#34;r&#34;:10},&#34;mapType&#34;:&#34;geo&#34;,&#34;title&#34;:&#34;Busiest air routes in the world&#34;,&#34;geo&#34;:{&#34;domain&#34;:{&#34;x&#34;:[0,1],&#34;y&#34;:[0,1]},&#34;scope&#34;:&#34;world&#34;,&#34;projection&#34;:{&#34;type&#34;:&#34;orthographic&#34;},&#34;showland&#34;:true,&#34;landcolor&#34;:&#34;rgba(242,242,242,1)&#34;,&#34;countrycolor&#34;:&#34;rgba(204,204,204,1)&#34;},&#34;showlegend&#34;:false,&#34;hovermode&#34;:&#34;closest&#34;},&#34;source&#34;:&#34;A&#34;,&#34;config&#34;:{&#34;showSendToCloud&#34;:false},&#34;data&#34;:[{&#34;type&#34;:&#34;scattergeo&#34;,&#34;mode&#34;:&#34;markers&#34;,&#34;text&#34;:[&#34;Jeju&#34;,&#34;Sapporo&#34;,&#34;Sydney&#34;,&#34;Fukuoka&#34;,&#34;Mumbai&#34;,&#34;Hanoi&#34;,&#34;Beijing&#34;,&#34;Hong Kong&#34;,&#34;Tokyo&#34;,&#34;Jakarta&#34;,&#34;Jakarta&#34;,&#34;Jeddah&#34;,&#34;Tokyo&#34;,&#34;Chengdu&#34;,&#34;Guangzhou&#34;,&#34;Cancun&#34;,&#34;Beijing&#34;,&#34;Brisbane&#34;,&#34;Jakarta&#34;,&#34;Guangzhou&#34;,&#34;Shanghai&#34;,&#34;Bangalore&#34;,&#34;Jakarta&#34;,&#34;Jakarta&#34;,&#34;Cape Town&#34;,&#34;Kuala Lumpur&#34;,&#34;São Paulo–Congonhas&#34;,&#34;Hong Kong&#34;,&#34;New York&#34;,&#34;Bogotá&#34;,&#34;Bangalore&#34;,&#34;Los Angeles&#34;,&#34;Bangkok&#34;,&#34;Brisbane&#34;,&#34;Cebu&#34;,&#34;Hong Kong&#34;,&#34;Mexico City&#34;,&#34;Kolkata&#34;,&#34;Da Nang&#34;,&#34;Chiang Mai&#34;,&#34;Seoul&#34;,&#34;Cusco&#34;,&#34;New York&#34;,&#34;Jakarta&#34;,&#34;Mexico City&#34;,&#34;Jeju&#34;,&#34;İzmir&#34;,&#34;Hong Kong&#34;,&#34;Guangzhou&#34;,&#34;Hong Kong&#34;],&#34;hoverinfo&#34;:[&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;],&#34;marker&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,0.5)&#34;,&#34;line&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,1)&#34;}},&#34;textfont&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,0.5)&#34;},&#34;line&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,0.5)&#34;},&#34;geo&#34;:&#34;geo&#34;,&#34;lat&#34;:[33.4996213,43.0617713,-33.8688197,33.5901838,19.0759837,21.0277644,39.9041999,22.3193039,35.6761919,-6.2087634,-6.2087634,21.485811,35.6761919,30.572815,23.12911,21.161908,39.9041999,-27.4704528,-6.2087634,23.12911,31.230416,12.9715987,-6.2087634,-6.2087634,-33.9248685,3.139003,-23.6273246,22.3193039,40.7127753,4.7109886,12.9715987,34.0522342,13.7563309,-27.4704528,10.3156992,22.3193039,19.4326077,22.572646,16.0544068,18.7883439,37.566535,-13.53195,40.7127753,-6.2087634,19.4326077,33.4996213,38.423734,22.3193039,23.12911,22.3193039],&#34;lon&#34;:[126.5311884,141.3544507,151.2092955,130.4016888,72.8776559,105.8341598,116.4073963,114.1693611,139.6503106,106.845599,106.845599,39.1925048,139.6503106,104.066801,113.264385,-86.8515279,116.4073963,153.0260341,106.845599,113.264385,121.473701,77.5945627,106.845599,106.845599,18.4240553,101.686855,-46.6565842,114.1693611,-74.0059728,-74.072092,77.5945627,-118.2436849,100.5017651,153.0260341,123.8854366,114.1693611,-99.133208,88.363895,108.2021667,98.9853008,126.9779692,-71.9674626,-74.0059728,106.845599,-99.133208,126.5311884,27.142826,114.1693611,113.264385,114.1693611],&#34;frame&#34;:null},{&#34;type&#34;:&#34;scattergeo&#34;,&#34;mode&#34;:&#34;markers&#34;,&#34;text&#34;:[&#34;Seoul&#34;,&#34;Tokyo&#34;,&#34;Melbourne&#34;,&#34;Tokyo&#34;,&#34;Delhi&#34;,&#34;Ho Chi Minh City&#34;,&#34;Shanghai&#34;,&#34;Taipei&#34;,&#34;Naha&#34;,&#34;Surabaya&#34;,&#34;Denpasar&#34;,&#34;Riyadh&#34;,&#34;Osaka&#34;,&#34;Beijing&#34;,&#34;Beijing&#34;,&#34;Mexico City&#34;,&#34;Shenzhen&#34;,&#34;Sydney&#34;,&#34;Singapore&#34;,&#34;Shanghai&#34;,&#34;Shenzhen&#34;,&#34;Delhi&#34;,&#34;Makassar&#34;,&#34;Medan&#34;,&#34;Johannesburg&#34;,&#34;Singapore&#34;,&#34;Rio de Janeiro&#34;,&#34;Shanghai&#34;,&#34;Los Angeles&#34;,&#34;Medellin&#34;,&#34;Mumbai&#34;,&#34;San Francisco&#34;,&#34;Phuket&#34;,&#34;Melbourne&#34;,&#34;Manila&#34;,&#34;Bangkok&#34;,&#34;Monterrey&#34;,&#34;Delhi&#34;,&#34;Ho Chi Minh City&#34;,&#34;Bangkok&#34;,&#34;Osaka&#34;,&#34;Lima&#34;,&#34;Chicago&#34;,&#34;Kuala Lumpur&#34;,&#34;Guadalajara&#34;,&#34;Gimhae&#34;,&#34;Istanbul&#34;,&#34;Seoul&#34;,&#34;Chengdu&#34;,&#34;Manila&#34;],&#34;hoverinfo&#34;:[&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;,&#34;text&#34;],&#34;marker&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,0.5)&#34;,&#34;line&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,1)&#34;}},&#34;textfont&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,0.5)&#34;},&#34;line&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,0.5)&#34;},&#34;geo&#34;:&#34;geo&#34;,&#34;lat&#34;:[37.566535,35.6761919,-37.8136276,35.6761919,28.7040592,10.8230989,31.230416,25.0329694,26.2125758,-7.2574719,-8.6704582,24.7135517,34.6937249,39.9041999,39.9041999,19.4326077,22.543096,-33.8688197,1.352083,31.230416,22.543096,28.7040592,-5.1476651,3.5951956,-26.2041028,1.352083,-22.9068467,31.230416,34.0522342,6.2476376,19.0759837,37.7749295,7.9519331,-37.8136276,14.5995124,13.7563309,25.6866142,28.7040592,10.8230989,13.7563309,34.6937249,-12.0463731,41.8781136,3.139003,20.6596988,35.2285451,41.0082376,37.566535,30.572815,14.5995124],&#34;lon&#34;:[126.9779692,139.6503106,144.9630576,139.6503106,77.1024902,106.6296638,121.473701,121.5654177,127.6790208,112.7520883,115.2126293,46.6752957,135.5022535,116.4073963,116.4073963,-99.133208,114.057865,151.2092955,103.819836,121.473701,114.057865,77.1024902,119.4327314,98.6722227,28.0473051,103.819836,-43.1728965,121.473701,-118.2436849,-75.5658153,72.8776559,-122.4194155,98.3380884,144.9630576,120.9842195,100.5017651,-100.3161126,77.1024902,106.6296638,100.5017651,135.5022535,-77.042754,-87.6297982,101.686855,-103.3496092,128.8893517,28.9783589,126.9779692,104.066801,120.9842195],&#34;frame&#34;:null},{&#34;type&#34;:&#34;scattergeo&#34;,&#34;mode&#34;:&#34;lines&#34;,&#34;hoverinfo&#34;:[&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;,null,&#34;none&#34;,&#34;none&#34;],&#34;marker&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,0.3)&#34;,&#34;size&#34;:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],&#34;sizemode&#34;:&#34;area&#34;,&#34;line&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,1)&#34;}},&#34;textfont&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,0.3)&#34;,&#34;size&#34;:1},&#34;line&#34;:{&#34;color&#34;:&#34;rgba(255,0,0,0.3)&#34;,&#34;width&#34;:1},&#34;geo&#34;:&#34;geo&#34;,&#34;lat&#34;:[33.4996213,37.566535,null,43.0617713,35.6761919,null,-33.8688197,-37.8136276,null,33.5901838,35.6761919,null,19.0759837,28.7040592,null,21.0277644,10.8230989,null,39.9041999,31.230416,null,22.3193039,25.0329694,null,35.6761919,26.2125758,null,-6.2087634,-7.2574719,null,-6.2087634,-8.6704582,null,21.485811,24.7135517,null,35.6761919,34.6937249,null,30.572815,39.9041999,null,23.12911,39.9041999,null,21.161908,19.4326077,null,39.9041999,22.543096,null,-27.4704528,-33.8688197,null,-6.2087634,1.352083,null,23.12911,31.230416,null,31.230416,22.543096,null,12.9715987,28.7040592,null,-6.2087634,-5.1476651,null,-6.2087634,3.5951956,null,-33.9248685,-26.2041028,null,3.139003,1.352083,null,-23.6273246,-22.9068467,null,22.3193039,31.230416,null,40.7127753,34.0522342,null,4.7109886,6.2476376,null,12.9715987,19.0759837,null,34.0522342,37.7749295,null,13.7563309,7.9519331,null,-27.4704528,-37.8136276,null,10.3156992,14.5995124,null,22.3193039,13.7563309,null,19.4326077,25.6866142,null,22.572646,28.7040592,null,16.0544068,10.8230989,null,18.7883439,13.7563309,null,37.566535,34.6937249,null,-13.53195,-12.0463731,null,40.7127753,41.8781136,null,-6.2087634,3.139003,null,19.4326077,20.6596988,null,33.4996213,35.2285451,null,38.423734,41.0082376,null,22.3193039,37.566535,null,23.12911,30.572815,null,22.3193039,14.5995124],&#34;lon&#34;:[126.5311884,126.9779692,null,141.3544507,139.6503106,null,151.2092955,144.9630576,null,130.4016888,139.6503106,null,72.8776559,77.1024902,null,105.8341598,106.6296638,null,116.4073963,121.473701,null,114.1693611,121.5654177,null,139.6503106,127.6790208,null,106.845599,112.7520883,null,106.845599,115.2126293,null,39.1925048,46.6752957,null,139.6503106,135.5022535,null,104.066801,116.4073963,null,113.264385,116.4073963,null,-86.8515279,-99.133208,null,116.4073963,114.057865,null,153.0260341,151.2092955,null,106.845599,103.819836,null,113.264385,121.473701,null,121.473701,114.057865,null,77.5945627,77.1024902,null,106.845599,119.4327314,null,106.845599,98.6722227,null,18.4240553,28.0473051,null,101.686855,103.819836,null,-46.6565842,-43.1728965,null,114.1693611,121.473701,null,-74.0059728,-118.2436849,null,-74.072092,-75.5658153,null,77.5945627,72.8776559,null,-118.2436849,-122.4194155,null,100.5017651,98.3380884,null,153.0260341,144.9630576,null,123.8854366,120.9842195,null,114.1693611,100.5017651,null,-99.133208,-100.3161126,null,88.363895,77.1024902,null,108.2021667,106.6296638,null,98.9853008,100.5017651,null,126.9779692,135.5022535,null,-71.9674626,-77.042754,null,-74.0059728,-87.6297982,null,106.845599,101.686855,null,-99.133208,-103.3496092,null,126.5311884,128.8893517,null,27.142826,28.9783589,null,114.1693611,126.9779692,null,113.264385,104.066801,null,114.1693611,120.9842195],&#34;frame&#34;:null}],&#34;highlight&#34;:{&#34;on&#34;:&#34;plotly_click&#34;,&#34;persistent&#34;:false,&#34;dynamic&#34;:false,&#34;selectize&#34;:false,&#34;opacityDim&#34;:0.2,&#34;selected&#34;:{&#34;opacity&#34;:1},&#34;debounce&#34;:0},&#34;shinyEvents&#34;:[&#34;plotly_hover&#34;,&#34;plotly_click&#34;,&#34;plotly_selected&#34;,&#34;plotly_relayout&#34;,&#34;plotly_brushed&#34;,&#34;plotly_brushing&#34;,&#34;plotly_clickannotation&#34;,&#34;plotly_doubleclick&#34;,&#34;plotly_deselect&#34;,&#34;plotly_afterplot&#34;,&#34;plotly_sunburstclick&#34;],&#34;base_url&#34;:&#34;https://plot.ly&#34;},&#34;evals&#34;:[],&#34;jsHooks&#34;:[]}&lt;/script&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Confidence and prediction intervals</title>
+      <link>https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/</link>
+      <pubDate>Sun, 30 May 2021 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/</guid>
+      <description>
+&lt;script src=&#34;https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;How can we (statisticians) better explain the differences between a confidence interval (CI) and a prediction interval (PI)? Sure, one could look up the definition on Wikipedia and memorise the definitions, but the real difficulty is how to communicate this clearly to young students/collaborators/clients without using mathematical formalism. For a linear regression model and a given value of the independent variable, the CI and PI confusingly share the same point estimate. Worse still, if we write out the mathematical formulas, they are virtually identical except one term!&lt;/p&gt;
+&lt;p&gt;The difference between the interpretation of CI and PI is actually a great example of how very similar mathematical constructions can lead to very different interpretations. These terms are not always rigorously defined and used, sometimes even in reputable sources (I would also add tolerance intervals here as well, but perhaps for another day).&lt;/p&gt;
+&lt;p&gt;This blog post explains the main statistical differences between CI and PI in a linear regression model through visualisations. In short:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;CI shows the variability in &lt;strong&gt;parameter estimates&lt;/strong&gt;. The primary intention is to understand the &lt;strong&gt;variability in the model&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;PI shows the variability in &lt;strong&gt;individual data points&lt;/strong&gt;. The primary intention is to &lt;strong&gt;capture future data points&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;combined_CI_PI_animation.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The statements above are of course extreme simplifications of these statistical concepts. I will attempt to minimise the need for mathematical derivations and use intuitive language and simulations to illustrate the subtle differences between these two concepts.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;a-quick-simulation-to-set-the-scene&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;A quick simulation to set the scene&lt;/h1&gt;
+&lt;p&gt;Suppose we have an independent variable (&lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt;) and a dependent variable (&lt;span class=&#34;math inline&#34;&gt;\(y\)&lt;/span&gt;) and we are asked to produce a linear regression.&lt;/p&gt;
+&lt;p&gt;For simplicity, I will generate some data with &lt;span class=&#34;math inline&#34;&gt;\(X \sim N(2,0.2^2)\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(\epsilon \sim N(0, 0.2^2)\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(y = 1 + 2*x + \epsilon\)&lt;/span&gt;. As much as I would like to use real data to add real-world relevance, generating data with a known value means that we are allowed to discuss how good our estimates are compared to the “true” value. This idea of a “true” value is not always possible if we use real data.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## Some packages that we will be using
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(broom)
+  library(ggpubr)
+})&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We will also use the &lt;code&gt;geom_smooth(method = &#34;lm&#34;)&lt;/code&gt; function from the &lt;code&gt;ggplot2&lt;/code&gt; package to add the (simple) linear regression line. I also choose to use the option &lt;code&gt;se = FALSE&lt;/code&gt; to suppress the visualisation of the (confidence) interval as we will do this manually later.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(8)
+theme_set(theme_classic(18))
+
+n = 30
+x = rnorm(n, 2, 0.2)
+epsilon = rnorm(n, 0, 0.2)
+y = 1 + 2*x + epsilon
+
+df = tibble(x, y)
+
+model = lm(y ~ x, data = df)
+
+df %&amp;gt;% 
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = &amp;quot;lm&amp;quot;, se = FALSE) +
+  ggpubr::stat_regline_equation()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## `geom_smooth()` using formula &amp;#39;y ~ x&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/index_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;confidence-interval-ci&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Confidence interval (CI)&lt;/h1&gt;
+&lt;div id=&#34;on-a-single-parameter&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;On a single parameter&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Definition&lt;/strong&gt;: if we are asked to construct a 95% CI for a parameter, then the probability* that this CI will contain the &lt;em&gt;true&lt;/em&gt; population parameter value is 95%. We can replace the “95%” with any other percentage that we can think of, though it is rare for us to consider something below 90%.&lt;/p&gt;
+&lt;p&gt;*The word “probability” is to be interpreted using a frequentist approach. See bonus section 1.&lt;/p&gt;
+&lt;p&gt;For example, if we were to look at the linear model above, the true slope value is 2, because that is how we generated the data through a formula. But the point estimate for this parameter is about 2.1 (formula in the top left corner of the plot), not exactly 2. You may ask, what is going on?!&lt;/p&gt;
+&lt;p&gt;This is because any data sampled from a population, being only a sample, cannot encapsulate entirely what is going on in the population. Our point estimate (in this case, 2.1) is estimated using our data, and thus, can’t be numerically identical to the true parameter (in this case, 2) that is associated with a population. This interplay between an estimate and the parameter of interest (or similarly, between a sampled data and the underlying population) is a fundamental concept in statistics.&lt;/p&gt;
+&lt;p&gt;We can think of a CI as being another estimate for the population parameter. Unlike a point estimate, which is just a point, a CI is an interval defined between an upper bound and a lower bound. The midpoint of a CI is the point estimate. Thus, we can think of a CI as a way to quantify the variability for that point estimate*!&lt;/p&gt;
+&lt;!-- And if a CI contains the parameter of interest (in this case, 2), then we may retain the null hypothesis that the population parameter is 2. Notice how I used the phrase &#34;null hypothesis&#34; here, that is because there is a equivalence relationship between $(1−\alpha)\%$ CI and hypothesis testing with alpha as the significance level. --&gt;
+&lt;p&gt;*Interestingly, in my experience, a point estimate, being just a single number, can often mislead some people into thinking that there is a lot of certainty behind this number when it absolutely does not! The associate CI could be quite large even if your point estimate looks very reasonable.&lt;/p&gt;
+&lt;p&gt;The confidence interval for the slope parameter can be computed as (1.8067, 2.4091) using the code below. Notice how the point estimate of 2.1 is halfway between the two bounds and that this CI also contains the true parameter value of 2. Similarly, one can construct confidence interval for the intercept term as (0.1906, 1.3905).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;confint(model)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##                 2.5 %   97.5 %
+## (Intercept) 0.1905894 1.390481
+## x           1.8067446 2.409144&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;visualisation&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Visualisation&lt;/h2&gt;
+&lt;p&gt;We now have a basic understanding of what a CI is with respect to a single parameter, but who cares about a single parameter anyways? After all, a statistical model could have many parameters, how would knowing a single one enhance our knowledge of the entire model?&lt;/p&gt;
+&lt;p&gt;Here is where a bit of creative visualisation can help us! Notice how the linear regression model, written out as a formula, is &lt;span class=&#34;math inline&#34;&gt;\(y = \alpha + \beta x + \epsilon\)&lt;/span&gt; with &lt;span class=&#34;math inline&#34;&gt;\(\alpha\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\beta\)&lt;/span&gt; being the population intercept and slope parameters, respectively. When we make estimations on these parameters, our linear model, as a straight line is &lt;span class=&#34;math inline&#34;&gt;\(y = \hat{\alpha} + \hat{\beta} x + \epsilon\)&lt;/span&gt;, where &lt;span class=&#34;math inline&#34;&gt;\(\hat{\alpha}\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\hat{\beta}\)&lt;/span&gt; estimate &lt;span class=&#34;math inline&#34;&gt;\(\alpha\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\beta\)&lt;/span&gt; respectively. So if we have the CIs quantifying the variability of&lt;span class=&#34;math inline&#34;&gt;\(\hat{\alpha}\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\hat{\beta}\)&lt;/span&gt;, then we should also be able to produce a CI associated with the linear model itself! And by doing so, we can get a better idea of how &lt;strong&gt;variable&lt;/strong&gt; the entire model is because we know how variable the individual estimates are!&lt;/p&gt;
+&lt;p&gt;Even if you didn’t understand the above, the CI associated with the linear model is simply the gray area produced by &lt;code&gt;geom_smooth(method = &#34;lm&#34;, se = TRUE)&lt;/code&gt; when using &lt;code&gt;ggplot2&lt;/code&gt;! You can think of this line as how the linear model line (blue) “jiggles” if you have (future) data sampled from the same underlying distribution.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df %&amp;gt;%
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  ggpubr::stat_regline_equation() +
+  geom_smooth(method = &amp;quot;lm&amp;quot;, se = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## `geom_smooth()` using formula &amp;#39;y ~ x&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;prediction-interval-pi&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Prediction interval (PI)&lt;/h1&gt;
+&lt;div id=&#34;on-a-single-data-point&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;On a single data point&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Definition&lt;/strong&gt;: If we were to construct a 95% prediction interval for a given value of &lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt; for a given linear model, then the probability that it will contain the corresponding value of &lt;span class=&#34;math inline&#34;&gt;\(y\)&lt;/span&gt; is 95%.&lt;/p&gt;
+&lt;p&gt;This is fundamentally different to a confidence interval, because CI tries to quantify the variability of an estimate, but PI is aiming to capture the variability of a (future) data point, &lt;span class=&#34;math inline&#34;&gt;\(y_{new}\)&lt;/span&gt;, given some &lt;span class=&#34;math inline&#34;&gt;\(x_{new}\)&lt;/span&gt; value. In other words, a CI tries to quantify the behaviour of an estimate (obtained through averaging many data points), but a PI tries to quantify the behaviour of a single data point. Thus, we should expect, through simple intuition, that individual behaviour is more variable than the averaged behaviour. And so, &lt;strong&gt;PI is usually wider than a CI&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;The main source of confusion for some people is that, both CI and PI share the same point estimate, i.e. &lt;span class=&#34;math inline&#34;&gt;\(\hat{\alpha} + \hat{\beta} \bar{x}\)&lt;/span&gt;. It also doesn’t help when these concepts are sometimes mixed up and talked about as though they are interchangeable in some colloquial settings.&lt;/p&gt;
+&lt;p&gt;One can compute the point prediction value and the 95% PI in &lt;code&gt;R&lt;/code&gt; using the code below. Though admittedly, we are simply producing predictions for the original data, not new data (thus the warning message in &lt;code&gt;R&lt;/code&gt;).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;predict(model, interval = &amp;quot;prediction&amp;quot;) %&amp;gt;% head&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning in predict.lm(model, interval = &amp;quot;prediction&amp;quot;): predictions on current data refer to _future_ responses&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##        fit      lwr      upr
+## 1 4.970763 4.605474 5.336052
+## 2 5.360727 4.991068 5.730386
+## 3 4.811024 4.445082 5.176966
+## 4 4.774198 4.407903 5.140492
+## 5 5.316730 4.947982 5.685477
+## 6 4.960942 4.595653 5.326230&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;visualisation-1&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Visualisation&lt;/h1&gt;
+&lt;p&gt;In my experience, PI’s are more intuitive to understand than CI’s. PI is simply a region to capture new data, but CI is about how the model “jiggles”.&lt;/p&gt;
+&lt;p&gt;It is slightly harder to generate a PI using &lt;code&gt;ggplot2&lt;/code&gt; with some customisation needed for the &lt;code&gt;geom_smooth&lt;/code&gt; function. Thus, I will attempt to generate both CI and PI manually and use &lt;code&gt;ggplot2&lt;/code&gt; for visualisation. I particularly like the &lt;code&gt;broom::augment&lt;/code&gt; function to generate these intervals here.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ci = broom::augment(model, interval = &amp;quot;confidence&amp;quot;)
+pi = broom::augment(model, interval = &amp;quot;prediction&amp;quot;)
+
+plotdf = tibble(
+  x = ci$x,
+  y = ci$y, 
+  line = ci$.fitted,
+  ci_lwr = ci$.lower,
+  ci_upr = ci$.upper,
+  pi_lwr = pi$.lower,
+  pi_upr = pi$.upper)
+
+plot1 = plotdf %&amp;gt;% 
+  ggplot(aes(x = x, y = y)) +
+  geom_point() + 
+  geom_line(aes(x = x, y = line), colour = &amp;quot;blue&amp;quot;) +
+  geom_ribbon(aes(x = x, ymin = ci_lwr, ymax = ci_upr), fill = &amp;quot;gray20&amp;quot;, alpha = 0.3) +
+  labs(caption = &amp;quot;blue: single estimated linear regression line,
+       gray: 95% CI&amp;quot;)
+
+plot1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/index_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot2 = plot1 + 
+  geom_ribbon(aes(x = x, ymin = pi_lwr, ymax = pi_upr), colour = &amp;quot;red&amp;quot;, alpha = 0) +
+  labs(caption = &amp;quot;blue: single estimated linear regression line,
+      red: 95% PI,
+      gray: 95% CI&amp;quot;)
+
+plot2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/index_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;From the plot, I would like to reiterate this idea that a CI (gray region) tries to quantify averaged behaviour of a model (blue line), and notice how small the jiggling is. But a PI (red lines) tries to quantify the behaviour of individual data points, and thus PI is much wider, because individuals are less predictable than the average.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bonus-1-probability-and-confidence-level&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Bonus 1: probability and confidence level&lt;/h1&gt;
+&lt;p&gt;In all the writings above, I have always assumed that we already know what a probability/confidence level is. However, this might not be fair and I would like to explain this concept better in this section.&lt;/p&gt;
+&lt;p&gt;In most introductory statistics courses, the first definition of probability is likely to be the frequentist definition, which is closely related to the concept of (re-)sampling. In our definition of CI above, we used 95% confidence level as the default. This means that, if we were to repeatedly sample new data of the same sample size from the population, and construct the CI in the same way, then the proportion of times that the CIs containing the true population parameter is 95%. This idea of “repeated sampling” applies to both PI and TI. Thus, even though in the definitions above, we have used the words “probability” and “confidence level” interchangeably, but in the most rigorous way, these interval concepts should only be interpreted through repeated sampling. We will do this in bonus section 2.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bonus-2-visualisation-through-repetitions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Bonus 2: visualisation through repetitions&lt;/h1&gt;
+&lt;p&gt;We will now repeat the data generation process 100 times and compute the corresponding statistics. The code below is not quite readable unless you are already familiar with &lt;code&gt;tidyverse&lt;/code&gt; and nested &lt;code&gt;tibble&lt;/code&gt;. The essence of the code is to first construct data in exactly the same way as we have above. And then, for each of the 100 data generation, we will then extract the corresponding fitted line, CI and PI for visualisation.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(gganimate)
+nsim = 100 ## Number of simulations
+n = 30
+
+sim_tbl = tibble(
+  x = rnorm(n*nsim, 2, sd = 0.2),
+  epsilon = rnorm(n*nsim, 0, sd = 0.2),
+  y = 1 + 2*x + epsilon,
+  sim_num = rep(1:nsim, n)) ## This tibble puts all the simulated data in one
+
+sim_tbl&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 3,000 x 4
+##        x epsilon     y sim_num
+##    &amp;lt;dbl&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;   &amp;lt;int&amp;gt;
+##  1  2.11  0.122   5.34       1
+##  2  2.02  0.107   5.15       2
+##  3  1.64  0.151   4.44       3
+##  4  1.78 -0.0513  4.51       4
+##  5  1.95 -0.224   4.67       5
+##  6  1.78  0.159   4.73       6
+##  7  1.90  0.0888  4.89       7
+##  8  2.33 -0.101   5.55       8
+##  9  2.08  0.0578  5.22       9
+## 10  1.68  0.267   4.63      10
+## # … with 2,990 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim_lm_tbl = sim_tbl %&amp;gt;% 
+  group_by(sim_num) %&amp;gt;% 
+  tidyr::nest() %&amp;gt;% ## Group by simulation number and separately fit linear models
+  dplyr::mutate(
+    lm = purrr::map(.x = data, .f = ~ lm(y ~ x, data = .x)),
+    lm_tidy = purrr::map(lm, broom::tidy))
+
+sim_lm_tbl&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 100 x 4
+## # Groups:   sim_num [100]
+##    sim_num data                  lm     lm_tidy             
+##      &amp;lt;int&amp;gt; &amp;lt;list&amp;gt;                &amp;lt;list&amp;gt; &amp;lt;list&amp;gt;              
+##  1       1 &amp;lt;tibble[,3] [30 × 3]&amp;gt; &amp;lt;lm&amp;gt;   &amp;lt;tibble[,5] [2 × 5]&amp;gt;
+##  2       2 &amp;lt;tibble[,3] [30 × 3]&amp;gt; &amp;lt;lm&amp;gt;   &amp;lt;tibble[,5] [2 × 5]&amp;gt;
+##  3       3 &amp;lt;tibble[,3] [30 × 3]&amp;gt; &amp;lt;lm&amp;gt;   &amp;lt;tibble[,5] [2 × 5]&amp;gt;
+##  4       4 &amp;lt;tibble[,3] [30 × 3]&amp;gt; &amp;lt;lm&amp;gt;   &amp;lt;tibble[,5] [2 × 5]&amp;gt;
+##  5       5 &amp;lt;tibble[,3] [30 × 3]&amp;gt; &amp;lt;lm&amp;gt;   &amp;lt;tibble[,5] [2 × 5]&amp;gt;
+##  6       6 &amp;lt;tibble[,3] [30 × 3]&amp;gt; &amp;lt;lm&amp;gt;   &amp;lt;tibble[,5] [2 × 5]&amp;gt;
+##  7       7 &amp;lt;tibble[,3] [30 × 3]&amp;gt; &amp;lt;lm&amp;gt;   &amp;lt;tibble[,5] [2 × 5]&amp;gt;
+##  8       8 &amp;lt;tibble[,3] [30 × 3]&amp;gt; &amp;lt;lm&amp;gt;   &amp;lt;tibble[,5] [2 × 5]&amp;gt;
+##  9       9 &amp;lt;tibble[,3] [30 × 3]&amp;gt; &amp;lt;lm&amp;gt;   &amp;lt;tibble[,5] [2 × 5]&amp;gt;
+## 10      10 &amp;lt;tibble[,3] [30 × 3]&amp;gt; &amp;lt;lm&amp;gt;   &amp;lt;tibble[,5] [2 × 5]&amp;gt;
+## # … with 90 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;fitted-lines&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Fitted lines&lt;/h2&gt;
+&lt;p&gt;For each the linear models that we have fitted, we will now extract the coefficients. We will perform additional manipulations for the purpose of plotting.&lt;/p&gt;
+&lt;p&gt;Notice how even though we have many fitted lines, their deviations from the single fitted line are small and almost cover the same range as the confidence interval (gray region). This is exactly what a confidence interval is designed for: to capture how a single fitted line jiggles under sampling from the same population.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim_coef_tbl = sim_lm_tbl %&amp;gt;% 
+  dplyr::select(sim_num, lm_tidy) %&amp;gt;% 
+  unnest(lm_tidy) %&amp;gt;% 
+  dplyr::select(sim_num, term, estimate) %&amp;gt;%
+  tidyr::pivot_wider(names_from = &amp;quot;term&amp;quot;,
+                     values_from = &amp;quot;estimate&amp;quot;)
+
+sim_coef_tbl&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 100 x 3
+## # Groups:   sim_num [100]
+##    sim_num `(Intercept)`     x
+##      &amp;lt;int&amp;gt;         &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;
+##  1       1         0.484  2.23
+##  2       2         0.941  2.05
+##  3       3         1.38   1.82
+##  4       4         1.85   1.59
+##  5       5         0.972  2.03
+##  6       6         0.606  2.17
+##  7       7         0.911  2.06
+##  8       8         1.24   1.88
+##  9       9         0.524  2.24
+## 10      10         0.826  2.11
+## # … with 90 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot1 +
+  geom_abline(slope = 2, intercept = 1) +
+  geom_abline(data = sim_coef_tbl,
+              aes(slope = x, intercept = `(Intercept)`),
+              size = 0.3, alpha = 0.5, colour = &amp;quot;orange&amp;quot;) +
+  labs(title = &amp;quot;Fitted lines&amp;quot;,
+       subtitle = &amp;quot;&amp;quot;,
+       caption = &amp;quot;black: true linear relationship
+       blue: single estimated linear regression line
+       orange: 100 simulated linear regression lines,
+       gray: 95% CI&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/index_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;confidence-intervals&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Confidence intervals&lt;/h2&gt;
+&lt;p&gt;What I don’t like about the plot above is that orange lines are plotted over other elements of the plot, i.e. overplotting. Another attempt at the same visualisation is to use animation. I will use only the first 20 simulations.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim_coef_tbl20 = sim_coef_tbl %&amp;gt;% dplyr::filter(sim_num &amp;lt;= 20)
+sim_tbl20 = sim_tbl %&amp;gt;% dplyr::filter(sim_num &amp;lt;= 20)
+
+sim_conf_int = augment(model, newdata = sim_tbl20, interval = &amp;quot;confidence&amp;quot;) %&amp;gt;% 
+  dplyr::select(x, y, .lower, .upper)
+
+animation1 = ggplot() +
+  geom_point(data = sim_tbl20, aes(x = x, y = y)) +
+  geom_ribbon(data = sim_conf_int, aes(x = x, y = y, ymin = .lower, ymax = .upper),
+              alpha = 0.5) +
+  geom_abline(intercept = model$coefficients[1],
+              slope = model$coefficients[2], colour = &amp;quot;blue&amp;quot;) +
+  geom_abline(data = sim_coef_tbl20,
+              aes(slope = x, intercept = `(Intercept)`), 
+              colour = &amp;quot;orange&amp;quot;) +
+  transition_states(sim_num) +
+  shadow_mark(exclude_layer = 1) +
+  labs(title = &amp;quot;Effect of CI under simulations&amp;quot;,
+       subtitle = &amp;quot;Simulation {closest_state}&amp;quot;,
+       caption = &amp;quot;blue: single estimated linear regression line,
+       orange: 20 simulated linear regression lines,
+       gray: 95% CI for the blue line&amp;quot;)
+
+# animation1
+
+# gganimate::anim_save(filename = &amp;quot;CI_animation.gif&amp;quot;, animation = animation1)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;CI_animation.gif&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim_pred_int = augment(x = model, newdata = sim_tbl20, interval = &amp;quot;predict&amp;quot;) %&amp;gt;% 
+  dplyr::select(x, y, .lower, .upper)
+
+animation2 = sim_tbl20 %&amp;gt;% 
+  ggplot(aes(x = x, y = y)) +
+  geom_point(size = 1) +
+  geom_ribbon(data = sim_pred_int, 
+              aes(x = x, ymin = .lower, ymax = .upper), 
+              fill = &amp;quot;gray20&amp;quot;, alpha = 0.5) +
+  geom_abline(intercept = model$coefficients[1],
+              slope = model$coefficients[2], colour = &amp;quot;blue&amp;quot;) +
+  transition_states(sim_num) +
+  shadow_mark(exclude_layer = 1) +
+  labs(title = &amp;quot;Effect of PI under simulations&amp;quot;,
+       subtitle = &amp;quot;Simulation {closest_state}&amp;quot;,
+       caption = &amp;quot;blue: single estimated linear regression line, \n
+       gray: 95% PI for the blue line&amp;quot;)
+
+# animation2
+
+# gganimate::anim_save(filename = &amp;quot;PI_animation.gif&amp;quot;, animation = animation2)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;PI_animation.gif&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bonus-3-side-by-side-animation&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Bonus 3: side by side animation&lt;/h1&gt;
+&lt;p&gt;This &lt;a href=&#34;https://github.com/thomasp85/gganimate/wiki/Animation-Composition&#34;&gt;post&lt;/a&gt; shows how to put &lt;code&gt;gganimate&lt;/code&gt; plots together.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(patchwork)
+library(magick)
+a_mgif &amp;lt;- image_read(animate(animation1))
+b_mgif &amp;lt;- image_read(animate(animation2))
+
+new_gif &amp;lt;- image_append(c(a_mgif[1], b_mgif[1]))
+for(i in 2:20){
+  combined &amp;lt;- image_append(c(a_mgif[i], b_mgif[i]))
+  new_gif &amp;lt;- c(new_gif, combined)
+}
+
+gganimate::anim_save(filename = &amp;quot;combined_CI_PI_animation.gif&amp;quot;, animation = new_gif)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;combined_CI_PI_animation.gif&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bonus-4-mathematical-formulas&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Bonus 4: Mathematical formulas&lt;/h1&gt;
+&lt;p&gt;Ok, I promise this is the last bonus section. I am including some formulas for completeness here.&lt;/p&gt;
+&lt;p&gt;Suppose that our data design matrix is &lt;span class=&#34;math inline&#34;&gt;\(X \in \mathbb{R}^{n \times p}\)&lt;/span&gt; and the response variable is &lt;span class=&#34;math inline&#34;&gt;\(y \in \mathbb{R}^n\)&lt;/span&gt;. If we set the confidence level to &lt;span class=&#34;math inline&#34;&gt;\((1-\alpha)\%\)&lt;/span&gt;, then we will use &lt;span class=&#34;math inline&#34;&gt;\(t_{n-p}^{(\alpha / 2)}\)&lt;/span&gt; to denote the Student t-distribution’s critical value, with &lt;span class=&#34;math inline&#34;&gt;\(n-p\)&lt;/span&gt; degrees of freedom.&lt;/p&gt;
+&lt;p&gt;For a new data point at &lt;span class=&#34;math inline&#34;&gt;\((x_{\text{new}}, y_{\text{new}})\)&lt;/span&gt;, the estimated response is &lt;span class=&#34;math inline&#34;&gt;\(\hat{y}_{new} = a + b x_{new}\)&lt;/span&gt;, where &lt;span class=&#34;math inline&#34;&gt;\(a\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(b\)&lt;/span&gt; are estimated intercept and slope term respectively. The estimated linear regression residual standard deviation is &lt;span class=&#34;math inline&#34;&gt;\(\hat{\sigma}\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;The confidence interval under this notation set up is:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[\hat{y}_{new} \pm t_{n-p}^{(\alpha / 2)} \hat{\sigma} \sqrt{x_{new}^{T}\left(X^{T} X\right)^{-1} x_{new}}.\]&lt;/span&gt;
+The prediction interval under this notation set up is:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[\hat{y}_{new} \pm t_{n-p}^{(\alpha / 2)} \hat{\sigma} \sqrt{1+x_{new}^{T}\left(X^{T} X\right)^{-1} x_{new}}.\]&lt;/span&gt;
+Notice that both formulas share the same point estimate of &lt;span class=&#34;math inline&#34;&gt;\(\hat{y}_{new}\)&lt;/span&gt; and the only difference between these two formulas is the term &lt;code&gt;1&lt;/code&gt; under the square root sign. But that single term makes up all the differences between these statistical concepts!&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Visualising COVID-19 data using Data Studio</title>
+      <link>https://www.kevinwangstats.com/post/visualising-covid19-using-data-studio/</link>
+      <pubDate>Sat, 11 Apr 2020 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/post/visualising-covid19-using-data-studio/</guid>
+      <description>
+&lt;script src=&#34;https://www.kevinwangstats.com/post/visualising-covid19-using-data-studio/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;tl;dr:&lt;/strong&gt; Google’s Data Studio is a great (and free) option for making data visualisation dashboards. Being a web-based dashboard application, its ability to connect to other Google products, such as BigQuery and GCP resources offers huge advantage over competing products. You can design a dashboard with minimum programming experience and the process is similar to writing PowerPoint slides. However, DS is mostly for the purpose of visualisation, so R/Shiny still has an advantage in computing and modeling. Below is my hacky 2-page report, correct up to April 2020:&lt;/p&gt;
+&lt;iframe width=&#34;800&#34; height=&#34;600&#34; src=&#34;https://datastudio.google.com/embed/reporting/3358c0f1-a068-47c6-9e8c-7b4d4873a843/page/MS0LB&#34; frameborder=&#34;0&#34; style=&#34;border:0&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;p&gt;I am in the process of learning how to use BigQuery (some progress are documented here in &lt;a href=&#34;https://kevinwang09.github.io/post/bigquery-in-r/&#34;&gt;this post&lt;/a&gt;). When I was exploring BigQuery’s web interface, I noticed that BigQuery could be connected with Data Studio (DS), a Google product that makes dashboard/BI visualisations.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;some-person-comments&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Some person comments&lt;/h1&gt;
+&lt;p&gt;As I recently have delivered &lt;a href=&#34;https://kevinwang09.github.io/shiny_3888&#34;&gt;a lecture on Shiny&lt;/a&gt;, I thought I will check out how Data Studio works and how it compares with Shiny. Sure, I have used Tableau before, but I have never used this kind of data visualisation software with databases before.&lt;/p&gt;
+&lt;p&gt;Overall, I think DS is a great web-based tool for quick explorations/visualisation of the data, its ability to connect to BigQuery and other databases is very attractive. I almost can’t believe how smooth the connection was after I have tried to connect the same data into &lt;code&gt;R&lt;/code&gt;. While many features that DS offers are not dissimilar to Microsoft Power BI and Tableau, &lt;strong&gt;DS is free&lt;/strong&gt; to use! Which is quite important for, well, people like myself who just lost the privilege to claim student discounts.&lt;/p&gt;
+&lt;p&gt;The drawback of DS is also clear: it is not Shiny, so it won’t handle complex modelling/computations in the background (that being said, I am sure there is a way that you can connect it to Google Cloud products for backend computations). DS is also web-based, so connecting it with data in your local laptop isn’t quite straight forward. It is also not quite as reproducible since it is not constructed using scripts. But these shouldn’t overshadow how easy it was to use DS and share it.&lt;/p&gt;
+&lt;p&gt;If a single visualisation is all you are after, not complex modelling, then DS is definitely a faster option than Shiny with a gentler learning curve.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;starting-started-with-a-ds-report&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Starting started with a DS report&lt;/h1&gt;
+&lt;p&gt;A DS report is made up of multiple pages, much like PowerPoint slides. &lt;a href=&#34;https://support.google.com/datastudio/answer/6292570?hl=en&amp;amp;ref_topic=6289358&#34;&gt;This tutorial&lt;/a&gt; is quite helpful to learn the basics.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The most powerful part of DS, in my opinion, is how you can add multiple data sources, e.g. SQL databases or Google Sheets. But being part of the Google ecosystem, I think the real power lies in how DS interacts with other Google products like Google Analytics and other third-party data sources.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;ds_source1.png&#34; 
+align=&#34;center&#34; width=&#34;800&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;ds_source2.png&#34; align=&#34;center&#34; width=&#34;800&#34; /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In the DS report above, I made connections to the &lt;a href=&#34;https://console.cloud.google.com/marketplace/details/johnshopkins/covid19_jhu_global_cases&#34;&gt;COVID-19 data from Johns Hopskins University&lt;/a&gt; and the World Bank global population data. I couldn’t find a Google public data documentation page for the latter, but you can make a SQL query using:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;SELECT *
+FROM `bigquery-public-data.world_bank_global_population.population_by_country` 
+LIMIT 10&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Having added the these two data into the DS report, you can visualise these data using charts, such as a table on the page 1 of the report:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;iframe width=&#34;800&#34; height=&#34;600&#34; src=&#34;https://datastudio.google.com/embed/reporting/3358c0f1-a068-47c6-9e8c-7b4d4873a843/page/SR0LB&#34; frameborder=&#34;0&#34; style=&#34;border:0&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;p&gt;In DS, every chart is associated with one data source that you have added. Of course, you can put together multiple data in some meaningful way and make a visualisation. This is exactly what I have done to calculate the “confirmed cases per 1 million” statistic.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;a-bit-more-data-manipulations&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;A bit more data manipulations&lt;/h1&gt;
+&lt;p&gt;In order to make the heatmap at the beginning of this post, a bit more data manipulations are needed. In particular, joining the two data together using “country” as a common key. Once this is done, we can take the ratio of the confirmed cases and the population and calculate the “confirmed cases per 1 million” statistic and making a heatmap visualisation is straightforward after that.&lt;/p&gt;
+&lt;p&gt;Joining data in DS is called “blending data”, which you can &lt;a href=&#34;https://support.google.com/datastudio/answer/9061420?hl=en&#34;&gt;find out more here&lt;/a&gt;. This is identical to the operation of the various JOIN operations in SQL if you choose your settings correctly.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.kevinwangstats.com/post/2020-04-11-visualising-covid19-using-data-studio_files/ds_data_blend.png&#34; align=&#34;center&#34; width=&#34;800&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Aside: of course, joining data isn’t the magic silver bullet for everything. If you examine closely on page 2 of the report, you will see that some countries have &lt;code&gt;null&lt;/code&gt; values in the &lt;code&gt;confirmed cases&lt;/code&gt; column, e.g. South Korea. This is because the name of the country was not consistent between the two counties. E.g. “South Korea” in one data and “Korea, South” in another. This has to be fixed by making a new column with matched names. The way that I did it was to create a &lt;code&gt;country_correct&lt;/code&gt; column in the population data using the definitions such as&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;CASE 
+    WHEN country IN (&amp;quot;United States&amp;quot;) THEN &amp;quot;US&amp;quot; 
+    WHEN country IN (&amp;quot;Russian Federation&amp;quot;) THEN &amp;quot;Russia&amp;quot; 
+    WHEN country IN (&amp;quot;Iran, Islamic Rep.&amp;quot;) THEN &amp;quot;Iran&amp;quot; 
+    ELSE country
+END&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You will probably notice that this is SQL code and quite similar to the &lt;code&gt;dplyr&lt;/code&gt; function &lt;code&gt;case_when&lt;/code&gt;. So I think some knowledge of SQL will be helpful when using DS.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;making-the-visualisations&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Making the visualisations&lt;/h1&gt;
+&lt;p&gt;This is where I was pleasantly surprised and where a point-and-click dashboard visualisation wins over Shiny. Since the &lt;code&gt;country_region&lt;/code&gt;/&lt;code&gt;country_correct&lt;/code&gt; is a geography variable, it can be directly plotted onto a world map automatically. Also importantly, linked interactivity is easily achieved between the table and the heatmap on page 2.&lt;/p&gt;
+&lt;p&gt;Aside: these tasks are possible, butnot always the easiest to do in &lt;code&gt;R&lt;/code&gt;, &lt;code&gt;plotly&lt;/code&gt; is the most competitive in this area (see &lt;a href=&#34;https://plotly.com/r/choropleth-maps/#world-choropleth-map&#34;&gt;this example&lt;/a&gt; and &lt;a href=&#34;https://plotly-r.com/client-side-linking.html#filter&#34;&gt;this example&lt;/a&gt;). Sure, I can pick up the codes in 5 minutes, but think about the learning curve behind learning &lt;code&gt;ggplot&lt;/code&gt;/&lt;code&gt;plotly&lt;/code&gt; framework, this could be overwhelming for people without a programming background. I can’t tell you how many hours I have spent trying to make a plot look right!&lt;/p&gt;
+&lt;iframe width=&#34;800&#34; height=&#34;600&#34; src=&#34;https://datastudio.google.com/embed/reporting/3358c0f1-a068-47c6-9e8c-7b4d4873a843/page/MS0LB&#34; frameborder=&#34;0&#34; style=&#34;border:0&#34; allowfullscreen&gt;
+&lt;/iframe&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;For the R/Shiny fanatics, put down your pitchforks, I am not going to abandon R/Shiny any time soon. Shiny is definitely great for customisation, but DS and other professional dashboard software actually do have a lot of awesome ideas. Advanced R/Shiny users can do many things that DS can do, but this is only assuming you have enough experience and know where to look for the right answers. For example:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The fact that I can readily share this report without setting up my own Shiny server or website is a great example of how Google thought about how their products will be distributed!&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;I am also not an artist, so I actually dislike spending hours to make my Shiny app look pretty, DS actually makes this process much easier since making a dashboard UI is quite similar to making PowerPoint slides.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Connecting to databases might be annoying and slow at times (seriously, it takes about 20 seconds for me to fetch the COVID-19 data over the National Broadband Network here in Australia), but when DS tries to fetch data, it has the backings of Google’s massive servers, and making changes to my visualisation is often done in less than 2 seconds!&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I can see myself using DS to visualise my pre-computed results in R and distribute this kind of interactive reports with others without paying for expensive Shiny servers, assuming that simple visualisations are all that I am after.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>BigQuery in R</title>
+      <link>https://www.kevinwangstats.com/post/bigquery-in-r/</link>
+      <pubDate>Wed, 01 Apr 2020 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/post/bigquery-in-r/</guid>
+      <description>
+&lt;script src=&#34;https://www.kevinwangstats.com/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;motivation&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Motivation&lt;/h1&gt;
+&lt;p&gt;Stranded at home due to COVID-19, I am trying to pick up SQL and Google’s BigQuery as new skills. Even though the learning curve has been okay, I can’t help to think how easy (and fast!) it was for me to use &lt;code&gt;dplyr&lt;/code&gt; to do exactly the same operations.&lt;/p&gt;
+&lt;p&gt;The purpose of this post is to document some SQL against &lt;code&gt;dplyr&lt;/code&gt;, or more precisely, &lt;code&gt;dbplyr&lt;/code&gt; (&lt;a href=&#34;https://cran.r-project.org/web/packages/dbplyr/vignettes/dbplyr.html&#34;&gt;&lt;code&gt;dplyr&lt;/code&gt; verbs on a database&lt;/a&gt;, don’t ask, it is magic!) to query COVID-19 data from &lt;a href=&#34;https://cloud.google.com/bigquery&#34;&gt;BigQuery&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The main part of the article starts &lt;a href=&#34;#main&#34;&gt;here&lt;/a&gt;, if you want to skip over &lt;a href=&#34;#bq_command&#34;&gt;using BigQuery in the command line&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Overall, I think &lt;code&gt;dplyr&lt;/code&gt; offers a more modern syntax. But then, of course, I am very biased towards anything that comes out of tidyverse and keep in mind that &lt;code&gt;dplyr&lt;/code&gt; is about 40 years later than SQL and probably borrowed a lot of strength from it.&lt;/p&gt;
+&lt;div id=&#34;what-you-need&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;What you need&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;A Google Cloud account. See &lt;a href=&#34;https://cloud.google.com/sdk/docs/quickstarts&#34;&gt;here&lt;/a&gt; for some resources and set it up with an appropriate project&lt;/li&gt;
+&lt;li&gt;R packages: &lt;code&gt;dplyr&lt;/code&gt;, &lt;code&gt;bigrquery&lt;/code&gt;, &lt;code&gt;DBI&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Command line tools from Google Cloud&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;why-gcpbigquery&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Why GCP/BigQuery?&lt;/h2&gt;
+&lt;p&gt;&lt;del&gt;Well, Google gave me lots of free credits. I am easily bought.&lt;/del&gt;&lt;/p&gt;
+&lt;p&gt;Jokes aside, I find the GCP documentation to be quite well-written and always up-to-date. Plus, the documentation contains lots examples of how to link the queried data to &lt;a href=&#34;https://cloud.google.com/bigquery/docs/visualize-data-studio&#34;&gt;data studio&lt;/a&gt; and &lt;a href=&#34;https://cloud.google.com/bigquery-ml/docs/bigqueryml-web-ui-start&#34;&gt;machine learning algorithms&lt;/a&gt;. Both of these capabilities are things that I want to eventually learn without paying for visualisation softwares like Tableau (sadly, I am no longer a student to qualify for their free accounts).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bq_command&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;(Optional) Running a BigQuery query in the command line&lt;/h1&gt;
+&lt;p&gt;&lt;em&gt;(Note: to use BigQuery, you will need to have a Google Cloud account and enable billing for a project, this might cost you, but luckily Google Cloud offers free credits when you sign up.)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;The two most common ways of making queries are:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://cloud.google.com/bigquery/docs/quickstarts/quickstart-web-ui&#34;&gt;Going through the Google Cloud Console and use the WebUI&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;a href=&#34;https://cloud.google.com/bigquery/docs/quickstarts/quickstart-command-line&#34;&gt;Command line&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I will show you a quick demo of how to run a simple query in the command line. But I do find the web UI option incredibly useful. I can see myself using web UI on the go if I have some urgent data questions while riding on a bus to work (totally normal behaviour based on my past experiences).&lt;/p&gt;
+&lt;p&gt;BigQuery has a set of &lt;a href=&#34;https://cloud.google.com/bigquery/public-data&#34;&gt;public datasets&lt;/a&gt;, including one for &lt;a href=&#34;https://console.cloud.google.com/marketplace/details/bigquery-public-datasets/covid19-dataset-list?preview=bigquery-public-datasets&#34;&gt;COVID-19&lt;/a&gt;. The &lt;a href=&#34;https://console.cloud.google.com/marketplace/details/johnshopkins/covid19_jhu_global_cases&#34;&gt;Johns Hopkins University dataset&lt;/a&gt; is also part of this collection, and at the time of writing this article, this dataset is small enough for demostration purposes.&lt;/p&gt;
+&lt;p&gt;In command line, tying&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;bq show bigquery-public-data:covid19_jhu_csse.summary&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;gives the output&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Table bigquery-public-data:covid19_jhu_csse.summary
+
+   Last modified              Schema              Total Rows   Total Bytes   Expiration   Time Partitioning   Clustered Fields      Labels     
+ ----------------- ----------------------------- ------------ ------------- ------------ ------------------- ------------------ -------------- 
+  02 Apr 19:06:19   |- province_state: string     41129        5564578                                                           freebqcovid:  
+                    |- country_region: string                                                                                                  
+                    |- date: date                                                                                                              
+                    |- latitude: float                                                                                                         
+                    |- longitude: float                                                                                                        
+                    |- location_geom: geography                                                                                                
+                    |- confirmed: integer                                                                                                      
+                    |- deaths: integer                                                                                                         
+                    |- recovered: integer                                                                                                      
+                    |- active: integer                                                                                                         
+                    |- fips: string                                                                                                            
+                    |- admin2: string                                                                                                          
+                    |- combined_key: string   &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here, &lt;code&gt;bigquery-public-data&lt;/code&gt; is the name of the BigQuery project that hosts the COVID-19 data. The name of the data stored in that project is &lt;code&gt;covid19_jhu_csse.summary&lt;/code&gt;. And you can see that the output of &lt;code&gt;bq show&lt;/code&gt; gives the specifications of all the columns in this data.&lt;/p&gt;
+&lt;p&gt;To make a normal SQL query, you can use&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;bq query --use_legacy_sql=false \
+&amp;#39;SELECT *
+FROM `bigquery-public-data.covid19_jhu_csse.summary`
+LIMIT 10;&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;which gives the output&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Waiting on bqjob_r28ad9889c4311223_0000017139f7f30c_1 ... (0s) Current status: DONE   
++----------------+----------------------+------------+----------+-----------+---------------+-----------+--------+-----------+--------+------+--------+--------------+
+| province_state |    country_region    |    date    | latitude | longitude | location_geom | confirmed | deaths | recovered | active | fips | admin2 | combined_key |
++----------------+----------------------+------------+----------+-----------+---------------+-----------+--------+-----------+--------+------+--------+--------------+
+| NULL           | United Arab Emirates | 2020-02-13 |     NULL |      NULL |          NULL |         8 |      0 |         1 |   NULL | NULL | NULL   | NULL         |
+| NULL           | Thailand             | 2020-02-22 |     NULL |      NULL |          NULL |        35 |      0 |        17 |   NULL | NULL | NULL   | NULL         |
+| NULL           | Vietnam              | 2020-01-24 |     NULL |      NULL |          NULL |         2 |   NULL |      NULL |   NULL | NULL | NULL   | NULL         |
+| NULL           | Malaysia             | 2020-02-17 |     NULL |      NULL |          NULL |        22 |      0 |         7 |   NULL | NULL | NULL   | NULL         |
+| NULL           | Finland              | 2020-02-25 |     NULL |      NULL |          NULL |         1 |      0 |         1 |   NULL | NULL | NULL   | NULL         |
+| NULL           | Vietnam              | 2020-02-21 |     NULL |      NULL |          NULL |        16 |      0 |        14 |   NULL | NULL | NULL   | NULL         |
+| NULL           | UK                   | 2020-02-17 |     NULL |      NULL |          NULL |         9 |      0 |         8 |   NULL | NULL | NULL   | NULL         |
+| NULL           | Nepal                | 2020-02-21 |     NULL |      NULL |          NULL |         1 |      0 |         1 |   NULL | NULL | NULL   | NULL         |
+| NULL           | San Marino           | 2020-02-27 |     NULL |      NULL |          NULL |         1 |      0 |         0 |   NULL | NULL | NULL   | NULL         |
+| NULL           | Thailand             | 2020-01-31 |     NULL |      NULL |          NULL |        19 |   NULL |         5 |   NULL | NULL | NULL   | NULL         |
++----------------+----------------------+------------+----------+-----------+---------------+-----------+--------+-----------+--------+------+--------+--------------+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Not bad! But let’s try to do this in &lt;code&gt;R&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;main&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Connecting to BigQuery using &lt;code&gt;DBI&lt;/code&gt;&lt;/h1&gt;
+&lt;p&gt;The &lt;code&gt;DBI&lt;/code&gt; (DataBaseInterface) package provides an important function, &lt;code&gt;dbconnect&lt;/code&gt;, which facilitates the connection to &lt;a href=&#34;https://db.rstudio.com/databases&#34;&gt;various databases&lt;/a&gt;. The most important argument in &lt;code&gt;dbconnect()&lt;/code&gt; is &lt;code&gt;drv&lt;/code&gt;, which specifies the driver that is necessary to connect to a database. The extra arguments in this case are related to Google’s way of setting up a Google Cloud projects and billing:
++ &lt;code&gt;project = &#34;bigquery-public-data&#34;&lt;/code&gt; sets which project the data is at, in this case, it is at the project managed by Google called “bigquery-public-data”.
++ &lt;code&gt;dataset = &#34;covid19_jhu_csse&#34;&lt;/code&gt; refers to the dataset (consiste of multiple tables) stored in the project.
++ &lt;code&gt;billing = &#34;your_project_name&#34;&lt;/code&gt; refers to billing account that you have with Google. Since you are making queries to databases, which takes up computational resources, which are not free, so you will need an Google Cloud account and your own project so Google will charge you. Mine is called “scpworkshop”.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(DBI)
+library(bigrquery)
+
+con &amp;lt;- dbConnect(
+  drv = bigrquery::bigquery(),
+  project = &amp;quot;bigquery-public-data&amp;quot;,
+  dataset = &amp;quot;covid19_jhu_csse&amp;quot;,
+  billing = &amp;quot;scpworkshop&amp;quot;
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We can list all the tables in the dataset using the &lt;code&gt;dbListTables&lt;/code&gt; function.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dbListTables(con) ## List all tables in this connection&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Using an auto-discovered, cached token.
+## To suppress this message, modify your code or options to clearly consent to the use of a cached token.
+## See gargle&amp;#39;s &amp;quot;Non-interactive auth&amp;quot; vignette for more details:
+## https://gargle.r-lib.org/articles/non-interactive-auth.html
+## The bigrquery package is using a cached token for kevin.wang09@gmail.com.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] &amp;quot;confirmed_cases&amp;quot; &amp;quot;deaths&amp;quot;          &amp;quot;recovered_cases&amp;quot; &amp;quot;summary&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Once we decide which table we wish to work on, in this case, the summary table, we can check on the column types of this table first before making the query. The reason that I prefer to check the column types first is because I keep finding a parsing error with the latest version of the &lt;code&gt;bigrquery&lt;/code&gt; package, which I have fixed &lt;a href=&#34;https://github.com/kevinwang09/bigrquery/tree/geography&#34;&gt;here&lt;/a&gt;. If you want to follow the example below, please install my updated package using &lt;code&gt;devtools::install_github(&#34;kevinwang09/bigrquery&#34;, ref = &#34;geography&#34;)&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;bigrquery::bq_table_fields(&amp;quot;bigquery-public-data.covid19_jhu_csse.summary&amp;quot;) ## List field types &lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## &amp;lt;bq_fields&amp;gt;
+##   province_state &amp;lt;STRING&amp;gt;
+##   country_region &amp;lt;STRING&amp;gt;
+##   date &amp;lt;DATE&amp;gt;
+##   latitude &amp;lt;FLOAT&amp;gt;
+##   longitude &amp;lt;FLOAT&amp;gt;
+##   location_geom &amp;lt;GEOGRAPHY&amp;gt;
+##   confirmed &amp;lt;INTEGER&amp;gt;
+##   deaths &amp;lt;INTEGER&amp;gt;
+##   recovered &amp;lt;INTEGER&amp;gt;
+##   active &amp;lt;INTEGER&amp;gt;
+##   fips &amp;lt;STRING&amp;gt;
+##   admin2 &amp;lt;STRING&amp;gt;
+##   combined_key &amp;lt;STRING&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;DBI::dbGetQuery(con, 
+&amp;quot;SELECT *
+FROM `bigquery-public-data.covid19_jhu_csse.summary`
+LIMIT 10;&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 10 x 13
+##    province_state country_region date       latitude longitude location_geom
+##    &amp;lt;chr&amp;gt;          &amp;lt;chr&amp;gt;          &amp;lt;date&amp;gt;        &amp;lt;dbl&amp;gt;     &amp;lt;dbl&amp;gt; &amp;lt;chr&amp;gt;        
+##  1 Hubei          Mainland China 2020-01-26       NA        NA &amp;lt;NA&amp;gt;         
+##  2 Guangdong      Mainland China 2020-01-26       NA        NA &amp;lt;NA&amp;gt;         
+##  3 Zhejiang       Mainland China 2020-01-26       NA        NA &amp;lt;NA&amp;gt;         
+##  4 Henan          Mainland China 2020-01-26       NA        NA &amp;lt;NA&amp;gt;         
+##  5 Chongqing      Mainland China 2020-01-26       NA        NA &amp;lt;NA&amp;gt;         
+##  6 Hunan          Mainland China 2020-01-26       NA        NA &amp;lt;NA&amp;gt;         
+##  7 Beijing        Mainland China 2020-01-26       NA        NA &amp;lt;NA&amp;gt;         
+##  8 Anhui          Mainland China 2020-01-26       NA        NA &amp;lt;NA&amp;gt;         
+##  9 Shandong       Mainland China 2020-01-26       NA        NA &amp;lt;NA&amp;gt;         
+## 10 Sichuan        Mainland China 2020-01-26       NA        NA &amp;lt;NA&amp;gt;         
+## # … with 7 more variables: confirmed &amp;lt;int&amp;gt;, deaths &amp;lt;int&amp;gt;, recovered &amp;lt;int&amp;gt;,
+## #   active &amp;lt;int&amp;gt;, fips &amp;lt;chr&amp;gt;, admin2 &amp;lt;chr&amp;gt;, combined_key &amp;lt;chr&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;comparing-the-syntax-style-of-dplyr-and-sql&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Comparing the syntax style of &lt;code&gt;dplyr&lt;/code&gt; and &lt;code&gt;SQL&lt;/code&gt;&lt;/h1&gt;
+&lt;p&gt;Suppose we want to check the total confirmed (the columns are already in cumulative confirmed cases) COVID19 cases for Italy and Spain, then in SQL, we can make the following query:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sql_tbl = DBI::dbGetQuery(con, 
+&amp;quot;SELECT country_region, confirmed
+FROM `bigquery-public-data.covid19_jhu_csse.summary`
+WHERE country_region IN (&amp;#39;Italy&amp;#39;, &amp;#39;Spain&amp;#39;) AND date = &amp;#39;2020-04-02&amp;#39;
+&amp;quot;)
+
+sql_tbl&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 2
+##   country_region confirmed
+##   &amp;lt;chr&amp;gt;              &amp;lt;int&amp;gt;
+## 1 Italy             115242
+## 2 Spain             112065&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Looks good!&lt;/p&gt;
+&lt;p&gt;But what about &lt;code&gt;dplyr&lt;/code&gt;?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(dplyr)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Attaching package: &amp;#39;dplyr&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following objects are masked from &amp;#39;package:stats&amp;#39;:
+## 
+##     filter, lag&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## The following objects are masked from &amp;#39;package:base&amp;#39;:
+## 
+##     intersect, setdiff, setequal, union&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;covid_data = tbl(con, &amp;quot;summary&amp;quot;) 
+
+dplyr_tbl = covid_data %&amp;gt;% 
+  dplyr::filter(country_region %in% c(&amp;#39;Italy&amp;#39;, &amp;#39;Spain&amp;#39;), date == &amp;#39;2020-04-02&amp;#39;) %&amp;gt;% 
+  dplyr::select(country_region, confirmed) %&amp;gt;% 
+  collect() ## collect() pulls the entire table into memory
+
+dplyr_tbl&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 2 x 2
+##   country_region confirmed
+##   &amp;lt;chr&amp;gt;              &amp;lt;int&amp;gt;
+## 1 Italy             115242
+## 2 Spain             112065&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;But are the results the same?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all.equal(sql_tbl, dplyr_tbl)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] TRUE&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Awesome!&lt;/p&gt;
+&lt;p&gt;We can see that both &lt;code&gt;dplyr&lt;/code&gt; verbs and SQL in this query are very similar which is great for data scientist to translate between the two.&lt;/p&gt;
+&lt;div id=&#34;a-more-complicated-query&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;A more complicated query&lt;/h2&gt;
+&lt;p&gt;You might be asking why I didn’t put US and China in the query, well, this is because that both countries has state/province level data, so the total confirmed caes will need to be summed across the state/province level first before being compared to other data at the country level.&lt;/p&gt;
+&lt;p&gt;Combine this subuery with the previous query, we get:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sql_tbl = DBI::dbGetQuery(con, 
+&amp;quot;SELECT country_region, SUM(confirmed) AS country_confirmed
+FROM `bigquery-public-data.covid19_jhu_csse.summary`
+WHERE country_region IN (&amp;#39;Italy&amp;#39;, &amp;#39;Spain&amp;#39;, &amp;#39;US&amp;#39;, &amp;#39;China&amp;#39;) AND date = &amp;#39;2020-04-02&amp;#39;
+GROUP BY country_region
+ORDER BY country_confirmed;
+&amp;quot;)
+
+sql_tbl&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 4 x 2
+##   country_region country_confirmed
+##   &amp;lt;chr&amp;gt;                      &amp;lt;int&amp;gt;
+## 1 China                      82432
+## 2 Spain                     112065
+## 3 Italy                     115242
+## 4 US                        243453&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Not bad! The &lt;code&gt;UNION ALL&lt;/code&gt; took care a lot of the hard work!&lt;/p&gt;
+&lt;p&gt;In &lt;code&gt;dplyr&lt;/code&gt;, the job is (I would argue) simpler:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dplyr_tbl = covid_data %&amp;gt;% 
+  filter(country_region %in% c(&amp;#39;Italy&amp;#39;, &amp;#39;Spain&amp;#39;, &amp;#39;US&amp;#39;, &amp;#39;China&amp;#39;), date == &amp;#39;2020-04-02&amp;#39;) %&amp;gt;% 
+  group_by(country_region) %&amp;gt;% 
+  summarise(country_confirmed = sum(confirmed)) %&amp;gt;% 
+  arrange(country_confirmed) %&amp;gt;% 
+  collect()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning: Missing values are always removed in SQL.
+## Use `SUM(x, na.rm = TRUE)` to silence this warning
+## This warning is displayed only once per session.&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dplyr_tbl&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 4 x 2
+##   country_region country_confirmed
+##   &amp;lt;chr&amp;gt;                      &amp;lt;int&amp;gt;
+## 1 China                      82432
+## 2 Spain                     112065
+## 3 Italy                     115242
+## 4 US                        243453&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all.equal(sql_tbl, dplyr_tbl)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] TRUE&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;which-is-better&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Which is better?&lt;/h2&gt;
+&lt;p&gt;Very much up to your personal taste!&lt;/p&gt;
+&lt;p&gt;I personally prefer &lt;code&gt;dplyr&lt;/code&gt; because I think its design is more intuitive:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;the grouping variable is automatically included in the final output, without using extra selection of columns&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;the operation of selecting columns and summarising columns are two distinct verbs in &lt;code&gt;dplyr&lt;/code&gt;, whereas in SQL it is just &lt;code&gt;SELECT&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;style&gt;
+pre {
+  overflow-x: auto;
+}
+pre code {
+  word-wrap: normal;
+  white-space: pre;
+}
+&lt;/style&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>COVID-19 visualisations</title>
+      <link>https://www.kevinwangstats.com/post/covid-19-visualisations/</link>
+      <pubDate>Fri, 27 Mar 2020 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/post/covid-19-visualisations/</guid>
+      <description>
+&lt;script src=&#34;https://www.kevinwangstats.com/post/covid-19-visualisations/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;The recent COVID-19 outbreak has caused much disruptions to people’s daily lives. As the policy of self-isolation gets adopted by many countries around the world, many people took to social media to share important resources and data visualisation illustrating the severity of COVID-19.
+I want to quite clear about my intentions behind this blog post: I am &lt;strong&gt;not&lt;/strong&gt; an epidemiologist/biologist/medical doctor. I will refrain from making any inferences from this data (ironic for a statistician) because it would be irresponsible for me to make commentaries on an ongoing public health crisis in which I am not an expert on. I am only here to show you some interesting R coding and data visualisations.&lt;/p&gt;
+&lt;p&gt;Between mid-February 2020 and mid-March 2020, I was in Cornell University (New York state) and observing the spread of COVID-19 quite closely. I was increasingly worried about the dramatic increase in the number of cases in US and the potential shutdown of the Australian border. I was on the brink of re-booking all my flights before it is too late. It is around the same time that I was asked by my supervisor back in Australia to design a lecture in Shiny apps, so I thought it will be useful for me to write an app and other visualisations to answer the following questions:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;What do the confirmed cases for each country looks like? What is the days-lagged in confirmed cases for each compare when compare to China (i.e. cross-correlation)?&lt;/li&gt;
+&lt;li&gt;What are the Sydney-bound flights that had confirmed cases? Is there a route that is safer than others?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div id=&#34;shiny-app-for-confirmed-cases-and-added-cases&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Shiny app for confirmed cases and added cases&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.kevinwangstats.com/img/covid19_shiny.png&#34; align=&#34;center&#34; width=&#34;600&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This app attemps to answer the first question, code: &lt;a href=&#34;https://github.com/kevinwang09/covid19&#34; class=&#34;uri&#34;&gt;https://github.com/kevinwang09/covid19&lt;/a&gt;. I can’t afford a server at this point, so you will need to run this app locally by reading through the instructions in the README of that repo.&lt;/p&gt;
+&lt;p&gt;Based on my simple visualisations at the time (~15 March 2020), I estimated that US’s major outbreak lags behind that of China by about 45 days or so. So it wasn’t so dangerous for me when I was in Cornell around mid-March, however, it was definitely not ideal as the county I was in already had two confirmed cases. Any delays in my departure could spell trouble. This is unfortunately true since at the time of writing, US has overtaken China in confirmed cases and New York state shares the biggest percentage of those confirmed cases.&lt;/p&gt;
+&lt;p&gt;The structure of the app is quite simple:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The COVID-19 data is fetched using the &lt;a href=&#34;https://github.com/GuangchuangYu/nCov2019&#34;&gt;nCov2019&lt;/a&gt; package using this line of code &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/global.R#L6&#34;&gt;here&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Cumulative confirmed cases are extracted &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/server.R#L3&#34;&gt;here&lt;/a&gt; and time series plot is made &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/server.R#L34&#34;&gt;here&lt;/a&gt; and the cross-correlation plot is made &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/server.R#L107&#34;&gt;here&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Similarly, the plots for added cases are &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/server.R#L66&#34;&gt;here&lt;/a&gt; and &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/server.R#L96&#34;&gt;here&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;interactive-animation-of-flights-with-confirmed-case&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Interactive animation of flights with confirmed case&lt;/h1&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.kevinwangstats.com/img/covid19_flights.gif&#34; align=&#34;center&#34; width=&#34;600&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;This is a standalone RMarkdown document: &lt;a href=&#34;https://kevinwang09.github.io/covid19/confirmed_flights.html#5_plotly_visualisations&#34; class=&#34;uri&#34;&gt;https://kevinwang09.github.io/covid19/confirmed_flights.html#5_plotly_visualisations&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The New South Wales Health website publishes a &lt;a href=&#34;https://www.health.nsw.gov.au/Infectious/diseases/Pages/coronavirus-flights.aspx&#34;&gt;list of flights with confirmed cases of COVID-19&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The coding beind this visualisation is also quite straight-forward:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The data are scrapped from the NSW Health website using the &lt;code&gt;xml2&lt;/code&gt; and &lt;code&gt;rvest&lt;/code&gt; packages. I particularly like the elegance of the coding style using tidyver to scrap this data, though some inspiration came from &lt;a href=&#34;https://stackoverflow.com/a/52863929&#34;&gt;this StackOverflow thread&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;url = &amp;quot;https://www.health.nsw.gov.au/Infectious/diseases/Pages/coronavirus-flights.aspx&amp;quot;
+raw = xml2::read_html(url)
+
+raw_flights_tbl = raw %&amp;gt;%
+  rvest::html_node(xpath = &amp;quot;.//div[@id=&amp;#39;ctl00_PlaceHolderMain_contentc1__ControlWrapper_RichHtmlField&amp;#39;]/table&amp;quot;) %&amp;gt;%
+  rvest::html_table() %&amp;gt;% 
+  as_tibble() %&amp;gt;% 
+  janitor::clean_names()&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;The geographical locations are then queried through Google Maps API for their longitude and latitudes.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;all_geocode = tibble(
+  location = c(flights_tbl$origin, flights_tbl$destination) %&amp;gt;% unique,
+  geocode = purrr::map(location, ggmap::geocode))&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;After grabbing these data, it is time to make plots using &lt;a href=&#34;https://github.com/kevinwang09/covid19/blob/885f7ba905d75fbf8bb070affaef20c6beb840af/confirmed_flights.Rmd#L129&#34;&gt;this chunk of code&lt;/a&gt;. Althought a lot of small adjustments were needed, but this &lt;a href=&#34;https://plotly.com/r/lines-on-maps/#flight-paths-map&#34;&gt;example from Plotly’s official website&lt;/a&gt; was quite helpful.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

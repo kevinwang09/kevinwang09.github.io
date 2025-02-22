@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>statistics | Kevin Wang</title>
+    <link>https://www.kevinwangstats.com/category/statistics/</link>
+      <atom:link href="https://www.kevinwangstats.com/category/statistics/index.xml" rel="self" type="application/rss+xml" />
+    <description>statistics</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Sun, 30 May 2021 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_512x512_fill_lanczos_center_3.png</url>
+      <title>statistics</title>
+      <link>https://www.kevinwangstats.com/category/statistics/</link>
+    </image>
+    
+    <item>
+      <title>Confidence and prediction intervals</title>
+      <link>https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/</link>
+      <pubDate>Sun, 30 May 2021 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/</guid>
+      <description>
+&lt;script src=&#34;https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;How can we (statisticians) better explain the differences between a confidence interval (CI) and a prediction interval (PI)? Sure, one could look up the definition on Wikipedia and memorise the definitions, but the real difficulty is how to communicate this clearly to young students/collaborators/clients without using mathematical formalism. For a linear regression model and a given value of the independent variable, the CI and PI confusingly share the same point estimate. Worse still, if we write out the mathematical formulas, they are virtually identical except one term!&lt;/p&gt;
+&lt;p&gt;The difference between the interpretation of CI and PI is actually a great example of how very similar mathematical constructions can lead to very different interpretations. These terms are not always rigorously defined and used, sometimes even in reputable sources (I would also add tolerance intervals here as well, but perhaps for another day).&lt;/p&gt;
+&lt;p&gt;This blog post explains the main statistical differences between CI and PI in a linear regression model through visualisations. In short:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;CI shows the variability in &lt;strong&gt;parameter estimates&lt;/strong&gt;. The primary intention is to understand the &lt;strong&gt;variability in the model&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;PI shows the variability in &lt;strong&gt;individual data points&lt;/strong&gt;. The primary intention is to &lt;strong&gt;capture future data points&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;combined_CI_PI_animation.gif&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The statements above are of course extreme simplifications of these statistical concepts. I will attempt to minimise the need for mathematical derivations and use intuitive language and simulations to illustrate the subtle differences between these two concepts.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;a-quick-simulation-to-set-the-scene&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;A quick simulation to set the scene&lt;/h1&gt;
+&lt;p&gt;Suppose we have an independent variable (&lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt;) and a dependent variable (&lt;span class=&#34;math inline&#34;&gt;\(y\)&lt;/span&gt;) and we are asked to produce a linear regression.&lt;/p&gt;
+&lt;p&gt;For simplicity, I will generate some data with &lt;span class=&#34;math inline&#34;&gt;\(X \sim N(2,0.2^2)\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(\epsilon \sim N(0, 0.2^2)\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(y = 1 + 2*x + \epsilon\)&lt;/span&gt;. As much as I would like to use real data to add real-world relevance, generating data with a known value means that we are allowed to discuss how good our estimates are compared to the “true” value. This idea of a “true” value is not always possible if we use real data.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;## Some packages that we will be using
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(broom)
+  library(ggpubr)
+})&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We will also use the &lt;code&gt;geom_smooth(method = &#34;lm&#34;)&lt;/code&gt; function from the &lt;code&gt;ggplot2&lt;/code&gt; package to add the (simple) linear regression line. I also choose to use the option &lt;code&gt;se = FALSE&lt;/code&gt; to suppress the visualisation of the (confidence) interval as we will do this manually later.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(8)
+theme_set(theme_classic(18))
+
+n = 30
+x = rnorm(n, 2, 0.2)
+epsilon = rnorm(n, 0, 0.2)
+y = 1 + 2*x + epsilon
+
+df = tibble(x, y)
+
+model = lm(y ~ x, data = df)
+
+df %&amp;gt;% 
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = &amp;quot;lm&amp;quot;, se = FALSE) +
+  ggpubr::stat_regline_equation()&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## `geom_smooth()` using formula &amp;#39;y ~ x&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/index_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;confidence-interval-ci&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Confidence interval (CI)&lt;/h1&gt;
+&lt;div id=&#34;on-a-single-parameter&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;On a single parameter&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Definition&lt;/strong&gt;: if we are asked to construct a 95% CI for a parameter, then the probability* that this CI will contain the &lt;em&gt;true&lt;/em&gt; population parameter value is 95%. We can replace the “95%” with any other percentage that we can think of, though it is rare for us to consider something below 90%.&lt;/p&gt;
+&lt;p&gt;*The word “probability” is to be interpreted using a frequentist approach. See bonus section 1.&lt;/p&gt;
+&lt;p&gt;For example, if we were to look at the linear model above, the true slope value is 2, because that is how we generated the data through a formula. But the point estimate for this parameter is about 2.1 (formula in the top left corner of the plot), not exactly 2. You may ask, what is going on?!&lt;/p&gt;
+&lt;p&gt;This is because any data sampled from a population, being only a sample, cannot encapsulate entirely what is going on in the population. Our point estimate (in this case, 2.1) is estimated using our data, and thus, can’t be numerically identical to the true parameter (in this case, 2) that is associated with a population. This interplay between an estimate and the parameter of interest (or similarly, between a sampled data and the underlying population) is a fundamental concept in statistics.&lt;/p&gt;
+&lt;p&gt;We can think of a CI as being another estimate for the population parameter. Unlike a point estimate, which is just a point, a CI is an interval defined between an upper bound and a lower bound. The midpoint of a CI is the point estimate. Thus, we can think of a CI as a way to quantify the variability for that point estimate*!&lt;/p&gt;
+&lt;!-- And if a CI contains the parameter of interest (in this case, 2), then we may retain the null hypothesis that the population parameter is 2. Notice how I used the phrase &#34;null hypothesis&#34; here, that is because there is a equivalence relationship between $(1−\alpha)\%$ CI and hypothesis testing with alpha as the significance level. --&gt;
+&lt;p&gt;*Interestingly, in my experience, a point estimate, being just a single number, can often mislead some people into thinking that there is a lot of certainty behind this number when it absolutely does not! The associate CI could be quite large even if your point estimate looks very reasonable.&lt;/p&gt;
+&lt;p&gt;The confidence interval for the slope parameter can be computed as (1.8067, 2.4091) using the code below. Notice how the point estimate of 2.1 is halfway between the two bounds and that this CI also contains the true parameter value of 2. Similarly, one can construct confidence interval for the intercept term as (0.1906, 1.3905).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;confint(model)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##                 2.5 %   97.5 %
+## (Intercept) 0.1905894 1.390481
+## x           1.8067446 2.409144&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;visualisation&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Visualisation&lt;/h2&gt;
+&lt;p&gt;We now have a basic understanding of what a CI is with respect to a single parameter, but who cares about a single parameter anyways? After all, a statistical model could have many parameters, how would knowing a single one enhance our knowledge of the entire model?&lt;/p&gt;
+&lt;p&gt;Here is where a bit of creative visualisation can help us! Notice how the linear regression model, written out as a formula, is &lt;span class=&#34;math inline&#34;&gt;\(y = \alpha + \beta x + \epsilon\)&lt;/span&gt; with &lt;span class=&#34;math inline&#34;&gt;\(\alpha\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\beta\)&lt;/span&gt; being the population intercept and slope parameters, respectively. When we make estimations on these parameters, our linear model, as a straight line is &lt;span class=&#34;math inline&#34;&gt;\(y = \hat{\alpha} + \hat{\beta} x + \epsilon\)&lt;/span&gt;, where &lt;span class=&#34;math inline&#34;&gt;\(\hat{\alpha}\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\hat{\beta}\)&lt;/span&gt; estimate &lt;span class=&#34;math inline&#34;&gt;\(\alpha\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\beta\)&lt;/span&gt; respectively. So if we have the CIs quantifying the variability of&lt;span class=&#34;math inline&#34;&gt;\(\hat{\alpha}\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\hat{\beta}\)&lt;/span&gt;, then we should also be able to produce a CI associated with the linear model itself! And by doing so, we can get a better idea of how &lt;strong&gt;variable&lt;/strong&gt; the entire model is because we know how variable the individual estimates are!&lt;/p&gt;
+&lt;p&gt;Even if you didn’t understand the above, the CI associated with the linear model is simply the gray area produced by &lt;code&gt;geom_smooth(method = &#34;lm&#34;, se = TRUE)&lt;/code&gt; when using &lt;code&gt;ggplot2&lt;/code&gt;! You can think of this line as how the linear model line (blue) “jiggles” if you have (future) data sampled from the same underlying distribution.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;df %&amp;gt;%
+  ggplot(aes(x = x, y = y)) +
+  geom_point() +
+  ggpubr::stat_regline_equation() +
+  geom_smooth(method = &amp;quot;lm&amp;quot;, se = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## `geom_smooth()` using formula &amp;#39;y ~ x&amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/index_files/figure-html/unnamed-chunk-5-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;prediction-interval-pi&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Prediction interval (PI)&lt;/h1&gt;
+&lt;div id=&#34;on-a-single-data-point&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;On a single data point&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Definition&lt;/strong&gt;: If we were to construct a 95% prediction interval for a given value of &lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt; for a given linear model, then the probability that it will contain the corresponding value of &lt;span class=&#34;math inline&#34;&gt;\(y\)&lt;/span&gt; is 95%.&lt;/p&gt;
+&lt;p&gt;This is fundamentally different to a confidence interval, because CI tries to quantify the variability of an estimate, but PI is aiming to capture the variability of a (future) data point, &lt;span class=&#34;math inline&#34;&gt;\(y_{new}\)&lt;/span&gt;, given some &lt;span class=&#34;math inline&#34;&gt;\(x_{new}\)&lt;/span&gt; value. In other words, a CI tries to quantify the behaviour of an estimate (obtained through averaging many data points), but a PI tries to quantify the behaviour of a single data point. Thus, we should expect, through simple intuition, that individual behaviour is more variable than the averaged behaviour. And so, &lt;strong&gt;PI is usually wider than a CI&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;The main source of confusion for some people is that, both CI and PI share the same point estimate, i.e. &lt;span class=&#34;math inline&#34;&gt;\(\hat{\alpha} + \hat{\beta} \bar{x}\)&lt;/span&gt;. It also doesn’t help when these concepts are sometimes mixed up and talked about as though they are interchangeable in some colloquial settings.&lt;/p&gt;
+&lt;p&gt;One can compute the point prediction value and the 95% PI in &lt;code&gt;R&lt;/code&gt; using the code below. Though admittedly, we are simply producing predictions for the original data, not new data (thus the warning message in &lt;code&gt;R&lt;/code&gt;).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;predict(model, interval = &amp;quot;prediction&amp;quot;) %&amp;gt;% head&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Warning in predict.lm(model, interval = &amp;quot;prediction&amp;quot;): predictions on current data refer to _future_ responses&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##        fit      lwr      upr
+## 1 4.970763 4.605474 5.336052
+## 2 5.360727 4.991068 5.730386
+## 3 4.811024 4.445082 5.176966
+## 4 4.774198 4.407903 5.140492
+## 5 5.316730 4.947982 5.685477
+## 6 4.960942 4.595653 5.326230&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;visualisation-1&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Visualisation&lt;/h1&gt;
+&lt;p&gt;In my experience, PI’s are more intuitive to understand than CI’s. PI is simply a region to capture new data, but CI is about how the model “jiggles”.&lt;/p&gt;
+&lt;p&gt;It is slightly harder to generate a PI using &lt;code&gt;ggplot2&lt;/code&gt; with some customisation needed for the &lt;code&gt;geom_smooth&lt;/code&gt; function. Thus, I will attempt to generate both CI and PI manually and use &lt;code&gt;ggplot2&lt;/code&gt; for visualisation. I particularly like the &lt;code&gt;broom::augment&lt;/code&gt; function to generate these intervals here.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ci = broom::augment(model, interval = &amp;quot;confidence&amp;quot;)
+pi = broom::augment(model, interval = &amp;quot;prediction&amp;quot;)
+
+plotdf = tibble(
+  x = ci$x,
+  y = ci$y, 
+  line = ci$.fitted,
+  ci_lwr = ci$.lower,
+  ci_upr = ci$.upper,
+  pi_lwr = pi$.lower,
+  pi_upr = pi$.upper)
+
+plot1 = plotdf %&amp;gt;% 
+  ggplot(aes(x = x, y = y)) +
+  geom_point() + 
+  geom_line(aes(x = x, y = line), colour = &amp;quot;blue&amp;quot;) +
+  geom_ribbon(aes(x = x, ymin = ci_lwr, ymax = ci_upr), fill = &amp;quot;gray20&amp;quot;, alpha = 0.3) +
+  labs(caption = &amp;quot;blue: single estimated linear regression line,
+       gray: 95% CI&amp;quot;)
+
+plot1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/index_files/figure-html/unnamed-chunk-7-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot2 = plot1 + 
+  geom_ribbon(aes(x = x, ymin = pi_lwr, ymax = pi_upr), colour = &amp;quot;red&amp;quot;, alpha = 0) +
+  labs(caption = &amp;quot;blue: single estimated linear regression line,
+      red: 95% PI,
+      gray: 95% CI&amp;quot;)
+
+plot2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/index_files/figure-html/unnamed-chunk-8-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;From the plot, I would like to reiterate this idea that a CI (gray region) tries to quantify averaged behaviour of a model (blue line), and notice how small the jiggling is. But a PI (red lines) tries to quantify the behaviour of individual data points, and thus PI is much wider, because individuals are less predictable than the average.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bonus-1-probability-and-confidence-level&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Bonus 1: probability and confidence level&lt;/h1&gt;
+&lt;p&gt;In all the writings above, I have always assumed that we already know what a probability/confidence level is. However, this might not be fair and I would like to explain this concept better in this section.&lt;/p&gt;
+&lt;p&gt;In most introductory statistics courses, the first definition of probability is likely to be the frequentist definition, which is closely related to the concept of (re-)sampling. In our definition of CI above, we used 95% confidence level as the default. This means that, if we were to repeatedly sample new data of the same sample size from the population, and construct the CI in the same way, then the proportion of times that the CIs containing the true population parameter is 95%. This idea of “repeated sampling” applies to both PI and TI. Thus, even though in the definitions above, we have used the words “probability” and “confidence level” interchangeably, but in the most rigorous way, these interval concepts should only be interpreted through repeated sampling. We will do this in bonus section 2.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bonus-2-visualisation-through-repetitions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Bonus 2: visualisation through repetitions&lt;/h1&gt;
+&lt;p&gt;We will now repeat the data generation process 100 times and compute the corresponding statistics. The code below is not quite readable unless you are already familiar with &lt;code&gt;tidyverse&lt;/code&gt; and nested &lt;code&gt;tibble&lt;/code&gt;. The essence of the code is to first construct data in exactly the same way as we have above. And then, for each of the 100 data generation, we will then extract the corresponding fitted line, CI and PI for visualisation.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(gganimate)
+nsim = 100 ## Number of simulations
+n = 30
+
+sim_tbl = tibble(
+  x = rnorm(n*nsim, 2, sd = 0.2),
+  epsilon = rnorm(n*nsim, 0, sd = 0.2),
+  y = 1 + 2*x + epsilon,
+  sim_num = rep(1:nsim, n)) ## This tibble puts all the simulated data in one
+
+sim_tbl&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 3,000 x 4
+##        x epsilon     y sim_num
+##    &amp;lt;dbl&amp;gt;   &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;   &amp;lt;int&amp;gt;
+##  1  2.11  0.122   5.34       1
+##  2  2.02  0.107   5.15       2
+##  3  1.64  0.151   4.44       3
+##  4  1.78 -0.0513  4.51       4
+##  5  1.95 -0.224   4.67       5
+##  6  1.78  0.159   4.73       6
+##  7  1.90  0.0888  4.89       7
+##  8  2.33 -0.101   5.55       8
+##  9  2.08  0.0578  5.22       9
+## 10  1.68  0.267   4.63      10
+## # … with 2,990 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim_lm_tbl = sim_tbl %&amp;gt;% 
+  group_by(sim_num) %&amp;gt;% 
+  tidyr::nest() %&amp;gt;% ## Group by simulation number and separately fit linear models
+  dplyr::mutate(
+    lm = purrr::map(.x = data, .f = ~ lm(y ~ x, data = .x)),
+    lm_tidy = purrr::map(lm, broom::tidy))
+
+sim_lm_tbl&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 100 x 4
+## # Groups:   sim_num [100]
+##    sim_num data                  lm     lm_tidy             
+##      &amp;lt;int&amp;gt; &amp;lt;list&amp;gt;                &amp;lt;list&amp;gt; &amp;lt;list&amp;gt;              
+##  1       1 &amp;lt;tibble[,3] [30 × 3]&amp;gt; &amp;lt;lm&amp;gt;   &amp;lt;tibble[,5] [2 × 5]&amp;gt;
+##  2       2 &amp;lt;tibble[,3] [30 × 3]&amp;gt; &amp;lt;lm&amp;gt;   &amp;lt;tibble[,5] [2 × 5]&amp;gt;
+##  3       3 &amp;lt;tibble[,3] [30 × 3]&amp;gt; &amp;lt;lm&amp;gt;   &amp;lt;tibble[,5] [2 × 5]&amp;gt;
+##  4       4 &amp;lt;tibble[,3] [30 × 3]&amp;gt; &amp;lt;lm&amp;gt;   &amp;lt;tibble[,5] [2 × 5]&amp;gt;
+##  5       5 &amp;lt;tibble[,3] [30 × 3]&amp;gt; &amp;lt;lm&amp;gt;   &amp;lt;tibble[,5] [2 × 5]&amp;gt;
+##  6       6 &amp;lt;tibble[,3] [30 × 3]&amp;gt; &amp;lt;lm&amp;gt;   &amp;lt;tibble[,5] [2 × 5]&amp;gt;
+##  7       7 &amp;lt;tibble[,3] [30 × 3]&amp;gt; &amp;lt;lm&amp;gt;   &amp;lt;tibble[,5] [2 × 5]&amp;gt;
+##  8       8 &amp;lt;tibble[,3] [30 × 3]&amp;gt; &amp;lt;lm&amp;gt;   &amp;lt;tibble[,5] [2 × 5]&amp;gt;
+##  9       9 &amp;lt;tibble[,3] [30 × 3]&amp;gt; &amp;lt;lm&amp;gt;   &amp;lt;tibble[,5] [2 × 5]&amp;gt;
+## 10      10 &amp;lt;tibble[,3] [30 × 3]&amp;gt; &amp;lt;lm&amp;gt;   &amp;lt;tibble[,5] [2 × 5]&amp;gt;
+## # … with 90 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;fitted-lines&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Fitted lines&lt;/h2&gt;
+&lt;p&gt;For each the linear models that we have fitted, we will now extract the coefficients. We will perform additional manipulations for the purpose of plotting.&lt;/p&gt;
+&lt;p&gt;Notice how even though we have many fitted lines, their deviations from the single fitted line are small and almost cover the same range as the confidence interval (gray region). This is exactly what a confidence interval is designed for: to capture how a single fitted line jiggles under sampling from the same population.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim_coef_tbl = sim_lm_tbl %&amp;gt;% 
+  dplyr::select(sim_num, lm_tidy) %&amp;gt;% 
+  unnest(lm_tidy) %&amp;gt;% 
+  dplyr::select(sim_num, term, estimate) %&amp;gt;%
+  tidyr::pivot_wider(names_from = &amp;quot;term&amp;quot;,
+                     values_from = &amp;quot;estimate&amp;quot;)
+
+sim_coef_tbl&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 100 x 3
+## # Groups:   sim_num [100]
+##    sim_num `(Intercept)`     x
+##      &amp;lt;int&amp;gt;         &amp;lt;dbl&amp;gt; &amp;lt;dbl&amp;gt;
+##  1       1         0.484  2.23
+##  2       2         0.941  2.05
+##  3       3         1.38   1.82
+##  4       4         1.85   1.59
+##  5       5         0.972  2.03
+##  6       6         0.606  2.17
+##  7       7         0.911  2.06
+##  8       8         1.24   1.88
+##  9       9         0.524  2.24
+## 10      10         0.826  2.11
+## # … with 90 more rows&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;plot1 +
+  geom_abline(slope = 2, intercept = 1) +
+  geom_abline(data = sim_coef_tbl,
+              aes(slope = x, intercept = `(Intercept)`),
+              size = 0.3, alpha = 0.5, colour = &amp;quot;orange&amp;quot;) +
+  labs(title = &amp;quot;Fitted lines&amp;quot;,
+       subtitle = &amp;quot;&amp;quot;,
+       caption = &amp;quot;black: true linear relationship
+       blue: single estimated linear regression line
+       orange: 100 simulated linear regression lines,
+       gray: 95% CI&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://www.kevinwangstats.com/post/2021-05-30-confidence-and-prediction-intervals/index_files/figure-html/unnamed-chunk-10-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;confidence-intervals&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Confidence intervals&lt;/h2&gt;
+&lt;p&gt;What I don’t like about the plot above is that orange lines are plotted over other elements of the plot, i.e. overplotting. Another attempt at the same visualisation is to use animation. I will use only the first 20 simulations.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim_coef_tbl20 = sim_coef_tbl %&amp;gt;% dplyr::filter(sim_num &amp;lt;= 20)
+sim_tbl20 = sim_tbl %&amp;gt;% dplyr::filter(sim_num &amp;lt;= 20)
+
+sim_conf_int = augment(model, newdata = sim_tbl20, interval = &amp;quot;confidence&amp;quot;) %&amp;gt;% 
+  dplyr::select(x, y, .lower, .upper)
+
+animation1 = ggplot() +
+  geom_point(data = sim_tbl20, aes(x = x, y = y)) +
+  geom_ribbon(data = sim_conf_int, aes(x = x, y = y, ymin = .lower, ymax = .upper),
+              alpha = 0.5) +
+  geom_abline(intercept = model$coefficients[1],
+              slope = model$coefficients[2], colour = &amp;quot;blue&amp;quot;) +
+  geom_abline(data = sim_coef_tbl20,
+              aes(slope = x, intercept = `(Intercept)`), 
+              colour = &amp;quot;orange&amp;quot;) +
+  transition_states(sim_num) +
+  shadow_mark(exclude_layer = 1) +
+  labs(title = &amp;quot;Effect of CI under simulations&amp;quot;,
+       subtitle = &amp;quot;Simulation {closest_state}&amp;quot;,
+       caption = &amp;quot;blue: single estimated linear regression line,
+       orange: 20 simulated linear regression lines,
+       gray: 95% CI for the blue line&amp;quot;)
+
+# animation1
+
+# gganimate::anim_save(filename = &amp;quot;CI_animation.gif&amp;quot;, animation = animation1)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;CI_animation.gif&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sim_pred_int = augment(x = model, newdata = sim_tbl20, interval = &amp;quot;predict&amp;quot;) %&amp;gt;% 
+  dplyr::select(x, y, .lower, .upper)
+
+animation2 = sim_tbl20 %&amp;gt;% 
+  ggplot(aes(x = x, y = y)) +
+  geom_point(size = 1) +
+  geom_ribbon(data = sim_pred_int, 
+              aes(x = x, ymin = .lower, ymax = .upper), 
+              fill = &amp;quot;gray20&amp;quot;, alpha = 0.5) +
+  geom_abline(intercept = model$coefficients[1],
+              slope = model$coefficients[2], colour = &amp;quot;blue&amp;quot;) +
+  transition_states(sim_num) +
+  shadow_mark(exclude_layer = 1) +
+  labs(title = &amp;quot;Effect of PI under simulations&amp;quot;,
+       subtitle = &amp;quot;Simulation {closest_state}&amp;quot;,
+       caption = &amp;quot;blue: single estimated linear regression line, \n
+       gray: 95% PI for the blue line&amp;quot;)
+
+# animation2
+
+# gganimate::anim_save(filename = &amp;quot;PI_animation.gif&amp;quot;, animation = animation2)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;PI_animation.gif&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bonus-3-side-by-side-animation&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Bonus 3: side by side animation&lt;/h1&gt;
+&lt;p&gt;This &lt;a href=&#34;https://github.com/thomasp85/gganimate/wiki/Animation-Composition&#34;&gt;post&lt;/a&gt; shows how to put &lt;code&gt;gganimate&lt;/code&gt; plots together.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(patchwork)
+library(magick)
+a_mgif &amp;lt;- image_read(animate(animation1))
+b_mgif &amp;lt;- image_read(animate(animation2))
+
+new_gif &amp;lt;- image_append(c(a_mgif[1], b_mgif[1]))
+for(i in 2:20){
+  combined &amp;lt;- image_append(c(a_mgif[i], b_mgif[i]))
+  new_gif &amp;lt;- c(new_gif, combined)
+}
+
+gganimate::anim_save(filename = &amp;quot;combined_CI_PI_animation.gif&amp;quot;, animation = new_gif)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;combined_CI_PI_animation.gif&#34; /&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bonus-4-mathematical-formulas&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Bonus 4: Mathematical formulas&lt;/h1&gt;
+&lt;p&gt;Ok, I promise this is the last bonus section. I am including some formulas for completeness here.&lt;/p&gt;
+&lt;p&gt;Suppose that our data design matrix is &lt;span class=&#34;math inline&#34;&gt;\(X \in \mathbb{R}^{n \times p}\)&lt;/span&gt; and the response variable is &lt;span class=&#34;math inline&#34;&gt;\(y \in \mathbb{R}^n\)&lt;/span&gt;. If we set the confidence level to &lt;span class=&#34;math inline&#34;&gt;\((1-\alpha)\%\)&lt;/span&gt;, then we will use &lt;span class=&#34;math inline&#34;&gt;\(t_{n-p}^{(\alpha / 2)}\)&lt;/span&gt; to denote the Student t-distribution’s critical value, with &lt;span class=&#34;math inline&#34;&gt;\(n-p\)&lt;/span&gt; degrees of freedom.&lt;/p&gt;
+&lt;p&gt;For a new data point at &lt;span class=&#34;math inline&#34;&gt;\((x_{\text{new}}, y_{\text{new}})\)&lt;/span&gt;, the estimated response is &lt;span class=&#34;math inline&#34;&gt;\(\hat{y}_{new} = a + b x_{new}\)&lt;/span&gt;, where &lt;span class=&#34;math inline&#34;&gt;\(a\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(b\)&lt;/span&gt; are estimated intercept and slope term respectively. The estimated linear regression residual standard deviation is &lt;span class=&#34;math inline&#34;&gt;\(\hat{\sigma}\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;The confidence interval under this notation set up is:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[\hat{y}_{new} \pm t_{n-p}^{(\alpha / 2)} \hat{\sigma} \sqrt{x_{new}^{T}\left(X^{T} X\right)^{-1} x_{new}}.\]&lt;/span&gt;
+The prediction interval under this notation set up is:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[\hat{y}_{new} \pm t_{n-p}^{(\alpha / 2)} \hat{\sigma} \sqrt{1+x_{new}^{T}\left(X^{T} X\right)^{-1} x_{new}}.\]&lt;/span&gt;
+Notice that both formulas share the same point estimate of &lt;span class=&#34;math inline&#34;&gt;\(\hat{y}_{new}\)&lt;/span&gt; and the only difference between these two formulas is the term &lt;code&gt;1&lt;/code&gt; under the square root sign. But that single term makes up all the differences between these statistical concepts!&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,1488 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.1.0 for Hugo" />
+  
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Kevin Y.X. Wang" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Introduction This is a simple exercise to extract data from a Wikipedia page (List of busiest passenger air routes) and performing a basic data visualisation." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://www.kevinwangstats.com/post/busiest-air-routes/" />
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.0/css/academicons.min.css" integrity="sha512-W4yqoT1+8NLkinBLBZko+dFB2ZbHsYLDdr50VElllRcNt2Q4/GSs6u71UHKxB7S6JEMCp5Ve4xjh3eGQl/HRvg==" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha256-FMvZuGapsJLjouA6k7Eo2lusoAX9i0ShlWFG6qt7SLc=" crossorigin="anonymous">
+
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.css" integrity="sha512-1xoFisiGdy9nvho8EgXuXvnpR5GAMSjFwp40gSRE3NwdUdIMIKuPa7bqoUhLD0O/5tPNhteAsE5XyyMi5reQVA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+    
+      
+      <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap" media="print" onload="this.media='all'">
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.2ee374d4cf5562c045dfeda3907f775c.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TGYMC1CTV1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'G-TGYMC1CTV1', {});
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/index.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://www.kevinwangstats.com/post/busiest-air-routes/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary" />
+  
+    <meta property="twitter:site" content="@KevinWangStats" />
+    <meta property="twitter:creator" content="@KevinWangStats" />
+  
+  <meta property="og:site_name" content="Kevin Wang" />
+  <meta property="og:url" content="https://www.kevinwangstats.com/post/busiest-air-routes/" />
+  <meta property="og:title" content="Busiest air routes | Kevin Wang" />
+  <meta property="og:description" content="Introduction This is a simple exercise to extract data from a Wikipedia page (List of busiest passenger air routes) and performing a basic data visualisation." /><meta property="og:image" content="https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_512x512_fill_lanczos_center_3.png" />
+    <meta property="twitter:image" content="https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_512x512_fill_lanczos_center_3.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2021-06-03T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2021-06-03T17:22:58&#43;10:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.kevinwangstats.com/post/busiest-air-routes/"
+  },
+  "headline": "Busiest air routes",
+  
+  "datePublished": "2021-06-03T00:00:00Z",
+  "dateModified": "2021-06-03T17:22:58+10:00",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Kevin Y.X. Wang"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Kevin Wang",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Introduction This is a simple exercise to extract data from a Wikipedia page (List of busiest passenger air routes) and performing a basic data visualisation."
+}
+</script>
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+  <title>Busiest air routes | Kevin Wang</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="6e0ae3a419e150aec936d7a2c42bed0e" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.a8a181ea67095ef9fbb0e99ffbf585a0.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container-xl">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Kevin Wang</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Kevin Wang</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#packages"><span>Packages</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#projects"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://scholar.google.com/citations?user=ScxpjTgAAAAJ&amp;hl=en" target="_blank" rel="noopener"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/academic_activities"><span>Academic Activities</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+      
+      
+        
+          
+          <li class="nav-item d-none d-lg-inline-flex">
+            <a class="nav-link" href="https://twitter.com/KevinWangStats" data-toggle="tooltip" data-placement="bottom" title="Follow me on Twitter" target="_blank" rel="noopener" aria-label="Follow me on Twitter">
+              <i class="fab fa-twitter" aria-hidden="true"></i>
+            </a>
+          </li>
+        
+      
+
+      
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#" aria-label="Search"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+      
+      <li class="nav-item dropdown theme-dropdown">
+        <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+          <i class="fas fa-moon" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item js-set-theme-light">
+            <span>Light</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-dark">
+            <span>Dark</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-auto">
+            <span>Automatic</span>
+          </a>
+        </div>
+      </li>
+      
+
+      
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>Busiest air routes</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+          Last updated on
+      
+    
+    Jun 3, 2021
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    7 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/datavisualisation/">DataVisualisation</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+<script src="https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/header-attrs/header-attrs.js"></script>
+<script src="https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/htmlwidgets/htmlwidgets.js"></script>
+<script src="https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/plotly-binding/plotly.js"></script>
+<script src="https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/typedarray/typedarray.min.js"></script>
+<script src="https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/jquery/jquery.min.js"></script>
+<link href="https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/crosstalk/css/crosstalk.css" rel="stylesheet" />
+<script src="https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/crosstalk/js/crosstalk.min.js"></script>
+<link href="https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="https://www.kevinwangstats.com/post/busiest-air-routes/index.en_files/plotly-main/plotly-latest.min.js"></script>
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>This is a simple exercise to extract data from a Wikipedia page (<a href="https://en.wikipedia.org/wiki/List_of_busiest_passenger_air_routes">List of busiest passenger air routes</a>) and performing a basic data visualisation.</p>
+<p>Why am I doing this? I somehow really got into aviation in the past 2 years. Due to the COVID travel restriction, I have spent days on YouTube watching planes taking off and landing. In a moment of self-indulgence, I would also like to add that Airbus 380 is such a beautiful engineering marvel and it is sad that COVID fastened the end of its production.</p>
+<p><img src="HK-qantas.jpg" /></p>
+<p><em>Airbus 380 at Hong Kong airport, 2018</em></p>
+</div>
+<div id="extracting-data" class="section level1">
+<h1>Extracting data</h1>
+<p>We can, in theory, copy and paste the data to an Excel sheet and then import the data. However, we will try to do something a bit fancier and use the <code>rvest</code> package to extract this data.</p>
+<p>The only downside with extracting the data in this way is that if the webpage is updated, then our code might not work. Hence, I will also save a copy of this data in my <a href="https://gist.github.com/kevinwang09/cfbb5bcbc73f6d8970fa4499f2cc0621">GitHub</a>.</p>
+<pre class="r"><code>suppressPackageStartupMessages({
+  library(xml2)
+  library(rvest)
+  library(tidyverse)
+})</code></pre>
+<pre class="r"><code>webpage = xml2::read_html(&quot;https://en.wikipedia.org/wiki/List_of_busiest_passenger_air_routes&quot;)
+
+raw_tbl = webpage %&gt;% 
+  html_element(&quot;table&quot;) %&gt;% 
+  html_table()
+
+raw_tbl</code></pre>
+<pre><code>## # A tibble: 50 x 7
+##     Rank `Airport 1`  `Airport 2`    `Distance (km)` `2018[1]` `2017[2]` Type   
+##    &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;                    &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;     &lt;chr&gt;  
+##  1     1 Jeju         Seoul-Gimpo                449 14,107,4… 13,460,3… Domest…
+##  2     2 Sapporo      Tokyo-Haneda               835 9,698,639 8,726,502 Domest…
+##  3     3 Sydney       Melbourne                  705 9,245,392 9,090,941 Domest…
+##  4     4 Fukuoka      Tokyo-Haneda               889 8,762,547 7,864,000 Domest…
+##  5     5 Mumbai       Delhi                     1150 7,392,155 7,129,943 Domest…
+##  6     6 Hanoi        Ho Chi Minh C…            1171 6,867,114 6,769,823 Domest…
+##  7     7 Beijing      Shanghai-Hong…            1081 6,518,997 6,833,684 Domest…
+##  8     8 Hong Kong    Taipei-Taoyuan             802 6,476,268 6,719,030 Intern…
+##  9     9 Tokyo-Haneda Naha                      1573 5,829,712 5,269,481 Domest…
+## 10    10 Jakarta      Surabaya                   700 5,649,046 5,271,304 Domest…
+## # … with 40 more rows</code></pre>
+<pre class="r"><code>## We are only interested in the 2018 passenger numbers
+subset_tbl = raw_tbl %&gt;% 
+  dplyr::transmute(
+    rank = Rank, 
+    airport1 = `Airport 1`, 
+    airport2 = `Airport 2`, 
+    distance = `Distance (km)`, 
+    passengers = `2018[1]` %&gt;% str_remove_all(&quot;,&quot;) %&gt;% as.integer(), 
+    type = Type)
+
+subset_tbl</code></pre>
+<pre><code>## # A tibble: 50 x 6
+##     rank airport1     airport2          distance passengers type         
+##    &lt;int&gt; &lt;chr&gt;        &lt;chr&gt;                &lt;int&gt;      &lt;int&gt; &lt;chr&gt;        
+##  1     1 Jeju         Seoul-Gimpo            449   14107414 Domestic     
+##  2     2 Sapporo      Tokyo-Haneda           835    9698639 Domestic     
+##  3     3 Sydney       Melbourne              705    9245392 Domestic     
+##  4     4 Fukuoka      Tokyo-Haneda           889    8762547 Domestic     
+##  5     5 Mumbai       Delhi                 1150    7392155 Domestic     
+##  6     6 Hanoi        Ho Chi Minh City      1171    6867114 Domestic     
+##  7     7 Beijing      Shanghai-Hongqiao     1081    6518997 Domestic     
+##  8     8 Hong Kong    Taipei-Taoyuan         802    6476268 International
+##  9     9 Tokyo-Haneda Naha                  1573    5829712 Domestic     
+## 10    10 Jakarta      Surabaya               700    5649046 Domestic     
+## # … with 40 more rows</code></pre>
+<pre class="r"><code>write_csv(x = subset_tbl, file = &quot;raw_airports_data.csv&quot;)</code></pre>
+<p>Notice that most of the “airports” are actually just the name of the city. We will use this to grab the longitude and latitude information. However, there are some exceptions like “Tokyo-Haneda”, where “Haneda” is one of the two international airports in the city of Tokyo. We will need to clean up these exceptions for consistency.</p>
+<pre class="r"><code>clean_tbl = subset_tbl %&gt;% 
+  dplyr::mutate(
+    city1 = purrr::map_chr(.x = airport1,
+                       .f = ~ str_split(.x, &quot;-&quot;)[[1]][1]),
+    city2 = purrr::map_chr(.x = airport2,
+                       .f = ~ str_split(.x, &quot;-&quot;)[[1]][1]))
+
+clean_tbl</code></pre>
+<pre><code>## # A tibble: 50 x 8
+##     rank airport1   airport2     distance passengers type      city1   city2    
+##    &lt;int&gt; &lt;chr&gt;      &lt;chr&gt;           &lt;int&gt;      &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;   &lt;chr&gt;    
+##  1     1 Jeju       Seoul-Gimpo       449   14107414 Domestic  Jeju    Seoul    
+##  2     2 Sapporo    Tokyo-Haneda      835    9698639 Domestic  Sapporo Tokyo    
+##  3     3 Sydney     Melbourne         705    9245392 Domestic  Sydney  Melbourne
+##  4     4 Fukuoka    Tokyo-Haneda      889    8762547 Domestic  Fukuoka Tokyo    
+##  5     5 Mumbai     Delhi            1150    7392155 Domestic  Mumbai  Delhi    
+##  6     6 Hanoi      Ho Chi Minh…     1171    6867114 Domestic  Hanoi   Ho Chi M…
+##  7     7 Beijing    Shanghai-Ho…     1081    6518997 Domestic  Beijing Shanghai 
+##  8     8 Hong Kong  Taipei-Taoy…      802    6476268 Internat… Hong K… Taipei   
+##  9     9 Tokyo-Han… Naha             1573    5829712 Domestic  Tokyo   Naha     
+## 10    10 Jakarta    Surabaya          700    5649046 Domestic  Jakarta Surabaya 
+## # … with 40 more rows</code></pre>
+</div>
+<div id="getting-locations-for-the-cities" class="section level1">
+<h1>Getting locations for the cities</h1>
+<div id="google-maps-api" class="section level2">
+<h2>Google Maps API</h2>
+<p>There are many ways of getting the location information for cities. In the past, I have found the most reliable way is to get it through <code>ggmap</code> which uses the Google Maps API, but this means you must set up a Google Cloud Platform billing account with them (which unfortunately requires a credit card). See <a href="https://cran.r-project.org/web/packages/ggmap/readme/README.html">this documentation</a>. Once a project is set up with the Google Cloud Platform, you will then need to enable the Google Maps API by searching for it in the top search bar. The API key is required too, see the documentations for <code>ggmap::register_google</code> for more information.</p>
+<p>Aside: is all these worth it? In my experience, absolutely! Because Google Maps is very smart and tends to understand certain complexities that you didn’t think of and handle those for you. For example, if you are interested in the city of Sydney, Google Maps will understand that to be the city of Sydney in Australia, not the city in Nova Scotia, Canada (I don’t know how they do this, but my guess is that they will return results that are more relevant, because, well, they are Google). Google Cloud is also offering free credits for most of their basic services, so one can take advantage of these without incurring substantial costs.</p>
+<p>To ensure code reproducibility, I will use the code below to download the coordinates for all the cities, save it as a CSV and make it available on <a href="https://gist.github.com/kevinwang09/006d00ee7a43778171e7fc2fd409cdd6">GitHub</a>.</p>
+<pre class="r"><code>library(ggmap)
+# ggmap::geocode(&quot;Sydney, Australia&quot;, output = &quot;latlon&quot;, source = &quot;google&quot;)
+all_cities = c(clean_tbl$city1, clean_tbl$city2) %&gt;% unique
+all_geocode = ggmap::geocode(location = all_cities, output = &quot;latlon&quot;)
+city_tbl = tibble(
+  city = all_cities,
+  lon = all_geocode$lon,
+  lat = all_geocode$lat)
+
+readr::write_csv(x = city_tbl, file = &quot;./city_tbl.csv&quot;)</code></pre>
+<p>Alternatively, if you don’t want to register for Google’s billings, you could use the <code>tidygeocoder</code>’s <code>geocode</code> function to get the latitude/longitude information via Open Street Map, which doesn’t require registration, but in my experience, it can be slower than Google Maps.</p>
+</div>
+<div id="tidygeocoder-location-extractions" class="section level2">
+<h2><code>tidygeocoder</code> location extractions</h2>
+<p>A small example:</p>
+<pre class="r"><code>city_tbl = tibble(
+  city = c(clean_tbl$city1, clean_tbl$city2) %&gt;% unique) %&gt;% 
+  tidygeocoder::geocode(city, method = &#39;osm&#39;, lat = latitude , long = longitude)</code></pre>
+</div>
+<div id="simple-maps-location-extractions" class="section level2">
+<h2>Simple maps location extractions</h2>
+<p>You could also use the data provided in <a href="https://simplemaps.com/data/world-cities" class="uri">https://simplemaps.com/data/world-cities</a> to perform data joins to get the location information. The downloaded data looks quite tidy with additional ASCII encoding and I was quite impressed with the quality of the data.</p>
+</div>
+</div>
+<div id="joining-data-and-visualise" class="section level1">
+<h1>Joining data and visualise</h1>
+<p>Once we have the location information we can simply join the data as followed:</p>
+<pre class="r"><code>city_tbl = readr::read_csv(file = &quot;https://gist.githubusercontent.com/kevinwang09/006d00ee7a43778171e7fc2fd409cdd6/raw/f12ec9deecdd99b093d0c819e21b125a7f7d4afd/city_tbl.csv&quot;)</code></pre>
+<pre><code>## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   city = col_character(),
+##   lon = col_double(),
+##   lat = col_double()
+## )</code></pre>
+<pre class="r"><code>joined_data = clean_tbl %&gt;% 
+  left_join(city_tbl, by = c(&quot;city1&quot; = &quot;city&quot;)) %&gt;% 
+  left_join(city_tbl, by = c(&quot;city2&quot; = &quot;city&quot;), suffix = c(&quot;1&quot;, &quot;2&quot;))</code></pre>
+<p>I really like <code>plotly</code>’s globe visualisation, because you can click and drag the globe, which is really nice.</p>
+<p>Using this visualisation, we can see most of the busiest routes in the world are concentrated around Asia. What surprised me a few years ago is that Australia, despite its small population, also had a couple of routes made it to this list, with Sydney - Melbourne being the third on the list. In my experience, on a good day, there could be two planes at the Sydney airport flying to Melbourne but only 10 minutes apart. Which I must admit was a rare luxury that I never realised.</p>
+<pre class="r"><code>library(plotly)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;plotly&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:ggplot2&#39;:
+## 
+##     last_plot</code></pre>
+<pre><code>## The following object is masked from &#39;package:stats&#39;:
+## 
+##     filter</code></pre>
+<pre><code>## The following object is masked from &#39;package:graphics&#39;:
+## 
+##     layout</code></pre>
+<pre class="r"><code>geo &lt;- list(
+  scope = &#39;world&#39;,
+  projection = list(type = &#39;orthographic&#39;),
+  showland = TRUE,
+  landcolor = toRGB(&quot;gray95&quot;),
+  countrycolor = toRGB(&quot;gray80&quot;)
+)
+
+fig &lt;- plot_geo(color = I(&quot;red&quot;))
+
+fig &lt;- fig %&gt;% 
+  add_markers(
+    data = joined_data, x = ~lon1, y = ~lat1, text = ~city1,
+    hoverinfo = &quot;text&quot;, alpha = 0.5) %&gt;% 
+  add_markers(
+    data = joined_data, x = ~lon2, y = ~lat2, text = ~city2,
+    hoverinfo = &quot;text&quot;, alpha = 0.5) %&gt;% 
+  add_segments(
+    data = group_by(joined_data, rank),
+    x = ~lon1, xend = ~lon2,
+    y = ~lat1, yend = ~lat2,
+    alpha = 0.3, size = I(1), 
+    hoverinfo = &quot;none&quot;) %&gt;% 
+  layout(
+    title = &#39;Busiest air routes in the world&#39;,
+    geo = geo, 
+    showlegend = FALSE, 
+    height = 800)
+
+fig</code></pre>
+<div id="htmlwidget-1" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"visdat":{"12dae18202af8":["function () ","plotlyVisDat"],"12dae67e50c27":["function () ","data"],"12dae6e8109ba":["function () ","data"],"12dae59a5cb03":["function () ","data"]},"cur_data":"12dae59a5cb03","attrs":{"12dae67e50c27":{"color":["red"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"scatter","mode":"markers","text":{},"hoverinfo":"text","alpha":0.5,"inherit":true},"12dae6e8109ba":{"color":["red"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"type":"scatter","mode":"markers","text":{},"hoverinfo":"text","alpha":0.5,"inherit":true},"12dae59a5cb03":{"color":["red"],"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"x":{},"y":{},"xend":{},"yend":{},"type":"scatter","mode":"lines","alpha":0.3,"size":[1],"hoverinfo":"none","inherit":true}},"layout":{"height":800,"margin":{"b":40,"l":60,"t":25,"r":10},"mapType":"geo","title":"Busiest air routes in the world","geo":{"domain":{"x":[0,1],"y":[0,1]},"scope":"world","projection":{"type":"orthographic"},"showland":true,"landcolor":"rgba(242,242,242,1)","countrycolor":"rgba(204,204,204,1)"},"showlegend":false,"hovermode":"closest"},"source":"A","config":{"showSendToCloud":false},"data":[{"type":"scattergeo","mode":"markers","text":["Jeju","Sapporo","Sydney","Fukuoka","Mumbai","Hanoi","Beijing","Hong Kong","Tokyo","Jakarta","Jakarta","Jeddah","Tokyo","Chengdu","Guangzhou","Cancun","Beijing","Brisbane","Jakarta","Guangzhou","Shanghai","Bangalore","Jakarta","Jakarta","Cape Town","Kuala Lumpur","São Paulo–Congonhas","Hong Kong","New York","Bogotá","Bangalore","Los Angeles","Bangkok","Brisbane","Cebu","Hong Kong","Mexico City","Kolkata","Da Nang","Chiang Mai","Seoul","Cusco","New York","Jakarta","Mexico City","Jeju","İzmir","Hong Kong","Guangzhou","Hong Kong"],"hoverinfo":["text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text"],"marker":{"color":"rgba(255,0,0,0.5)","line":{"color":"rgba(255,0,0,1)"}},"textfont":{"color":"rgba(255,0,0,0.5)"},"line":{"color":"rgba(255,0,0,0.5)"},"geo":"geo","lat":[33.4996213,43.0617713,-33.8688197,33.5901838,19.0759837,21.0277644,39.9041999,22.3193039,35.6761919,-6.2087634,-6.2087634,21.485811,35.6761919,30.572815,23.12911,21.161908,39.9041999,-27.4704528,-6.2087634,23.12911,31.230416,12.9715987,-6.2087634,-6.2087634,-33.9248685,3.139003,-23.6273246,22.3193039,40.7127753,4.7109886,12.9715987,34.0522342,13.7563309,-27.4704528,10.3156992,22.3193039,19.4326077,22.572646,16.0544068,18.7883439,37.566535,-13.53195,40.7127753,-6.2087634,19.4326077,33.4996213,38.423734,22.3193039,23.12911,22.3193039],"lon":[126.5311884,141.3544507,151.2092955,130.4016888,72.8776559,105.8341598,116.4073963,114.1693611,139.6503106,106.845599,106.845599,39.1925048,139.6503106,104.066801,113.264385,-86.8515279,116.4073963,153.0260341,106.845599,113.264385,121.473701,77.5945627,106.845599,106.845599,18.4240553,101.686855,-46.6565842,114.1693611,-74.0059728,-74.072092,77.5945627,-118.2436849,100.5017651,153.0260341,123.8854366,114.1693611,-99.133208,88.363895,108.2021667,98.9853008,126.9779692,-71.9674626,-74.0059728,106.845599,-99.133208,126.5311884,27.142826,114.1693611,113.264385,114.1693611],"frame":null},{"type":"scattergeo","mode":"markers","text":["Seoul","Tokyo","Melbourne","Tokyo","Delhi","Ho Chi Minh City","Shanghai","Taipei","Naha","Surabaya","Denpasar","Riyadh","Osaka","Beijing","Beijing","Mexico City","Shenzhen","Sydney","Singapore","Shanghai","Shenzhen","Delhi","Makassar","Medan","Johannesburg","Singapore","Rio de Janeiro","Shanghai","Los Angeles","Medellin","Mumbai","San Francisco","Phuket","Melbourne","Manila","Bangkok","Monterrey","Delhi","Ho Chi Minh City","Bangkok","Osaka","Lima","Chicago","Kuala Lumpur","Guadalajara","Gimhae","Istanbul","Seoul","Chengdu","Manila"],"hoverinfo":["text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text"],"marker":{"color":"rgba(255,0,0,0.5)","line":{"color":"rgba(255,0,0,1)"}},"textfont":{"color":"rgba(255,0,0,0.5)"},"line":{"color":"rgba(255,0,0,0.5)"},"geo":"geo","lat":[37.566535,35.6761919,-37.8136276,35.6761919,28.7040592,10.8230989,31.230416,25.0329694,26.2125758,-7.2574719,-8.6704582,24.7135517,34.6937249,39.9041999,39.9041999,19.4326077,22.543096,-33.8688197,1.352083,31.230416,22.543096,28.7040592,-5.1476651,3.5951956,-26.2041028,1.352083,-22.9068467,31.230416,34.0522342,6.2476376,19.0759837,37.7749295,7.9519331,-37.8136276,14.5995124,13.7563309,25.6866142,28.7040592,10.8230989,13.7563309,34.6937249,-12.0463731,41.8781136,3.139003,20.6596988,35.2285451,41.0082376,37.566535,30.572815,14.5995124],"lon":[126.9779692,139.6503106,144.9630576,139.6503106,77.1024902,106.6296638,121.473701,121.5654177,127.6790208,112.7520883,115.2126293,46.6752957,135.5022535,116.4073963,116.4073963,-99.133208,114.057865,151.2092955,103.819836,121.473701,114.057865,77.1024902,119.4327314,98.6722227,28.0473051,103.819836,-43.1728965,121.473701,-118.2436849,-75.5658153,72.8776559,-122.4194155,98.3380884,144.9630576,120.9842195,100.5017651,-100.3161126,77.1024902,106.6296638,100.5017651,135.5022535,-77.042754,-87.6297982,101.686855,-103.3496092,128.8893517,28.9783589,126.9779692,104.066801,120.9842195],"frame":null},{"type":"scattergeo","mode":"lines","hoverinfo":["none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none",null,"none","none"],"marker":{"color":"rgba(255,0,0,0.3)","size":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"sizemode":"area","line":{"color":"rgba(255,0,0,1)"}},"textfont":{"color":"rgba(255,0,0,0.3)","size":1},"line":{"color":"rgba(255,0,0,0.3)","width":1},"geo":"geo","lat":[33.4996213,37.566535,null,43.0617713,35.6761919,null,-33.8688197,-37.8136276,null,33.5901838,35.6761919,null,19.0759837,28.7040592,null,21.0277644,10.8230989,null,39.9041999,31.230416,null,22.3193039,25.0329694,null,35.6761919,26.2125758,null,-6.2087634,-7.2574719,null,-6.2087634,-8.6704582,null,21.485811,24.7135517,null,35.6761919,34.6937249,null,30.572815,39.9041999,null,23.12911,39.9041999,null,21.161908,19.4326077,null,39.9041999,22.543096,null,-27.4704528,-33.8688197,null,-6.2087634,1.352083,null,23.12911,31.230416,null,31.230416,22.543096,null,12.9715987,28.7040592,null,-6.2087634,-5.1476651,null,-6.2087634,3.5951956,null,-33.9248685,-26.2041028,null,3.139003,1.352083,null,-23.6273246,-22.9068467,null,22.3193039,31.230416,null,40.7127753,34.0522342,null,4.7109886,6.2476376,null,12.9715987,19.0759837,null,34.0522342,37.7749295,null,13.7563309,7.9519331,null,-27.4704528,-37.8136276,null,10.3156992,14.5995124,null,22.3193039,13.7563309,null,19.4326077,25.6866142,null,22.572646,28.7040592,null,16.0544068,10.8230989,null,18.7883439,13.7563309,null,37.566535,34.6937249,null,-13.53195,-12.0463731,null,40.7127753,41.8781136,null,-6.2087634,3.139003,null,19.4326077,20.6596988,null,33.4996213,35.2285451,null,38.423734,41.0082376,null,22.3193039,37.566535,null,23.12911,30.572815,null,22.3193039,14.5995124],"lon":[126.5311884,126.9779692,null,141.3544507,139.6503106,null,151.2092955,144.9630576,null,130.4016888,139.6503106,null,72.8776559,77.1024902,null,105.8341598,106.6296638,null,116.4073963,121.473701,null,114.1693611,121.5654177,null,139.6503106,127.6790208,null,106.845599,112.7520883,null,106.845599,115.2126293,null,39.1925048,46.6752957,null,139.6503106,135.5022535,null,104.066801,116.4073963,null,113.264385,116.4073963,null,-86.8515279,-99.133208,null,116.4073963,114.057865,null,153.0260341,151.2092955,null,106.845599,103.819836,null,113.264385,121.473701,null,121.473701,114.057865,null,77.5945627,77.1024902,null,106.845599,119.4327314,null,106.845599,98.6722227,null,18.4240553,28.0473051,null,101.686855,103.819836,null,-46.6565842,-43.1728965,null,114.1693611,121.473701,null,-74.0059728,-118.2436849,null,-74.072092,-75.5658153,null,77.5945627,72.8776559,null,-118.2436849,-122.4194155,null,100.5017651,98.3380884,null,153.0260341,144.9630576,null,123.8854366,120.9842195,null,114.1693611,100.5017651,null,-99.133208,-100.3161126,null,88.363895,77.1024902,null,108.2021667,106.6296638,null,98.9853008,100.5017651,null,126.9779692,135.5022535,null,-71.9674626,-77.042754,null,-74.0059728,-87.6297982,null,106.845599,101.686855,null,-99.133208,-103.3496092,null,126.5311884,128.8893517,null,27.142826,28.9783589,null,114.1693611,126.9779692,null,113.264385,104.066801,null,114.1693611,120.9842195],"frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://www.kevinwangstats.com/post/busiest-air-routes/&amp;text=Busiest%20air%20routes" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://www.kevinwangstats.com/post/busiest-air-routes/&amp;t=Busiest%20air%20routes" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Busiest%20air%20routes&amp;body=https://www.kevinwangstats.com/post/busiest-air-routes/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://www.kevinwangstats.com/post/busiest-air-routes/&amp;title=Busiest%20air%20routes" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Busiest%20air%20routes%20https://www.kevinwangstats.com/post/busiest-air-routes/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://www.kevinwangstats.com/post/busiest-air-routes/&amp;title=Busiest%20air%20routes" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://www.kevinwangstats.com/"><img class="avatar mr-3 avatar-circle" src="/author/kevin-y.x.-wang/avatar_hu4dac1e2f91aaf4115dfec68ee8ebdf48_697857_270x270_fill_q75_lanczos_center.jpg" alt="Kevin Y.X. Wang"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://www.kevinwangstats.com/">Kevin Y.X. Wang</a></h5>
+      <h6 class="card-subtitle">Senior Data Scientist</h6>
+      <p class="card-text">Senior Data scientist at Illumina. PhD in Statistics.</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://twitter.com/KevinWangStats" target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=ScxpjTgAAAAJ&amp;hl=en" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/kevinwang09" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/kevinwangstats/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/kevinwangstats/cv/blob/main/CV_KEVIN_YX_WANG_twopage.pdf" target="_blank" rel="noopener">
+        <i class="ai ai-cv"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+  
+
+  
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+      
+      
+      
+      
+      
+      
+      Published with <a href="https://wowchemy.com/?utm_campaign=poweredby" target="_blank" rel="noopener">Wowchemy</a> — the free, <a href="https://github.com/wowchemy/wowchemy-hugo-modules" target="_blank" rel="noopener">open source</a> website builder that empowers creators.
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/instant.page/5.1.0/instantpage.min.js" integrity="sha512-1+qUtKoh9XZW7j+6LhRMAyOrgSQKenQ4mluTR+cvxXjP1Z54RxZuzstR/H9kgPXQsVB8IW7DMDFUJpzLjvhGSQ==" crossorigin="anonymous"></script>
+
+      
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/highlight.min.js" integrity="sha512-TDKKr+IvoqZnPzc3l35hdjpHD0m+b2EC2SrLEgKDRWpxf2rFCxemkgvJ5kfU48ip+Y+m2XVKyOCD85ybtlZDmw==" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/r.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/python.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/latex.min.js"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.js" integrity="sha512-SeiQaaDh73yrb56sTW/RgVdi/mMqNeM2oBwubFHagc5BkixSpP1fvqF47mKzPGWYSSy4RwbBunrJBQ4Co8fRWA==" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    <script src="/js/bootstrap.bundle.min.6aed84840afc03ab4d5750157f69c120.js"></script>
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.cf8ca859a9b74f8b1cd804621b13e5f1.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

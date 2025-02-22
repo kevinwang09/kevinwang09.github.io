@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Packages | Kevin Wang</title>
+    <link>https://www.kevinwangstats.com/package/</link>
+      <atom:link href="https://www.kevinwangstats.com/package/index.xml" rel="self" type="application/rss+xml" />
+    <description>Packages</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Sun, 01 Dec 2019 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_512x512_fill_lanczos_center_3.png</url>
+      <title>Packages</title>
+      <link>https://www.kevinwangstats.com/package/</link>
+    </image>
+    
+    <item>
+      <title>learningtower</title>
+      <link>https://www.kevinwangstats.com/package/learningtower/</link>
+      <pubDate>Sun, 01 Dec 2019 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/package/learningtower/</guid>
+      <description>&lt;p&gt;The goal of learningtower is to provide a user-friendly R package to provide easy access to a subset of variables from PISA data collected from the OECD, for the years 2000 - 2018, collected on a three year basis. This is an excellent dataset for exploring and visualizing data. This dataset can also be used for other analytically purposes as well as statistical computations.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>mcvis</title>
+      <link>https://www.kevinwangstats.com/package/mcvis/</link>
+      <pubDate>Tue, 01 Jan 2019 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/package/mcvis/</guid>
+      <description>&lt;p&gt;Multi-collinearity is a big problem in performing regression. Without properly detecting collinearity, the regression estimation could be severely biased. The traditional statistics like variance inflation factor or eigenvalues do not always perform well in applications. mcvis is a new framework that utilises resampling techniques to repeatedly learn from these conventional collinearity indices and their relationships in order to better understand the causes of collinearity. Our framework is made available in &lt;code&gt;R&lt;/code&gt; through the &lt;code&gt;mcvis&lt;/code&gt; package which includes new collinearity measures and visualisations, in particular a bipartite plot that informs on the degree and structure of collinearity.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>scMerge</title>
+      <link>https://www.kevinwangstats.com/package/scmerge/</link>
+      <pubDate>Mon, 01 Jan 2018 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/package/scmerge/</guid>
+      <description>&lt;p&gt;Single-cell RNA-seq is an exciting new technology that allows us to study cell heterogeneity. However, like most transcriptomics data, multiple scRNA-Seq data cannot be easily combined without adjustments for scaling. &lt;code&gt;scMerge&lt;/code&gt; uses clever algorithms to group similar cells between multiple datasets to understand the noise structure between them. This noise structure is then removed from these datasets to produce a merged data suitable for other downstream scRNA-Seq data analysis.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>APES</title>
+      <link>https://www.kevinwangstats.com/package/apes/</link>
+      <pubDate>Tue, 01 Mar 2016 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/package/apes/</guid>
+      <description>&lt;p&gt;Exhaustive variable selection is known to be time consuming, especially for Generalised Linear Models (GLMs). APES is a variable selection method that first converts a given GLM into a linear model first and then uses a best-subset algorithm to find the best linear model. This linear model is then converted back to a GLM to approximate the original exhaustive search problem. &lt;code&gt;APES&lt;/code&gt; can be orders of magnitudes faster than the true exhaustive search while retaining a reasonable accuracy.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

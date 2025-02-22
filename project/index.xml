@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects | Kevin Wang</title>
+    <link>https://www.kevinwangstats.com/project/</link>
+      <atom:link href="https://www.kevinwangstats.com/project/index.xml" rel="self" type="application/rss+xml" />
+    <description>Projects</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Wed, 27 Apr 2016 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_512x512_fill_lanczos_center_3.png</url>
+      <title>Projects</title>
+      <link>https://www.kevinwangstats.com/project/</link>
+    </image>
+    
+    <item>
+      <title>Bioconductor packages</title>
+      <link>https://www.kevinwangstats.com/project/bioc/</link>
+      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/project/bioc/</guid>
+      <description>&lt;p&gt;I have an interest in developing Bioconductor packages. I am currently the maintainer of &lt;a href=&#34;https://bioconductor.org/packages/release/bioc/html/scMerge.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;scMerge&lt;/a&gt;. I am thinking about working towards integrating &lt;code&gt;tidyverse&lt;/code&gt; concepts with S4-class objects in Bioconductor, e.g. through &lt;a href=&#34;https://github.com/kevinwang09/plyexperiment&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;plyexperiment&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I think the Bioconductor framework for package management (and by extension, the pursue for reproducibility in research) is invaluable. Thus, I have taken up some extra efforts to learn about the &lt;code&gt;git&lt;/code&gt; version control system and the package continuous integration tool &lt;code&gt;travis&lt;/code&gt;. I also use &lt;code&gt;docker&lt;/code&gt;, which you can read about &lt;a href=&#34;https://www.kevinwangstats.com/project/cloud_computing&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Compare R &amp; Python/SQL</title>
+      <link>https://www.kevinwangstats.com/project/rpython/</link>
+      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/project/rpython/</guid>
+      <description>&lt;p&gt;I am in the process of learning the pros/cons between &lt;code&gt;R&lt;/code&gt; and &lt;code&gt;Python&lt;/code&gt;/&lt;code&gt;SQL&lt;/code&gt; for a range of analytical tasks. As such, I have created &lt;a href=&#34;https://kevinwang09.github.io/compare-r-python/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;this webpage&lt;/a&gt; for R vs Python and &lt;a href=&#34;https://kevinwang09.github.io/compare-r-sql/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;this webpage&lt;/a&gt; for R vs SQL.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Cricinformatics</title>
+      <link>https://www.kevinwangstats.com/project/cricinformatics/</link>
+      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/project/cricinformatics/</guid>
+      <description>&lt;p&gt;I always enjoy watching cricket and given that my research is in bioinformatics, I have &amp;ldquo;created&amp;rdquo; my own discipline: Cricinformatics (the name has nothing to do with Cricinfo, but I am open to the idea of a sponsorship).&lt;/p&gt;
+&lt;p&gt;Cricinformatics aims to use powerful bioinformatics tools to analyse cricket data. I have written a talk on this and all &lt;a href=&#34;https://github.com/kevinwang09/Cricinformatics&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;codes are available&lt;/a&gt; on GitHub.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Data Visualisation</title>
+      <link>https://www.kevinwangstats.com/project/visualisation/</link>
+      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/project/visualisation/</guid>
+      <description>&lt;p&gt;I like make pretty pictures to explain statistical concepts. This project is very broad but here is a selection of my works to visualise:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://kevinwang09.github.io/mcvis/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Multi-collinearity&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://shiny.maths.usyd.edu.au/oneSampleTCI/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Duality between p-values and confidence interval&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://gauss17gon.shinyapps.io/ggplot2_basic_tutorial/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Learning &lt;code&gt;ggplot2&lt;/code&gt; using the &lt;code&gt;learnr&lt;/code&gt; package&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/kevinwang09/visualiseEN&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Visualising Elastic Net (in development)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Feature Selection</title>
+      <link>https://www.kevinwangstats.com/project/featureselection/</link>
+      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/project/featureselection/</guid>
+      <description>&lt;p&gt;One of the areas of research that I have a particular focus on is feature selection. One of my more notable work on this is &lt;a href=&#34;https://kevinwang09.github.io/APES/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;APES&lt;/a&gt; - APproximated Exhaustive Search for generalised linear models. It is available as a standalone &lt;code&gt;R&lt;/code&gt; package.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Pokemon Data</title>
+      <link>https://www.kevinwangstats.com/project/pokemon/</link>
+      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/project/pokemon/</guid>
+      <description>&lt;p&gt;During my PhD years, I realised that I don&amp;rsquo;t get enough exercise. And given that my research is in bioinformatics, I have a great idea to play Pokemon Go and analyse the data/theory associated with the game.&lt;/p&gt;
+&lt;p&gt;I have given &lt;a href=&#34;https://github.com/kevinwang09/pokemon_workshop/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;talks&lt;/a&gt; on the classical Coupon Collector&amp;rsquo;s Problem in statistics, which can be seen as a basic model for collecting Pokemons.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Project Euler</title>
+      <link>https://www.kevinwangstats.com/project/project_euler/</link>
+      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/project/project_euler/</guid>
+      <description>&lt;p&gt;I am using Python to solve a series of &lt;a href=&#34;http://projecteuler.net/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Project Euler&lt;/a&gt; challenges. All codes and explanations are stored in &lt;a href=&#34;https://github.com/kevinwang09/project_euler&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;this GitHub repository&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Projects in the cloud</title>
+      <link>https://www.kevinwangstats.com/project/cloud_computing/</link>
+      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/project/cloud_computing/</guid>
+      <description>&lt;p&gt;I believe research should always be reproducible, even if that translates to extra work for the authors/developers. That line of thinking lead me to learn about &lt;code&gt;docker&lt;/code&gt;. I have used it in the past to produce containers to freeze old versions of my package (e.g. see &lt;a href=&#34;https://github.com/kevinwang09/scmerge_docker&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;docker image for scMerge&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;Some Google Cloud based workshops I have designed and administered are on the topics of&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Single Cell RNA Analysis. Which was hosted at the &lt;a href=&#34;https://github.com/SydneyBioX/SC_CPC_workshop&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;University of Sydney&lt;/a&gt;, &lt;a href=&#34;https://github.com/SydneyBioX/BIS2019_SC&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Bioinformatics Summer 2019&lt;/a&gt; and &lt;a href=&#34;https://github.com/SydneyBioX/cornell_sc_workshop&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Cornell University&lt;/a&gt;. An accompany wiki page is &lt;a href=&#34;https://github.com/SydneyBioX/SC_CPC_workshop/wiki&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;R, RStudio and Tidyverse. Which was hosted at &lt;a href=&#34;https://github.com/SydneyBioX/tidy2019&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Bioinformatics Summer 2019&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I also helped with the deployment of the following workshops at Bioinformatics Summer 2019:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ycao6928/testASMI&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;HiC analysis&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/SydneyBioX/BIS2019_PhosR&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Phosphoproteomic data analysis&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Every workshop that I hosted come with a GitHub Page website. All scripts for running the workshop (except passwords) are stored in their respective GitHub repo.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>tidytuesday</title>
+      <link>https://www.kevinwangstats.com/project/tidytuesday/</link>
+      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
+      <guid>https://www.kevinwangstats.com/project/tidytuesday/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

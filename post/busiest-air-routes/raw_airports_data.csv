@@ -1,0 +1,51 @@
+rank,airport1,airport2,distance,passengers,type
+1,Jeju,Seoul-Gimpo,449,14107414,Domestic
+2,Sapporo,Tokyo-Haneda,835,9698639,Domestic
+3,Sydney,Melbourne,705,9245392,Domestic
+4,Fukuoka,Tokyo-Haneda,889,8762547,Domestic
+5,Mumbai,Delhi,1150,7392155,Domestic
+6,Hanoi,Ho Chi Minh City,1171,6867114,Domestic
+7,Beijing,Shanghai-Hongqiao,1081,6518997,Domestic
+8,Hong Kong,Taipei-Taoyuan,802,6476268,International
+9,Tokyo-Haneda,Naha,1573,5829712,Domestic
+10,Jakarta,Surabaya,700,5649046,Domestic
+11,Jakarta,Denpasar,991,5535108,Domestic
+12,Jeddah,Riyadh,857,5526110,Domestic
+13,Tokyo-Haneda,Osaka-Itami,407,5131757,Domestic
+14,Chengdu,Beijing,1559,5092442,Domestic
+15,Guangzhou,Beijing,1898,5076229,Domestic
+16,Cancun,Mexico City,1294,4885602,Domestic
+17,Beijing,Shenzhen,1979,4853038,Domestic
+18,Brisbane,Sydney,756,4815609,Domestic
+19,Jakarta,Singapore,896,4812342,International
+20,Guangzhou,Shanghai-Hongqiao,1176,4724514,Domestic
+21,Shanghai-Hongqiao,Shenzhen,1217,4679294,Domestic
+22,Bangalore,Delhi,1717,4542638,Domestic
+23,Jakarta,Makassar,1439,4530428,Domestic
+24,Jakarta,Medan,1401,4512830,Domestic
+25,Cape Town,Johannesburg,1292,4508214,Domestic
+26,Kuala Lumpur,Singapore,296,4490463,International
+27,São Paulo–Congonhas,Rio de Janeiro-Santos Dumont,378,4234631,Domestic
+28,Hong Kong,Shanghai-Pudong,1247,4053909,International
+29,New York-JFK,Los Angeles,3982,3971922,Domestic
+30,Bogotá,Medellin-Rionegro,239,3930332,Domestic
+31,Bangalore,Mumbai,834,3814494,Domestic
+32,Los Angeles,San Francisco,541,3635655,Domestic
+33,Bangkok-Suvarnabhumi,Phuket,685,3612373,Domestic
+34,Brisbane,Melbourne,1379,3565266,Domestic
+35,Cebu,Manila,570,3519525,Domestic
+36,Hong Kong,Bangkok-Suvarnabhumi,1694,3490988,International
+37,Mexico City,Monterrey,729,3474971,Domestic
+38,Kolkata,Delhi,1333,3431999,Domestic
+39,Da Nang,Ho Chi Minh City,617,3256718,Domestic
+40,Chiang Mai,Bangkok-Don Mueang,569,3212124,Domestic
+41,Seoul-Incheon,Osaka-Kansai,872,3210813,International
+42,Cusco,Lima,583,3201414,Domestic
+43,New York-LaGuardia,Chicago-O'Hare,1177,3198700,Domestic
+44,Jakarta,Kuala Lumpur,1142,3170193,International
+45,Mexico City,Guadalajara,466,3170177,Domestic
+46,Jeju,Gimhae,294,3106224,Domestic
+47,İzmir,Istanbul-Atatürk,348,3084250,Domestic
+48,Hong Kong,Seoul-Incheon,2080,3081942,International
+49,Guangzhou,Chengdu,1232,3044038,Domestic
+50,Hong Kong,Manila,1145,3008842,International

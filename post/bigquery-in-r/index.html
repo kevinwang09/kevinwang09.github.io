@@ -1,0 +1,1552 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.1.0 for Hugo" />
+  
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Kevin Y.X. Wang" />
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Motivation Stranded at home due to COVID-19, I am trying to pick up SQL and Google’s BigQuery as new skills. Even though the learning curve has been okay, I can’t help to think how easy (and fast!" />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://www.kevinwangstats.com/post/bigquery-in-r/" />
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+  
+  
+  
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.9.0/css/academicons.min.css" integrity="sha512-W4yqoT1+8NLkinBLBZko+dFB2ZbHsYLDdr50VElllRcNt2Q4/GSs6u71UHKxB7S6JEMCp5Ve4xjh3eGQl/HRvg==" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha256-FMvZuGapsJLjouA6k7Eo2lusoAX9i0ShlWFG6qt7SLc=" crossorigin="anonymous">
+
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.css" integrity="sha512-1xoFisiGdy9nvho8EgXuXvnpR5GAMSjFwp40gSRE3NwdUdIMIKuPa7bqoUhLD0O/5tPNhteAsE5XyyMi5reQVA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+    
+      
+      <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap" media="print" onload="this.media='all'">
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.2ee374d4cf5562c045dfeda3907f775c.css" />
+
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-TGYMC1CTV1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+
+  function gtag() {
+      dataLayer.push(arguments);
+  }
+
+  function trackOutboundLink(url, target) {
+    gtag('event', 'click', {
+         'event_category': 'outbound',
+         'event_label': url,
+         'transport_type': 'beacon',
+         'event_callback': function () {
+           if (target !== '_blank') {
+             document.location = url;
+           }
+         }
+    });
+    console.debug("Outbound link clicked: " + url);
+  }
+
+  function onClickCallback(event) {
+    if ((event.target.tagName !== 'A') || (event.target.host === window.location.host)) {
+      return;
+    }
+    trackOutboundLink(event.target, event.target.getAttribute('target'));  
+  }
+
+  gtag('js', new Date());
+  gtag('config', 'G-TGYMC1CTV1', {});
+  gtag('set', {'cookie_flags': 'SameSite=None;Secure'});
+
+  
+  document.addEventListener('click', onClickCallback, false);
+</script>
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/index.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://www.kevinwangstats.com/post/bigquery-in-r/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary" />
+  
+    <meta property="twitter:site" content="@KevinWangStats" />
+    <meta property="twitter:creator" content="@KevinWangStats" />
+  
+  <meta property="og:site_name" content="Kevin Wang" />
+  <meta property="og:url" content="https://www.kevinwangstats.com/post/bigquery-in-r/" />
+  <meta property="og:title" content="BigQuery in R | Kevin Wang" />
+  <meta property="og:description" content="Motivation Stranded at home due to COVID-19, I am trying to pick up SQL and Google’s BigQuery as new skills. Even though the learning curve has been okay, I can’t help to think how easy (and fast!" /><meta property="og:image" content="https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_512x512_fill_lanczos_center_3.png" />
+    <meta property="twitter:image" content="https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_512x512_fill_lanczos_center_3.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2020-04-01T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2020-04-01T21:53:16&#43;11:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.kevinwangstats.com/post/bigquery-in-r/"
+  },
+  "headline": "BigQuery in R",
+  
+  "datePublished": "2020-04-01T00:00:00Z",
+  "dateModified": "2020-04-01T21:53:16+11:00",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Kevin Y.X. Wang"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "Kevin Wang",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.kevinwangstats.com/media/icon_hucd79782a54a1b8440324534e0bd47fb4_18398_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Motivation Stranded at home due to COVID-19, I am trying to pick up SQL and Google’s BigQuery as new skills. Even though the learning curve has been okay, I can’t help to think how easy (and fast!"
+}
+</script>
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+  <title>BigQuery in R | Kevin Wang</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="e5a021cf9a894fb5b5ec1cb25c346ce4" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.a8a181ea67095ef9fbb0e99ffbf585a0.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container-xl">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Kevin Wang</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Kevin Wang</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#packages"><span>Packages</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#projects"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://scholar.google.com/citations?user=ScxpjTgAAAAJ&amp;hl=en" target="_blank" rel="noopener"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/academic_activities"><span>Academic Activities</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+      
+      
+        
+          
+          <li class="nav-item d-none d-lg-inline-flex">
+            <a class="nav-link" href="https://twitter.com/KevinWangStats" data-toggle="tooltip" data-placement="bottom" title="Follow me on Twitter" target="_blank" rel="noopener" aria-label="Follow me on Twitter">
+              <i class="fab fa-twitter" aria-hidden="true"></i>
+            </a>
+          </li>
+        
+      
+
+      
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#" aria-label="Search"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+      
+      <li class="nav-item dropdown theme-dropdown">
+        <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+          <i class="fas fa-moon" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item js-set-theme-light">
+            <span>Light</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-dark">
+            <span>Dark</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-auto">
+            <span>Automatic</span>
+          </a>
+        </div>
+      </li>
+      
+
+      
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>BigQuery in R</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+          Last updated on
+      
+    
+    Apr 1, 2020
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    9 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+
+</div>
+
+    
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<div id="motivation" class="section level1">
+<h1>Motivation</h1>
+<p>Stranded at home due to COVID-19, I am trying to pick up SQL and Google’s BigQuery as new skills. Even though the learning curve has been okay, I can’t help to think how easy (and fast!) it was for me to use <code>dplyr</code> to do exactly the same operations.</p>
+<p>The purpose of this post is to document some SQL against <code>dplyr</code>, or more precisely, <code>dbplyr</code> (<a href="https://cran.r-project.org/web/packages/dbplyr/vignettes/dbplyr.html"><code>dplyr</code> verbs on a database</a>, don’t ask, it is magic!) to query COVID-19 data from <a href="https://cloud.google.com/bigquery">BigQuery</a>.</p>
+<p>The main part of the article starts <a href="#main">here</a>, if you want to skip over <a href="#bq_command">using BigQuery in the command line</a>.</p>
+<p>Overall, I think <code>dplyr</code> offers a more modern syntax. But then, of course, I am very biased towards anything that comes out of tidyverse and keep in mind that <code>dplyr</code> is about 40 years later than SQL and probably borrowed a lot of strength from it.</p>
+<div id="what-you-need" class="section level2">
+<h2>What you need</h2>
+<ul>
+<li>A Google Cloud account. See <a href="https://cloud.google.com/sdk/docs/quickstarts">here</a> for some resources and set it up with an appropriate project</li>
+<li>R packages: <code>dplyr</code>, <code>bigrquery</code>, <code>DBI</code></li>
+<li>Command line tools from Google Cloud</li>
+</ul>
+</div>
+<div id="why-gcpbigquery" class="section level2">
+<h2>Why GCP/BigQuery?</h2>
+<p><del>Well, Google gave me lots of free credits. I am easily bought.</del></p>
+<p>Jokes aside, I find the GCP documentation to be quite well-written and always up-to-date. Plus, the documentation contains lots examples of how to link the queried data to <a href="https://cloud.google.com/bigquery/docs/visualize-data-studio">data studio</a> and <a href="https://cloud.google.com/bigquery-ml/docs/bigqueryml-web-ui-start">machine learning algorithms</a>. Both of these capabilities are things that I want to eventually learn without paying for visualisation softwares like Tableau (sadly, I am no longer a student to qualify for their free accounts).</p>
+</div>
+</div>
+<div id="bq_command" class="section level1">
+<h1>(Optional) Running a BigQuery query in the command line</h1>
+<p><em>(Note: to use BigQuery, you will need to have a Google Cloud account and enable billing for a project, this might cost you, but luckily Google Cloud offers free credits when you sign up.)</em></p>
+<p>The two most common ways of making queries are:</p>
+<ol style="list-style-type: decimal">
+<li><p><a href="https://cloud.google.com/bigquery/docs/quickstarts/quickstart-web-ui">Going through the Google Cloud Console and use the WebUI</a></p></li>
+<li><p><a href="https://cloud.google.com/bigquery/docs/quickstarts/quickstart-command-line">Command line</a></p></li>
+</ol>
+<p>I will show you a quick demo of how to run a simple query in the command line. But I do find the web UI option incredibly useful. I can see myself using web UI on the go if I have some urgent data questions while riding on a bus to work (totally normal behaviour based on my past experiences).</p>
+<p>BigQuery has a set of <a href="https://cloud.google.com/bigquery/public-data">public datasets</a>, including one for <a href="https://console.cloud.google.com/marketplace/details/bigquery-public-datasets/covid19-dataset-list?preview=bigquery-public-datasets">COVID-19</a>. The <a href="https://console.cloud.google.com/marketplace/details/johnshopkins/covid19_jhu_global_cases">Johns Hopkins University dataset</a> is also part of this collection, and at the time of writing this article, this dataset is small enough for demostration purposes.</p>
+<p>In command line, tying</p>
+<pre><code>bq show bigquery-public-data:covid19_jhu_csse.summary</code></pre>
+<p>gives the output</p>
+<pre><code>Table bigquery-public-data:covid19_jhu_csse.summary
+
+   Last modified              Schema              Total Rows   Total Bytes   Expiration   Time Partitioning   Clustered Fields      Labels     
+ ----------------- ----------------------------- ------------ ------------- ------------ ------------------- ------------------ -------------- 
+  02 Apr 19:06:19   |- province_state: string     41129        5564578                                                           freebqcovid:  
+                    |- country_region: string                                                                                                  
+                    |- date: date                                                                                                              
+                    |- latitude: float                                                                                                         
+                    |- longitude: float                                                                                                        
+                    |- location_geom: geography                                                                                                
+                    |- confirmed: integer                                                                                                      
+                    |- deaths: integer                                                                                                         
+                    |- recovered: integer                                                                                                      
+                    |- active: integer                                                                                                         
+                    |- fips: string                                                                                                            
+                    |- admin2: string                                                                                                          
+                    |- combined_key: string   </code></pre>
+<p>Here, <code>bigquery-public-data</code> is the name of the BigQuery project that hosts the COVID-19 data. The name of the data stored in that project is <code>covid19_jhu_csse.summary</code>. And you can see that the output of <code>bq show</code> gives the specifications of all the columns in this data.</p>
+<p>To make a normal SQL query, you can use</p>
+<pre><code>bq query --use_legacy_sql=false \
+&#39;SELECT *
+FROM `bigquery-public-data.covid19_jhu_csse.summary`
+LIMIT 10;&#39;</code></pre>
+<p>which gives the output</p>
+<pre><code>Waiting on bqjob_r28ad9889c4311223_0000017139f7f30c_1 ... (0s) Current status: DONE   
++----------------+----------------------+------------+----------+-----------+---------------+-----------+--------+-----------+--------+------+--------+--------------+
+| province_state |    country_region    |    date    | latitude | longitude | location_geom | confirmed | deaths | recovered | active | fips | admin2 | combined_key |
++----------------+----------------------+------------+----------+-----------+---------------+-----------+--------+-----------+--------+------+--------+--------------+
+| NULL           | United Arab Emirates | 2020-02-13 |     NULL |      NULL |          NULL |         8 |      0 |         1 |   NULL | NULL | NULL   | NULL         |
+| NULL           | Thailand             | 2020-02-22 |     NULL |      NULL |          NULL |        35 |      0 |        17 |   NULL | NULL | NULL   | NULL         |
+| NULL           | Vietnam              | 2020-01-24 |     NULL |      NULL |          NULL |         2 |   NULL |      NULL |   NULL | NULL | NULL   | NULL         |
+| NULL           | Malaysia             | 2020-02-17 |     NULL |      NULL |          NULL |        22 |      0 |         7 |   NULL | NULL | NULL   | NULL         |
+| NULL           | Finland              | 2020-02-25 |     NULL |      NULL |          NULL |         1 |      0 |         1 |   NULL | NULL | NULL   | NULL         |
+| NULL           | Vietnam              | 2020-02-21 |     NULL |      NULL |          NULL |        16 |      0 |        14 |   NULL | NULL | NULL   | NULL         |
+| NULL           | UK                   | 2020-02-17 |     NULL |      NULL |          NULL |         9 |      0 |         8 |   NULL | NULL | NULL   | NULL         |
+| NULL           | Nepal                | 2020-02-21 |     NULL |      NULL |          NULL |         1 |      0 |         1 |   NULL | NULL | NULL   | NULL         |
+| NULL           | San Marino           | 2020-02-27 |     NULL |      NULL |          NULL |         1 |      0 |         0 |   NULL | NULL | NULL   | NULL         |
+| NULL           | Thailand             | 2020-01-31 |     NULL |      NULL |          NULL |        19 |   NULL |         5 |   NULL | NULL | NULL   | NULL         |
++----------------+----------------------+------------+----------+-----------+---------------+-----------+--------+-----------+--------+------+--------+--------------+</code></pre>
+<p>Not bad! But let’s try to do this in <code>R</code>.</p>
+</div>
+<div id="main" class="section level1">
+<h1>Connecting to BigQuery using <code>DBI</code></h1>
+<p>The <code>DBI</code> (DataBaseInterface) package provides an important function, <code>dbconnect</code>, which facilitates the connection to <a href="https://db.rstudio.com/databases">various databases</a>. The most important argument in <code>dbconnect()</code> is <code>drv</code>, which specifies the driver that is necessary to connect to a database. The extra arguments in this case are related to Google’s way of setting up a Google Cloud projects and billing:
++ <code>project = "bigquery-public-data"</code> sets which project the data is at, in this case, it is at the project managed by Google called “bigquery-public-data”.
++ <code>dataset = "covid19_jhu_csse"</code> refers to the dataset (consiste of multiple tables) stored in the project.
++ <code>billing = "your_project_name"</code> refers to billing account that you have with Google. Since you are making queries to databases, which takes up computational resources, which are not free, so you will need an Google Cloud account and your own project so Google will charge you. Mine is called “scpworkshop”.</p>
+<pre class="r"><code>library(DBI)
+library(bigrquery)
+
+con &lt;- dbConnect(
+  drv = bigrquery::bigquery(),
+  project = &quot;bigquery-public-data&quot;,
+  dataset = &quot;covid19_jhu_csse&quot;,
+  billing = &quot;scpworkshop&quot;
+)</code></pre>
+<p>We can list all the tables in the dataset using the <code>dbListTables</code> function.</p>
+<pre class="r"><code>dbListTables(con) ## List all tables in this connection</code></pre>
+<pre><code>## Using an auto-discovered, cached token.
+## To suppress this message, modify your code or options to clearly consent to the use of a cached token.
+## See gargle&#39;s &quot;Non-interactive auth&quot; vignette for more details:
+## https://gargle.r-lib.org/articles/non-interactive-auth.html
+## The bigrquery package is using a cached token for kevin.wang09@gmail.com.</code></pre>
+<pre><code>## [1] &quot;confirmed_cases&quot; &quot;deaths&quot;          &quot;recovered_cases&quot; &quot;summary&quot;</code></pre>
+<p>Once we decide which table we wish to work on, in this case, the summary table, we can check on the column types of this table first before making the query. The reason that I prefer to check the column types first is because I keep finding a parsing error with the latest version of the <code>bigrquery</code> package, which I have fixed <a href="https://github.com/kevinwang09/bigrquery/tree/geography">here</a>. If you want to follow the example below, please install my updated package using <code>devtools::install_github("kevinwang09/bigrquery", ref = "geography")</code>.</p>
+<pre class="r"><code>bigrquery::bq_table_fields(&quot;bigquery-public-data.covid19_jhu_csse.summary&quot;) ## List field types </code></pre>
+<pre><code>## &lt;bq_fields&gt;
+##   province_state &lt;STRING&gt;
+##   country_region &lt;STRING&gt;
+##   date &lt;DATE&gt;
+##   latitude &lt;FLOAT&gt;
+##   longitude &lt;FLOAT&gt;
+##   location_geom &lt;GEOGRAPHY&gt;
+##   confirmed &lt;INTEGER&gt;
+##   deaths &lt;INTEGER&gt;
+##   recovered &lt;INTEGER&gt;
+##   active &lt;INTEGER&gt;
+##   fips &lt;STRING&gt;
+##   admin2 &lt;STRING&gt;
+##   combined_key &lt;STRING&gt;</code></pre>
+<pre class="r"><code>DBI::dbGetQuery(con, 
+&quot;SELECT *
+FROM `bigquery-public-data.covid19_jhu_csse.summary`
+LIMIT 10;&quot;)</code></pre>
+<pre><code>## # A tibble: 10 x 13
+##    province_state country_region date       latitude longitude location_geom
+##    &lt;chr&gt;          &lt;chr&gt;          &lt;date&gt;        &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;        
+##  1 Hubei          Mainland China 2020-01-26       NA        NA &lt;NA&gt;         
+##  2 Guangdong      Mainland China 2020-01-26       NA        NA &lt;NA&gt;         
+##  3 Zhejiang       Mainland China 2020-01-26       NA        NA &lt;NA&gt;         
+##  4 Henan          Mainland China 2020-01-26       NA        NA &lt;NA&gt;         
+##  5 Chongqing      Mainland China 2020-01-26       NA        NA &lt;NA&gt;         
+##  6 Hunan          Mainland China 2020-01-26       NA        NA &lt;NA&gt;         
+##  7 Beijing        Mainland China 2020-01-26       NA        NA &lt;NA&gt;         
+##  8 Anhui          Mainland China 2020-01-26       NA        NA &lt;NA&gt;         
+##  9 Shandong       Mainland China 2020-01-26       NA        NA &lt;NA&gt;         
+## 10 Sichuan        Mainland China 2020-01-26       NA        NA &lt;NA&gt;         
+## # … with 7 more variables: confirmed &lt;int&gt;, deaths &lt;int&gt;, recovered &lt;int&gt;,
+## #   active &lt;int&gt;, fips &lt;chr&gt;, admin2 &lt;chr&gt;, combined_key &lt;chr&gt;</code></pre>
+</div>
+<div id="comparing-the-syntax-style-of-dplyr-and-sql" class="section level1">
+<h1>Comparing the syntax style of <code>dplyr</code> and <code>SQL</code></h1>
+<p>Suppose we want to check the total confirmed (the columns are already in cumulative confirmed cases) COVID19 cases for Italy and Spain, then in SQL, we can make the following query:</p>
+<pre class="r"><code>sql_tbl = DBI::dbGetQuery(con, 
+&quot;SELECT country_region, confirmed
+FROM `bigquery-public-data.covid19_jhu_csse.summary`
+WHERE country_region IN (&#39;Italy&#39;, &#39;Spain&#39;) AND date = &#39;2020-04-02&#39;
+&quot;)
+
+sql_tbl</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   country_region confirmed
+##   &lt;chr&gt;              &lt;int&gt;
+## 1 Italy             115242
+## 2 Spain             112065</code></pre>
+<p>Looks good!</p>
+<p>But what about <code>dplyr</code>?</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>covid_data = tbl(con, &quot;summary&quot;) 
+
+dplyr_tbl = covid_data %&gt;% 
+  dplyr::filter(country_region %in% c(&#39;Italy&#39;, &#39;Spain&#39;), date == &#39;2020-04-02&#39;) %&gt;% 
+  dplyr::select(country_region, confirmed) %&gt;% 
+  collect() ## collect() pulls the entire table into memory
+
+dplyr_tbl</code></pre>
+<pre><code>## # A tibble: 2 x 2
+##   country_region confirmed
+##   &lt;chr&gt;              &lt;int&gt;
+## 1 Italy             115242
+## 2 Spain             112065</code></pre>
+<p>But are the results the same?</p>
+<pre class="r"><code>all.equal(sql_tbl, dplyr_tbl)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<p>Awesome!</p>
+<p>We can see that both <code>dplyr</code> verbs and SQL in this query are very similar which is great for data scientist to translate between the two.</p>
+<div id="a-more-complicated-query" class="section level2">
+<h2>A more complicated query</h2>
+<p>You might be asking why I didn’t put US and China in the query, well, this is because that both countries has state/province level data, so the total confirmed caes will need to be summed across the state/province level first before being compared to other data at the country level.</p>
+<p>Combine this subuery with the previous query, we get:</p>
+<pre class="r"><code>sql_tbl = DBI::dbGetQuery(con, 
+&quot;SELECT country_region, SUM(confirmed) AS country_confirmed
+FROM `bigquery-public-data.covid19_jhu_csse.summary`
+WHERE country_region IN (&#39;Italy&#39;, &#39;Spain&#39;, &#39;US&#39;, &#39;China&#39;) AND date = &#39;2020-04-02&#39;
+GROUP BY country_region
+ORDER BY country_confirmed;
+&quot;)
+
+sql_tbl</code></pre>
+<pre><code>## # A tibble: 4 x 2
+##   country_region country_confirmed
+##   &lt;chr&gt;                      &lt;int&gt;
+## 1 China                      82432
+## 2 Spain                     112065
+## 3 Italy                     115242
+## 4 US                        243453</code></pre>
+<p>Not bad! The <code>UNION ALL</code> took care a lot of the hard work!</p>
+<p>In <code>dplyr</code>, the job is (I would argue) simpler:</p>
+<pre class="r"><code>dplyr_tbl = covid_data %&gt;% 
+  filter(country_region %in% c(&#39;Italy&#39;, &#39;Spain&#39;, &#39;US&#39;, &#39;China&#39;), date == &#39;2020-04-02&#39;) %&gt;% 
+  group_by(country_region) %&gt;% 
+  summarise(country_confirmed = sum(confirmed)) %&gt;% 
+  arrange(country_confirmed) %&gt;% 
+  collect()</code></pre>
+<pre><code>## Warning: Missing values are always removed in SQL.
+## Use `SUM(x, na.rm = TRUE)` to silence this warning
+## This warning is displayed only once per session.</code></pre>
+<pre class="r"><code>dplyr_tbl</code></pre>
+<pre><code>## # A tibble: 4 x 2
+##   country_region country_confirmed
+##   &lt;chr&gt;                      &lt;int&gt;
+## 1 China                      82432
+## 2 Spain                     112065
+## 3 Italy                     115242
+## 4 US                        243453</code></pre>
+<pre class="r"><code>all.equal(sql_tbl, dplyr_tbl)</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+</div>
+<div id="which-is-better" class="section level2">
+<h2>Which is better?</h2>
+<p>Very much up to your personal taste!</p>
+<p>I personally prefer <code>dplyr</code> because I think its design is more intuitive:</p>
+<ul>
+<li><p>the grouping variable is automatically included in the final output, without using extra selection of columns</p></li>
+<li><p>the operation of selecting columns and summarising columns are two distinct verbs in <code>dplyr</code>, whereas in SQL it is just <code>SELECT</code></p></li>
+</ul>
+<style>
+pre {
+  overflow-x: auto;
+}
+pre code {
+  word-wrap: normal;
+  white-space: pre;
+}
+</style>
+</div>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/gcp/">GCP</a>
+  
+  <a class="badge badge-light" href="/tag/cloud/">Cloud</a>
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://www.kevinwangstats.com/post/bigquery-in-r/&amp;text=BigQuery%20in%20R" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://www.kevinwangstats.com/post/bigquery-in-r/&amp;t=BigQuery%20in%20R" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=BigQuery%20in%20R&amp;body=https://www.kevinwangstats.com/post/bigquery-in-r/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://www.kevinwangstats.com/post/bigquery-in-r/&amp;title=BigQuery%20in%20R" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=BigQuery%20in%20R%20https://www.kevinwangstats.com/post/bigquery-in-r/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://www.kevinwangstats.com/post/bigquery-in-r/&amp;title=BigQuery%20in%20R" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://www.kevinwangstats.com/"><img class="avatar mr-3 avatar-circle" src="/author/kevin-y.x.-wang/avatar_hu4dac1e2f91aaf4115dfec68ee8ebdf48_697857_270x270_fill_q75_lanczos_center.jpg" alt="Kevin Y.X. Wang"></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://www.kevinwangstats.com/">Kevin Y.X. Wang</a></h5>
+      <h6 class="card-subtitle">Senior Data Scientist</h6>
+      <p class="card-text">Senior Data scientist at Illumina. PhD in Statistics.</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="/#contact" >
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://twitter.com/KevinWangStats" target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://scholar.google.com/citations?user=ScxpjTgAAAAJ&amp;hl=en" target="_blank" rel="noopener">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/kevinwang09" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://www.linkedin.com/in/kevinwangstats/" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i>
+      </a>
+    </li>
+  
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    <li>
+      <a href="https://github.com/kevinwangstats/cv/blob/main/CV_KEVIN_YX_WANG_twopage.pdf" target="_blank" rel="noopener">
+        <i class="ai ai-cv"></i>
+      </a>
+    </li>
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/visualising-covid19-using-data-studio/">Visualising COVID-19 data using Data Studio</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+  
+
+  
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+      
+      
+      
+      
+      
+      
+      Published with <a href="https://wowchemy.com/?utm_campaign=poweredby" target="_blank" rel="noopener">Wowchemy</a> — the free, <a href="https://github.com/wowchemy/wowchemy-hugo-modules" target="_blank" rel="noopener">open source</a> website builder that empowers creators.
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/instant.page/5.1.0/instantpage.min.js" integrity="sha512-1+qUtKoh9XZW7j+6LhRMAyOrgSQKenQ4mluTR+cvxXjP1Z54RxZuzstR/H9kgPXQsVB8IW7DMDFUJpzLjvhGSQ==" crossorigin="anonymous"></script>
+
+      
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/highlight.min.js" integrity="sha512-TDKKr+IvoqZnPzc3l35hdjpHD0m+b2EC2SrLEgKDRWpxf2rFCxemkgvJ5kfU48ip+Y+m2XVKyOCD85ybtlZDmw==" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/r.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/python.min.js"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/latex.min.js"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.js" integrity="sha512-SeiQaaDh73yrb56sTW/RgVdi/mMqNeM2oBwubFHagc5BkixSpP1fvqF47mKzPGWYSSy4RwbBunrJBQ4Co8fRWA==" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    <script src="/js/bootstrap.bundle.min.6aed84840afc03ab4d5750157f69c120.js"></script>
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.cf8ca859a9b74f8b1cd804621b13e5f1.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>
